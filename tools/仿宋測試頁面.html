@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>開源仿宋與硬筆楷體 WebFont 測試集</title>
+
+  <!-- 引入你 GitHub 倉庫中的 4 款仿宋/硬筆字型 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/zhuque-fangsong/result.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-huo-fangsong/result.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/huiwen-fangsong/result.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/iansui/result.css">
+
+  <style>
+    :root {
+      --bg-color: #f5f2eb;
+      --card-bg: #ffffff;
+      --text-main: #2b2b2b;
+      --border-color: #e2dcd2;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.8;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px solid #d3c9b8;
+      padding-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      letter-spacing: 2px;
+      color: #3d3122;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: #736350;
+      font-size: 14px;
+    }
+
+    .font-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 35px;
+      box-shadow: 0 4px 15px rgba(60, 40, 20, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .font-card:hover {
+      box-shadow: 0 6px 20px rgba(60, 40, 20, 0.08);
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: sans-serif;
+      font-size: 12px;
+      background-color: #f0eada;
+      color: #8c6d3f;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+
+    .card-title {
+      font-size: 30px;
+      margin: 0 0 15px 0;
+      color: #1a1a1a;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .description {
+      font-size: 18px;
+      text-align: justify;
+      margin-bottom: 20px;
+      color: #333333;
+    }
+
+    .specimen-box {
+      background-color: #faf8f5;
+      border-left: 4px solid #a67c52;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: #5c4033;
+    }
+
+    /* 各字型特定的 CSS Class */
+    .font-zhuque {
+      font-family: "Zhuque Fangsong (technical preview)", serif;
+    }
+
+    .font-chill-huo {
+      font-family: "ChillHuoFangSong", serif;
+    }
+
+    .font-huiwen {
+      font-family: "Huiwen-Fangsong", serif;
+    }
+
+    .font-iansui {
+      font-family: "Iansui", serif;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #8c7b6c;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>古典與現代的交響 — 開源仿宋字型集</h1>
+    <p>託管來源：GitHub <code>xiao-xue-seng/fonts</code> ｜ CDN 分發：jsDelivr</p>
+  </header>
+
+  <!-- 1. 朱雀仿宋 -->
+  <div class="font-card">
+    <span class="badge">正文經典 ‧ 民國南宋活字復刻</span>
+    <h2 class="card-title font-zhuque">1. 朱雀仿宋 (Zhuque Fangsong)</h2>
+    <p class="description font-zhuque">
+      「朱雀仿宋」改刻自民國時期經典的「南宋」活字。其筆畫剛勁挺拔、線條清麗，橫豎轉折間盡顯古雅的文人氣息。專為現代高解析度螢幕與正文閱讀進行深度優化，骨架勻稱、書卷氣濃郁，是進行長篇正文閱讀、古典書籍排版與文藝創作的絕佳選擇。
+    </p>
+    <div class="specimen-box font-zhuque">
+      天地玄黃，宇宙洪荒。日月盈昃，辰宿列張。
+    </div>
+  </div>
+
+  <!-- 2. 寒蝉活仿宋 -->
+  <div class="font-card">
+    <span class="badge">活字印痕 ‧ 墨暈歲月質感</span>
+    <h2 class="card-title font-chill-huo">2. 寒蝉活仿宋 (Chill Huo FangSong)</h2>
+    <p class="description font-chill-huo">
+      「寒蟬活仿宋」由寒蟬字型（Warren2060）基於朱雀仿宋二次創作而成。本字型特別模擬了傳統金屬活字在壓印紙張時，墨水擴散所產生的輕微「墨暈（Ink Bleed）」與紙張肌理，重現了鉛印時代微瑕而真實的歷史歲月感，非常適合古風海報、詩詞與獨立視覺設計。
+    </p>
+    <div class="specimen-box font-chill-huo">
+      寒來暑往，秋收冬藏。紙香墨飛，歲月沉香。
+    </div>
+  </div>
+
+  <!-- 3. 汇文仿宋 -->
+  <div class="font-card">
+    <span class="badge">老式新華字模 ‧ 五十年代經典</span>
+    <h2 class="card-title font-huiwen">3. 汇文仿宋 (Huiwen Fangsong)</h2>
+    <p class="description font-huiwen">
+      「匯文仿宋」由特里王（Terry Wang）復刻自 1950 年代新華字模廠的經典「59-4 仿宋體」。其字體秀麗端莊、結構骨幹嚴謹，保留了老式活字印刷極佳的鉛字質感與懷舊氛圍，靜謐而典雅，沉澱著半個世紀前活字鑄造的歲月印記。
+    </p>
+    <div class="specimen-box font-huiwen">
+      雲想衣裳花想容，春風拂檻露華濃。清秀挺拔，懷舊鉛印。
+    </div>
+  </div>
+
+  <!-- 4. 芫荽體 -->
+  <div class="font-card">
+    <span class="badge">繁體優化 ‧ 仿宋骨架與硬筆溫潤</span>
+    <h2 class="card-title font-iansui">4. 芫荽體 (Iansui)</h2>
+    <p class="description font-iansui">
+      「芫荽體」由台灣字型創作者 ButTaiwan 基於日本 Klee One 改編優化，專為繁體中文排版與標點置中量身打造。它兼具了仿宋體的挺拔骨架與硬筆楷書的溫潤手感，字形親切自然、結構清雅秀逸，是近年繁體開源字型中極受歡迎的優雅佳作。
+    </p>
+    <div class="specimen-box font-iansui">
+      綠滿窗前草不除，客來正值讀書時。溫潤挺拔，親切秀逸。
+    </div>
+  </div>
+
+  <footer>
+    💡 提示：按 <code>F12</code> 打開開發者工具，點擊 <b>Network</b> 頁籤，可觀察各字型如何在網頁開啟時精準載入對應的 <code>.woff2</code> 切片檔案。
+  </footer>
+
+</body>
+</html>
