@@ -9,6 +9,7 @@
 ### 1. 寒蝉正楷體 (ChillKai)
 
 - **授權**：SIL Open Font License 1.1
+
 - **CSS 引入網址**：
 
   ```html
@@ -77,4 +78,77 @@
       font-family: "ChillKai", "TW-Kai-ExtB", serif;
     }
   </style>
+  ```
+
+### 3. 朱雀仿宋
+
+- **授權**：SIL Open Font License 1.1
+
+- **CSS 引入網址**：
+
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/zhuque-fangsong/result.css"
+  />
+  ```
+
+- **CSS 套用**：
+  ```css
+  font-family: "Zhuque Fangsong (technical preview)", serif;
+  ```
+
+### 4. 寒蝉活仿宋
+
+- **授權**：SIL Open Font License 1.1
+
+- **CSS 引入網址**：
+
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-huo-fangsong/result.css"
+  />
+  ```
+
+- **CSS 套用**：
+  ```css
+  font-family: "ChillHuoFangSong", serif;
+  ```
+
+### 5. 汇文仿宋
+
+- **原字型的聲明**：本字体文件开源且免费商用,禁止第三方在任何平台以任何方式用此字体牟利。如果您用付费方式获得了此字体文件,请找卖家退款。
+
+- **CSS 引入網址**：
+
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/huiwen-fangsong/result.css"
+
+  />
+  ```
+
+- **CSS 套用**：
+  ```css
+  font-family: "Huiwen-Fangsong", serif;
+  ```
+
+### 6. 芫荽體
+
+- **授權**：SIL Open Font License 1.1
+
+- **CSS 引入網址**：
+
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/iansui/result.css"
+  />
+  ```
+
+- **CSS 套用**：
+  ```css
+  font-family: "Iansui", serif;
   ```
