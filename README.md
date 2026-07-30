@@ -8,7 +8,7 @@
 - **授權**：SIL Open Font License 1.1
 - **CSS 引入網址**：
   ```html
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yourname/fonts@main/chill-kai/result.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-kai/result.css">
   ```
 - **CSS 套用**：
   ```css
