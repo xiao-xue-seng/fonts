@@ -18,7 +18,7 @@
 
 將輸出的 "TW-Kai-Punct.ttf" 進行切片。
 
-在切片後的 result.css，搜尋「"TW-Kai"」取代為「"TW-Kai-Punct"」，這就是CSS中使用的名稱。(開頭註解部分的 TW-Kai 也可以順便加 -Punct ，不過不是必要的。)
+在切片後的 result.css，搜尋「font-family:"TW-Kai"」取代為「font-family:"TW-Kai-Punct"」，這就是CSS中使用的名稱。(開頭註解部分的 TW-Kai 也可以順便加 -Punct ，不過不是必要的。)
 
 以同樣的方式也製作 TW-Sung-Punct 供宋體使用。
 
