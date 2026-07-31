@@ -6,7 +6,7 @@
 
 ## 📦 字型列表與引入方式
 
-### 1. 寒蝉正楷體 (ChillKai)
+### 寒蝉正楷體 (ChillKai)
 
 - **授權**：SIL Open Font License 1.1
 
@@ -33,7 +33,7 @@
   font-family: "ChillKai", serif;
   ```
 
-### 2. 全字庫正楷體 Ext-B、全字庫正宋體 Ext-B
+### 全字庫正楷體 Ext-B、全字庫正宋體 Ext-B
 
 - **字型來源說明**：
   本專案字型採集自 中華民國數位發展部 / 國家發展委員會 [中文標準交換碼全字庫 (CNS 11643)]，依據政府資料開放授權條款 (OGDL 1.0) 及 SIL OFL 1.1 進行託管與分發。
@@ -80,7 +80,7 @@
   </style>
   ```
 
-### 3. 朱雀仿宋
+### 朱雀仿宋
 
 - **授權**：SIL Open Font License 1.1
 
@@ -98,7 +98,7 @@
   font-family: "Zhuque Fangsong (technical preview)", serif;
   ```
 
-### 4. 寒蝉活仿宋
+### 寒蝉活仿宋
 
 - **授權**：SIL Open Font License 1.1
 
@@ -116,7 +116,7 @@
   font-family: "ChillHuoFangSong", serif;
   ```
 
-### 5. 汇文仿宋
+### 汇文仿宋
 
 - **原字型的聲明**：本字体文件开源且免费商用,禁止第三方在任何平台以任何方式用此字体牟利。如果您用付费方式获得了此字体文件,请找卖家退款。
 
@@ -126,7 +126,6 @@
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/huiwen-fangsong/result.css"
-
   />
   ```
 
@@ -135,7 +134,7 @@
   font-family: "Huiwen-Fangsong", serif;
   ```
 
-### 6. 芫荽體
+### 芫荽體
 
 - **授權**：SIL Open Font License 1.1
 
@@ -151,4 +150,33 @@
 - **CSS 套用**：
   ```css
   font-family: "Iansui", serif;
+  ```
+
+### 全字庫正楷體標點符號子集、全字庫正宋體標點符號子集
+
+用來取代簡體字型的標點符號，以符合繁中的置中標點習慣。
+
+- **字型來源說明**：
+  本專案字型採集自 中華民國數位發展部 / 國家發展委員會 [中文標準交換碼全字庫 (CNS 11643)]，依據政府資料開放授權條款 (OGDL 1.0) 及 SIL OFL 1.1 進行託管與分發。
+
+- **CSS 引入網址**：
+
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-kai-punct/result.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-sung-punct/result.css"
+  />
+  ```
+
+- **CSS 套用**：
+
+  放在簡體字之前，利用備援(fallback)特性取代標點符號。
+
+  ```css
+  font-family: "TW-Kai-Punct", "ChillKai", serif;
+  font-family: "TW-Sung-Punct", "ChillHuoFangSong", serif;
   ```

@@ -1,3 +1,7 @@
+"""
+比較 寒蟬 兩個檔案之間的差異
+"""
+
 from fontTools.ttLib import TTFont
 
 # 載入兩個字型檔案（請替換成你實際的檔案名稱與路徑）
