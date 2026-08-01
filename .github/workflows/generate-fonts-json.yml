@@ -1,0 +1,40 @@
+name: Generate Font List JSON
+
+on:
+  push:
+    branches:
+      - main # 如果您的預設分支是 master，請改成 master
+    paths:
+      - "**/result.css"
+      - "tools/**"
+      - ".github/workflows/generate-fonts-json.yml"
+
+# 給予 Actions 機器人寫入程式碼庫的權限
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 複製程式碼到 GitHub Actions 虛擬機
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 安裝 Python 環境
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. 執行您的 Python 腳本
+      - name: Run font list script
+        run: python3 tools/generate_font_list.py
+
+      # 4. 如果 api/fonts.json 有更新，自動 Commit 並 Push 回 Repo
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add api/fonts.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "auto: update api/fonts.json [skip ci]" && git push)
