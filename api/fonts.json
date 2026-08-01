@@ -1,0 +1,62 @@
+[
+  {
+    "id": "chill-huo-fangsong",
+    "name": "ChillHuoFangSong",
+    "displayName": "寒蟬活仿宋",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-huo-fangsong/result.css"
+  },
+  {
+    "id": "chill-kai",
+    "name": "ChillKai",
+    "displayName": "寒蟬楷體",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-kai/result.css"
+  },
+  {
+    "id": "huiwen-fangsong",
+    "name": "Huiwen-Fangsong",
+    "displayName": "匯文仿宋",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/huiwen-fangsong/result.css"
+  },
+  {
+    "id": "iansui",
+    "name": "Iansui",
+    "displayName": "芫荽體",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/iansui/result.css"
+  },
+  {
+    "id": "instrument-sans",
+    "name": "InstrumentSansLatinSubset",
+    "displayName": "Instrument Sans 拉丁子集",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/instrument-sans/result.css"
+  },
+  {
+    "id": "tw-kai-extb",
+    "name": "TW-Kai-Ext-B",
+    "displayName": "全字庫正楷體 Ext-B",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-kai-extb/result.css"
+  },
+  {
+    "id": "tw-kai-punct",
+    "name": "TW-Kai-Punct",
+    "displayName": "全字庫正楷體標點符號",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-kai-punct/result.css"
+  },
+  {
+    "id": "tw-sung-extb",
+    "name": "TW-Sung-Ext-B",
+    "displayName": "全字庫正宋體 Ext-B",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-sung-extb/result.css"
+  },
+  {
+    "id": "tw-sung-punct",
+    "name": "TW-Sung-Punct",
+    "displayName": "全字庫正宋體標點符號",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-sung-punct/result.css"
+  },
+  {
+    "id": "zhuque-fangsong",
+    "name": "Zhuque Fangsong (technical preview)",
+    "displayName": "朱雀仿宋",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/zhuque-fangsong/result.css"
+  }
+]
