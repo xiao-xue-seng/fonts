@@ -6,22 +6,28 @@
 
 ## 🚀 第一步：如何在網站中引入 SDK
 
-請在網站的 HTML（通常是 `index.html`）的 `<head>` 標籤內，加入以下這行 `<script>` 程式碼：
+請在網站 HTML（通常是 `index.html`）的 **`<head>` 標籤內靠前的位置**，加入以下這行 `<script>` 程式碼：
 
 ```html
-<!-- 引入字型動態載入 SDK -->
-<script
-  src="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/font-loader.js"
-  data-site="amec"
-  async
-></script>
+<head>
+  <meta charset="UTF-8" />
+  <!-- 💡 建議放在 <head> 靠前的位置，讓字型連線與下載最早開始發揮效能 -->
+  <script
+    src="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/font-loader-min.js"
+    data-site="amec"
+    async
+  ></script>
+  ...
+</head>
 ```
 
 ### 關鍵參數說明：
 
 - **`data-site="amec"`**（重要）：
   這個屬性是告訴 SDK：「**請幫我讀取 amec 這個網站專用的字型清單**」。
-  SDK 會自動去抓取 `https://.../api/amec.json` 設定檔。未來如果擴充了新網站（例如 `amrtf`），只需將此處改成 `data-site="amrtf"` 即可，完全不用改動 JS 內容！
+  SDK 會自動去抓取 `https://.../api/amec.json` 設定檔。未來如果擴充了新網站（例如 `amrtf`），只需新增設定檔後，將此處改成 `data-site="amrtf"` 即可，完全不用改動 JS 內容！
+
+✨ **如果您只是要顯示字型，不需要取得字型清單等進階資訊，那麼到這裡就全部完成了！** ✨
 
 ---
 
@@ -146,17 +152,24 @@ onMounted(() => {
 
 ## ❓ 常見問題 (FAQ)
 
-### Q1：為什麼不能直接呼叫 `window.__FONT_SDK__.getAvailableFonts()`，有時候會拿到空的？
+### Q1：`font-loader-min.js` 運作時會自動幫網站做哪些優化？
+
+**答**：SDK 為了確保下載速度與防止重複載入，會在背景自動完成以下兩大任務：
+
+1. **自動預先連線 (Preconnect)**：自動分析字型來源網域，並預先建立網路連線（含跨域安全性設定），縮短下載延遲。若您的 HTML 本身已經手動寫過連線標籤，SDK 會聰明判斷並跳過，不重複建立。
+2. **智慧去重載入 (Deduplication)**：載入字型前會先檢查頁面上是否已經寫了該字型。**連版本號差異（如 `@v1.1.0` 與 `@main`）都會自動忽略並比對**，如果網站已有該字型，SDK 會直接保留網站原本的連結，不會產生重複下載的問題。
+
+### Q2：為什麼不能直接呼叫 `window.__FONT_SDK__.getAvailableFonts()`，有時候會拿到空的？
 
 **答**：因為 SDK 是透過網路非同步去抓取 `amec.json` 的。如果您的 Vue 組件掛載（Mounted）時，網路請求還沒完成，`isReady` 就會是 `false`。
 因此，**請務必照著範例寫出 `if (isReady) { ... } else { 監聽 fonts:loaded }` 的雙重判斷**，才能確保百分之百抓得到資料！
 
-### Q2：未來如果要增加新的字型，管理員需要改程式碼嗎？
+### Q3：未來如果要增加新的字型，管理員需要改程式碼嗎？
 
 **答**：完全不需要改任何 JS 或 Vue 程式碼！
 管理員只需要在 GitHub 倉庫的 `api/amec.json` 裡面新增該字型，SDK 與 Vue 畫面就會自動讀取並顯示新的字型。
 
-### Q3：`font.name` 和 `font.displayName` 有什麼不同？
+### Q4：`font.name` 和 `font.displayName` 有什麼不同？
 
 - **`displayName`**：適合**給人看的名稱**（例如："寒蟬楷體"），用於選單標籤。
 - **`name`**：適合**給 CSS 讀取的名稱**（例如："ChillKai"），用於 `font-family: "ChillKai"`。
