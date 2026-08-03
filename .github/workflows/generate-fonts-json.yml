@@ -3,13 +3,13 @@ name: Generate Font List JSON
 on:
   push:
     tags:
-      - "v*" # 當有 push 新的 Tag 時觸發
-    branches:
-      - main # push 到 main 時觸發。如果您的預設分支是 master，請改成 master
-    paths:
-      - "**/result.css"
-      - "tools/**"
-      - ".github/workflows/generate-fonts-json.yml"
+      - "v*" # 當 push 新的 Tag 時觸發
+    # branches:
+    #   - main # push 到 main 時觸發。如果您的預設分支是 master，請改成 master
+    # paths:
+    #   - "**/result.css"
+    #   - "tools/**"
+    #   - ".github/workflows/generate-fonts-json.yml"
 
 # 給予 Actions 機器人寫入程式碼庫的權限
 permissions:
