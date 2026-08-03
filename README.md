@@ -2,6 +2,8 @@
 
 祈請 大寶恩師 加持
 
+感恩所有開源字型的創作者們
+
 本倉庫收錄經過中文子集化（`cn-font-split`）切片之免費可商用 WebFont。
 
 ## 📦 字型列表與引入方式
@@ -209,6 +211,54 @@
 
 ---
 
+### 🟩文鼎楷體 / 明體（台灣版與大陸版）
+
+- **字型來源說明**：
+  本專案採用文鼎科技（Arphic Technology Co., Ltd.）之 AR PL UKai / AR PL UMing 字型，並配合 Debian / Ubuntu CJK-Unifonts 社群修補後，透過 ARPHIC PUBLIC LICENSE（ARPHICPL）進行自託管與分發。切片與格式轉換後，仍須保留原始版權宣告與授權檔案。
+
+- **在網頁 `<head>` 中引入字型**：
+
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/ukai-tw/result.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/ukai-cn/result.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/uming-tw/result.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/uming-cn/result.css"
+  />
+  ```
+
+- **CSS 中使用**：
+
+  ```css
+  .my-text-style {
+    font-family: "AR PL UKai TW", serif;
+  }
+  .my-text-style {
+    font-family: "AR PL UKai CN", serif;
+  }
+  .my-text-style {
+    font-family: "AR PL UMing TW", serif;
+  }
+  .my-text-style {
+    font-family: "AR PL UMing CN", serif;
+  }
+  ```
+
+- **版權聲明**：
+  本字型源自文鼎科技之 ARPHIC PUBLIC LICENSE 授權字型，包含原始版權註明「Copyright (C) 1999 Arphic Technology Co., Ltd.」與相關授權說明；本倉庫已將授權檔案一併收錄於各字型資料夾中，請於散布時一併保留。
+
+---
+
 ### 🟩Instrument Sans 拉丁字子集
 
 用來取代中文字型中的拉丁文字，讓整體排版更美觀。為什麼做成子集？是因為不想要取代原 Instrument Sans 所有字碼範圍的字，只想取代部分字碼。
@@ -237,11 +287,13 @@
 
 本倉庫收錄之字型均為開源、免費可商用字型，各字型版權歸屬於其原始創作者所有：
 
-| 字型名稱                    | 原始作者 / 團隊                 | 原專案連結與授權                                                                |
-| :-------------------------- | :------------------------------ | :------------------------------------------------------------------------------ |
-| **寒蝉正楷體 / 寒蟬活仿宋** | Warren2060                      | [GitHub](https://github.com/Warren2060) (SIL OFL 1.1)                           |
-| **朱雀仿宋**                | 璇璣造字 (TrionesType)          | [GitHub](https://github.com/TrionesType/zhuque) (SIL OFL 1.1)                   |
-| **匯文仿宋**                | 特里王 (Terry Wang)             | 復刻自 59-4 活字 (SIL OFL 1.1)                                                  |
-| **芫荽體**                  | ButTaiwan                       | [GitHub](https://github.com/ButTaiwan/iansui) (SIL OFL 1.1)                     |
-| **全字庫正楷體、正宋體**    | 數位發展部 / 國家發展委員會     | [全字庫](https://www.fonts.org.tw/) (OGDL 1.0 / OFL 1.1)                        |
-| **Instrument Sans**         | Instrument / Rodrigo Fuenzalida | [Google Fonts](https://fonts.google.com/specimen/Instrument+Sans) (SIL OFL 1.1) |
+| 字型名稱                        | 原始作者 / 團隊                              | 原專案連結與授權                                                                                                         |
+| :------------------------------ | :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| **寒蝉正楷體 / 寒蟬活仿宋**     | Warren2060                                   | [GitHub](https://github.com/Warren2060) (SIL OFL 1.1)                                                                    |
+| **朱雀仿宋**                    | 璇璣造字 (TrionesType)                       | [GitHub](https://github.com/TrionesType/zhuque) (SIL OFL 1.1)                                                            |
+| **匯文仿宋**                    | 特里王 (Terry Wang)                          | 復刻自 59-4 活字 (SIL OFL 1.1)                                                                                           |
+| **芫荽體**                      | ButTaiwan                                    | [GitHub](https://github.com/ButTaiwan/iansui) (SIL OFL 1.1)                                                              |
+| **文鼎楷體（台灣版 / 大陸版）** | 文鼎科技 / Debian / Ubuntu CJK-Unifonts 社群 | [ARPHICPL](ukai-tw/license/zh_TW.UTF-8/ARPHICPL.TXT) / [ARPHICPL](ukai-cn/license/zh_CN.UTF-8/ARPHICPL.TXT) (ARPHICPL)   |
+| **文鼎明體（台灣版 / 大陸版）** | 文鼎科技 / Debian / Ubuntu CJK-Unifonts 社群 | [ARPHICPL](uming-tw/license/zh_TW.UTF-8/ARPHICPL.txt) / [ARPHICPL](uming-cn/license/zh_CN.utf-8/ARPHICPL.txt) (ARPHICPL) |
+| **全字庫正楷體、正宋體**        | 數位發展部 / 國家發展委員會                  | [全字庫](https://www.fonts.org.tw/) (OGDL 1.0 / OFL 1.1)                                                                 |
+| **Instrument Sans**             | Instrument / Rodrigo Fuenzalida              | [Google Fonts](https://fonts.google.com/specimen/Instrument+Sans) (SIL OFL 1.1)                                          |
