@@ -54,6 +54,30 @@
     "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-sung-punct/result.css"
   },
   {
+    "id": "ukai-cn",
+    "name": "AR PL UKai CN",
+    "displayName": "AR PL UKai CN",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/ukai-cn/result.css"
+  },
+  {
+    "id": "ukai-tw",
+    "name": "AR PL UKai TW",
+    "displayName": "AR PL UKai TW",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/ukai-tw/result.css"
+  },
+  {
+    "id": "uming-cn",
+    "name": "AR PL UMing CN",
+    "displayName": "AR PL UMing CN",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/uming-cn/result.css"
+  },
+  {
+    "id": "uming-tw",
+    "name": "AR PL UMing TW",
+    "displayName": "AR PL UMing TW",
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/uming-tw/result.css"
+  },
+  {
     "id": "zhuque-fangsong",
     "name": "Zhuque Fangsong (technical preview)",
     "displayName": "朱雀仿宋",
