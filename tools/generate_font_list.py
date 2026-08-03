@@ -36,17 +36,22 @@ def get_latest_git_tag(repo_root: Path) -> str | None:
         if tag:
             return tag
 
-    # 2. 次要判斷：使用 git 指令取得本地最新的 Tag
+    # 2. 次要判斷：直接列出所有標籤並取最高版本號
+    # 棄用 git describe，改用 git tag 排序。
+    # 因為淺層複製 (fetch-depth: 1) 會導致 commit 歷史斷層，describe 無法運作。
     try:
         result = subprocess.run(
-            ["git", "describe", "--tags", "--abbrev=0"],
+            ["git", "tag", "--sort=-v:refname"],
             cwd=repo_root,
             capture_output=True,
             text=True,
             check=True,
         )
-        tag = result.stdout.strip()
-        return tag if tag else None
+        # 依照版本號從大到小排列，過濾掉空行
+        tags = [t.strip() for t in result.stdout.splitlines() if t.strip()]
+        if tags:
+            return tags[0]  # 回傳最大的版本號 (例如 v1.1.0)
+        return None
     except (subprocess.SubprocessError, FileNotFoundError):
         return None
 
