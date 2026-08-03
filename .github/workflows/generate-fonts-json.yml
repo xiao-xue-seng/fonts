@@ -2,8 +2,10 @@ name: Generate Font List JSON
 
 on:
   push:
+    tags:
+      - "v*" # 當有 push 新的 Tag 時觸發
     branches:
-      - main # 如果您的預設分支是 master，請改成 master
+      - main # push 到 main 時觸發。如果您的預設分支是 master，請改成 master
     paths:
       - "**/result.css"
       - "tools/**"
@@ -17,21 +19,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 複製程式碼到 GitHub Actions 虛擬機
+      # 1. 複製程式碼到 GitHub Actions 虛擬機 (fetch-depth: 1 保持極速，不安裝巨大歷史二進位檔)
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      # 2. 安裝 Python 環境
+      # 2. 僅拉取輕量的 Tag 標記資訊 (耗時不到半秒，解決抓不到 Tag 的問題)
+      - name: Fetch git tags
+        run: git fetch --tags --depth=1
+
+      # 3. 安裝 Python 環境
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 3. 執行您的 Python 腳本
+      # 4. 執行 Python 腳本
       - name: Run font list script
         run: python3 tools/generate_font_list.py
 
-      # 4. 如果 api/fonts.json 有更新，自動 Commit 並 Push 回 Repo
+      # 5. 如果 api/fonts.json 有更新，自動 Commit 並 Push 回 Repo
       - name: Commit and push if changed
         run: |
           git config --global user.name 'github-actions[bot]'

@@ -7,10 +7,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
-
 
 FONT_FAMILY_RE = re.compile(r"font-family\s*:\s*(['\"])(.*?)\1", re.IGNORECASE)
 METADATA_RE = re.compile(
@@ -30,6 +30,13 @@ def load_config(path: Path) -> dict:
 
 
 def get_latest_git_tag(repo_root: Path) -> str | None:
+    # 1. 優先判斷：如果在 GitHub Actions 環境中且是由 Tag 觸發
+    if os.environ.get("GITHUB_REF_TYPE") == "tag":
+        tag = os.environ.get("GITHUB_REF_NAME")
+        if tag:
+            return tag
+
+    # 2. 次要判斷：使用 git 指令取得本地最新的 Tag
     try:
         result = subprocess.run(
             ["git", "describe", "--tags", "--abbrev=0"],
@@ -92,27 +99,42 @@ def build_font_list(root: Path, config: dict, base_url: str) -> list[dict[str, s
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="從字型資料夾產生全部字型清單 JSON")
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent.parent)
-    parser.add_argument("--config", type=Path, default=Path(__file__).with_name("font-list.config.json"))
+    parser.add_argument(
+        "--root", type=Path, default=Path(__file__).resolve().parent.parent
+    )
+    parser.add_argument(
+        "--config", type=Path, default=Path(__file__).with_name("font-list.config.json")
+    )
     parser.add_argument("--output", type=Path, default=None)
-    parser.add_argument("--tag", type=str, default=None, help="指定 Git tag（預設自動取得最新的 tag，若無則使用 main）")
+    parser.add_argument(
+        "--tag",
+        type=str,
+        default=None,
+        help="指定 Git tag（預設自動取得最新的 tag，若無則使用 main）",
+    )
     parser.add_argument(
         "--base-url",
         default=None,
         help="result.css 所使用的 CDN 根網址（若未指定，則自動使用 https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@{TAG_OR_MAIN}）",
     )
-    parser.add_argument("--exclude", action="append", default=[], help="額外排除的資料夾，可重複指定")
+    parser.add_argument(
+        "--exclude", action="append", default=[], help="額外排除的資料夾，可重複指定"
+    )
     args = parser.parse_args()
 
     tag = args.tag or get_latest_git_tag(args.root) or "main"
     base_url = args.base_url or f"https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@{tag}"
 
     config = load_config(args.config)
-    config["excludeFolders"] = list(set(config.get("excludeFolders", [])) | set(args.exclude))
+    config["excludeFolders"] = list(
+        set(config.get("excludeFolders", [])) | set(args.exclude)
+    )
     output = args.output or args.root / "api" / "fonts.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     fonts = build_font_list(args.root, config, base_url)
-    output.write_text(json.dumps(fonts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    output.write_text(
+        json.dumps(fonts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(f"已產生 {len(fonts)} 個字型：{output} (使用 base_url: {base_url})")
 
 
