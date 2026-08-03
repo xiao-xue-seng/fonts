@@ -17,6 +17,8 @@ METADATA_RE = re.compile(
     r"^Windows\s+(?:zh-TW|zh)\s+(?:FontFamilyName|TypographicFamilyName)\s+(.+?)\s*$",
     re.IGNORECASE | re.MULTILINE,
 )
+# 用於匹配語意化版本號（SemVer）並提取 Major 主版本號
+TAG_MAJOR_RE = re.compile(r"^v?(\d+)(?:\.\d+)*", re.IGNORECASE)
 
 
 def load_config(path: Path) -> dict:
@@ -30,30 +32,37 @@ def load_config(path: Path) -> dict:
 
 
 def get_latest_git_tag(repo_root: Path) -> str | None:
+    raw_tag = None
+
     # 1. 優先判斷：如果在 GitHub Actions 環境中且是由 Tag 觸發
     if os.environ.get("GITHUB_REF_TYPE") == "tag":
-        tag = os.environ.get("GITHUB_REF_NAME")
-        if tag:
-            return tag
+        raw_tag = os.environ.get("GITHUB_REF_NAME")
 
     # 2. 次要判斷：直接列出所有標籤並取最高版本號
-    # 棄用 git describe，改用 git tag 排序。
-    # 因為淺層複製 (fetch-depth: 1) 會導致 commit 歷史斷層，describe 無法運作。
-    try:
-        result = subprocess.run(
-            ["git", "tag", "--sort=-v:refname"],
-            cwd=repo_root,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        # 依照版本號從大到小排列，過濾掉空行
-        tags = [t.strip() for t in result.stdout.splitlines() if t.strip()]
-        if tags:
-            return tags[0]  # 回傳最大的版本號 (例如 v1.1.0)
+    if not raw_tag:
+        try:
+            result = subprocess.run(
+                ["git", "tag", "--sort=-v:refname"],
+                cwd=repo_root,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            tags = [t.strip() for t in result.stdout.splitlines() if t.strip()]
+            if tags:
+                raw_tag = tags[0]  # 取最大的版本號 (例如 v1.1.0)
+        except (subprocess.SubprocessError, FileNotFoundError):
+            pass
+
+    if not raw_tag:
         return None
-    except (subprocess.SubprocessError, FileNotFoundError):
-        return None
+
+    # 3. 將完整版本號 (如 v1.1.0, 1.0.0) 轉為主版本號格式 (如 v1)
+    match = TAG_MAJOR_RE.match(raw_tag)
+    if match:
+        return f"v{match.group(1)}"
+
+    return raw_tag
 
 
 def first_font_family(css: str, css_path: Path) -> str:
@@ -115,7 +124,7 @@ def main() -> None:
         "--tag",
         type=str,
         default=None,
-        help="指定 Git tag（預設自動取得最新的 tag，若無則使用 main）",
+        help="指定 Git tag（預設自動取得最新的 tag 主版本號，若無則使用 main）",
     )
     parser.add_argument(
         "--base-url",
