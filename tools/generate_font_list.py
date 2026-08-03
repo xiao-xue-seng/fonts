@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 from pathlib import Path
 
 
@@ -26,6 +27,21 @@ def load_config(path: Path) -> dict:
     if not isinstance(config, dict):
         raise ValueError(f"設定檔必須是 JSON 物件：{path}")
     return config
+
+
+def get_latest_git_tag(repo_root: Path) -> str | None:
+    try:
+        result = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        tag = result.stdout.strip()
+        return tag if tag else None
+    except (subprocess.SubprocessError, FileNotFoundError):
+        return None
 
 
 def first_font_family(css: str, css_path: Path) -> str:
@@ -79,21 +95,25 @@ def main() -> None:
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--config", type=Path, default=Path(__file__).with_name("font-list.config.json"))
     parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument("--tag", type=str, default=None, help="指定 Git tag（預設自動取得最新的 tag，若無則使用 main）")
     parser.add_argument(
         "--base-url",
-        default="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main",
-        help="result.css 所使用的 CDN 根網址",
+        default=None,
+        help="result.css 所使用的 CDN 根網址（若未指定，則自動使用 https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@{TAG_OR_MAIN}）",
     )
     parser.add_argument("--exclude", action="append", default=[], help="額外排除的資料夾，可重複指定")
     args = parser.parse_args()
+
+    tag = args.tag or get_latest_git_tag(args.root) or "main"
+    base_url = args.base_url or f"https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@{tag}"
 
     config = load_config(args.config)
     config["excludeFolders"] = list(set(config.get("excludeFolders", [])) | set(args.exclude))
     output = args.output or args.root / "api" / "fonts.json"
     output.parent.mkdir(parents=True, exist_ok=True)
-    fonts = build_font_list(args.root, config, args.base_url)
+    fonts = build_font_list(args.root, config, base_url)
     output.write_text(json.dumps(fonts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"已產生 {len(fonts)} 個字型：{output}")
+    print(f"已產生 {len(fonts)} 個字型：{output} (使用 base_url: {base_url})")
 
 
 if __name__ == "__main__":
