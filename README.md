@@ -6,6 +6,11 @@
 
 本倉庫收錄經過中文子集化（`cn-font-split`）切片之免費可商用 WebFont。
 
+## 🟨SDK 使用方式
+
+請參考 [Font Loader SDK 說明文件](教學說明/sdk/字型動態載入器%20(Font%20Loader%20SDK)%20使用說明文件.md)
+
+
 ## 📦 字型列表與引入方式
 
 ### 🟩寒蝉正楷體 (ChillKai)
