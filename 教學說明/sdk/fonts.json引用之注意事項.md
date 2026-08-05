@@ -1,4 +1,15 @@
-### ⚠️ `fonts.json` 引用與版本注意事項
+## 可直接使用 Raw GitHub 取得
+
+因為「管理後台」只有你自己或內部管理員會開啟，流量非常小，你甚至可以完全不用 jsDelivr 來讀取 fonts.json，而是直接讀 GitHub 原生 URL：
+
+```
+// 流量小，直接讀 Raw GitHub，幾乎毫無快取延遲
+fetch('https://raw.githubusercontent.com/xiao-xue-seng/fonts/main/api/fonts.json');
+```
+
+(以下保留做參考)
+
+## ⚠️ `fonts.json` 引用與版本注意事項
 
 `fonts.json`提供最新的「全部字型清單」。為了確保前端網站與管理後台始終能取得最新的字型目錄，**請務必透過 `@main` 分支來獲取 `fonts.json`，請勿在網址中綁定特定的版本 Tag（例如 `@v1.2.0`）。**
 
@@ -7,7 +18,7 @@
 **✅ 正確的引用網址：**
 [https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/fonts.json](https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/fonts.json)
 
-#### 為什麼不能綁定版本 Tag？（Git 自動化時間差）
+### 為什麼不能綁定版本 Tag？（Git 自動化時間差）
 
 這與我們採用 GitHub Actions 自動發布字型清單的流程有關。系統運作的順序如下：
 
@@ -17,7 +28,7 @@
 
 **核心問題在於：** 新的 `fonts.json` 是在 Tag 建立「之後」才產出並提交的。因此，`v1.2.0` 這個標籤的歷史快照中，**並不包含這份剛更新的檔案**。如果前端強行請求 `@v1.2.0/api/fonts.json`，只會拿到上一次更新的舊清單。
 
-#### 這樣的架構有什麼好處？
+### 這樣的架構有什麼好處？
 
 這個架構完美結合了「配置的靈活性」與「靜態資源的穩定性」：
 

@@ -1,0 +1,19 @@
+name: Purge v1 Production Assets
+
+on:
+  push:
+    tags:
+      - "v1.*" # 只有在推送 v1.x.x 這種版本 Tag 時才觸發
+
+jobs:
+  purge-v1-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Purge @v1 Production Files
+        run: |
+          # 1. 強制讓 @v1/api/amec.json 指向最新 Tag
+          curl -s https://purge.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/amec.json
+
+          # 2. 順便刷一次 SDK (若有多個網站 JSON，也可在此一併加上)
+          curl -s https://purge.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/font-loader-min.js
+          curl -s https://purge.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/font-loader.js
