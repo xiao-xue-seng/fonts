@@ -12,7 +12,7 @@
   const site = currentScript?.getAttribute("data-site") || "amec";
 
   // 動態拼出對應的 JSON 網址
-  const CONFIG_URL = `https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/${site}.json`;
+  const CONFIG_URL = `https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/${site}.json`;
 
   let loadedFontsData = [];
 

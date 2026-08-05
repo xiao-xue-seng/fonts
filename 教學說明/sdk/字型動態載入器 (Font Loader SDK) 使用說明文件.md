@@ -13,13 +13,16 @@
   <meta charset="UTF-8" />
   <!-- 💡 建議放在 <head> 靠前的位置，讓字型連線與下載最早開始發揮效能 -->
   <script
-    src="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/font-loader-min.js"
+    src="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/font-loader-min.js"
     data-site="amec"
     async
   ></script>
   ...
 </head>
 ```
+
+請留意，上述網址中是使用主版號 `.../fonts@v1/...` 這可以優化載入速度，不過未來如果 API 大幅改版(例如改為v2)，則必須更新前端引用的網址。
+大幅改版的機率很低，但如果希望極力避免更新前端，可改用 `@main` ，效能會稍微差一點。
 
 ### 關鍵參數說明：
 
@@ -52,13 +55,13 @@
     "id": "chill-kai",
     "name": "ChillKai",
     "displayName": "寒蟬楷體",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-kai/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-kai/result.css"
   },
   {
     "id": "iansui",
     "name": "Iansui",
     "displayName": "芫荽體",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/iansui/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/iansui/result.css"
   }
 ]
 ```
