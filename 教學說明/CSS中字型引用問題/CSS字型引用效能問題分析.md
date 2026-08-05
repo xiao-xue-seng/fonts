@@ -1,4 +1,8 @@
-🟨Q：我有一個網站會透過API取得"公用的CSS"，用來統一控制正文內容的樣式。
+(這次問的是 Gemini 3.6 Flash ， 假設它對自家的 Google Fonts 會熟悉一點)
+
+## 🟨Q：
+
+我有一個網站會透過API取得"公用的CSS"，用來統一控制正文內容的樣式。
 這份共用的CSS是透過"管理後台"更新其內容，會有一些網站/服務同時引用這份CSS，以便統一所有平台的正文樣式及字型。這份CSS的開頭如下：
 
 ```
@@ -118,13 +122,11 @@ body[data-theme=dark] .context-root .content .context.amrtf-amec.bo,
 
 ---
 
-(這次問的是 Gemini 3.6 Flash ， 假設它對自家的 Google Fonts 會熟悉一點)
+## A：
 
 這份 CSS 檔在字型載入與設定上有相當多的歷史包袱與效能隱患。作為跨平台共用的核心 CSS，目前的寫法會嚴重影響引用該 CSS 之網站的**首屏載入速度（LCP）**、**版面跳動（CLS）**，並可能導致**字型樣式覆蓋異常**。
 
 以下為針對「字型引用」部分的重點審查與問題剖析：
-
----
 
 ### 1. 嚴重警告：使用已棄用的 Google Fonts Early Access API
 
@@ -209,8 +211,6 @@ body[data-theme=dark] .context-root .content .context.amrtf-amec.bo,
 
 - **問題點**：選擇器結尾處（逗號後面）混入了 **`U+00A0` (No-Break Space, 不換行空格)**，而非標準的 `U+0020` 空格。某些嚴格的 CSS 解析器或建置工具會因此判斷 CSS 語法錯誤，導致該段樣式完全失效。
 
----
-
 ### 審查總結表
 
 | 項目           | 目前狀態                                           | 潛在風險 / 影響                              |
@@ -219,8 +219,6 @@ body[data-theme=dark] .context-root .content .context.amrtf-amec.bo,
 | **字型格式**   | 使用 `.ttf` 且無 `font-display`                    | 造成 FOIT（文字閃爍/暫時隱形），檔案體積過大 |
 | **字體排版**   | 強制用 `unicode-range` 將 Arial 注入 Noto 命名空間 | 基線不對齊、字體寬度異常、跨平台顯示不一致   |
 | **語法安全性** | 包含不換行空格（`U+00A0`）                         | 部分瀏覽器或打包工具解析失敗                 |
-
----
 
 ### 建議的優化方向
 
@@ -237,18 +235,20 @@ font-family: Arial, "Noto Sans TC", sans-serif;
 
 ---
 
-🟨Q：OK。我想先專注於字型的引用方式來探討，包含您提到的「如何在跨網站架構下優化字型的載入效能」，請提供符合目前主流的做法。
+## 🟨Q：
+
+OK。我想先專注於字型的引用方式來探討，包含您提到的「如何在跨網站架構下優化字型的載入效能」，請提供符合目前主流的做法。
 這份CSS中，引入字型的用意應該是希望能透過"管理後台"網頁來控制正文的字型，所以透過 @import url(...) 方式載入字型，這應當沒問題吧？
 
 ---
+
+## A：
 
 透過管理後台動態更新 CSS 檔案，並在 CSS 開頭使用 `@import url(...)` 載入字型，在**架構概念**上是合理的，但**在實作細節與現代前端效能標準上，這並非最佳做法**。
 
 在跨網站（Multi-tenant / Cross-domain）架構下，如果直接在 CSS 中寫死 `@import` 外部字型，會遇到嚴重的**效能瓶頸（瀑布流延遲）**與**快取控制問題**。
 
 以下針對「目前主流做法」與「@import 的效能陷阱」進行深入解析與重構建議：
-
----
 
 ### 1. 為什麼直接使用 `@import` 會造成效能瓶頸？
 
@@ -260,8 +260,6 @@ font-family: Arial, "Noto Sans TC", sans-serif;
 4. Google Fonts CSS 下載完成並解析後，瀏覽器才知道真正要下載的字型檔 (`.woff2`) 網址。
 5. 瀏覽器發起第 3 層請求去下載 `.woff2` 字型檔。
 6. **結果**：使用者會遇到長達數秒的文字空白（FOIT）或版面劇烈跳動（CLS），尤其在行動網路環境下更明顯。
-
----
 
 ### 2. 現代主流優化方案（跨網站架構）
 
@@ -309,8 +307,6 @@ font-family: Arial, "Noto Sans TC", sans-serif;
 }
 ```
 
----
-
 #### 方案 B：自建 CDN 自託管字型（Self-Hosting）
 
 如果平台需要支援「藏文」或自訂的特殊的 `.ttf` / `.woff2` 字型（例如 `Monlam Uni OuChan2`），強烈建議將字型檔 hosted 在自己的跨國 CDN（如 Cloudflare / AWS CloudFront）上。
@@ -337,8 +333,6 @@ Cache-Control: public, max-age=31536000, immutable
   font-display: swap; /* 確保字型下載完成前先用系統字型顯示，避免文字隱形 */
 }
 ```
-
----
 
 ### 3. 優化後的公用 CSS 字型引入範例
 
@@ -382,15 +376,17 @@ Cache-Control: public, max-age=31536000, immutable
 
 ---
 
-🟨Q：關於當前寫法中「@import 會造成效能瓶頸」部分，我想確認一下是每個 @import 都會個別造成延遲，還是整個 common.css 中的所有 @import 合併起來會延遲一次？
+## 🟨Q：
+
+關於當前寫法中「@import 會造成效能瓶頸」部分，我想確認一下是每個 @import 都會個別造成延遲，還是整個 common.css 中的所有 @import 合併起來會延遲一次？
 
 ---
+
+## A：
 
 簡單來說：**每個外部 `@import` 都是獨立的 HTTP 請求，瀏覽器預設會「串行（Sequence）」下載它們，因此延遲是會「層層疊加」的。**
 
 如果不小心形成多層嵌套，延遲會呈倍數成長；即使寫在同一支 CSS 開頭，也會顯著拉長整體下載時間。
-
----
 
 ### 1. 同一支 CSS 裡的多個 `@import`：串行下載延遲
 
@@ -408,8 +404,6 @@ Cache-Control: public, max-age=31536000, immutable
   雖然現代瀏覽器會試圖同時發起多個 HTTP/2 或 HTTP/3 請求，但 **CSS 的解析順序具有嚴格限制**。在所有 `@import` 的 CSS 檔案完全下載並解析完畢之前，瀏覽器會暫停渲染（Block Rendering）頁面正文。
 - **延遲累加機制**：
   如果寫了 8 個 `@import`，瀏覽器就必須建立 8 次連線（或在同一連線發送 8 個 Request）。頁面畫面呈現的等待時間，取決於**這 8 個請求中下載最慢的那一個**，而不是全部打包只算一次連線時間。
-
----
 
 ### 2. 致命的「多層瀑布流（Font Waterfall）」：層層相扣的連鎖延遲
 
@@ -434,8 +428,6 @@ Cache-Control: public, max-age=31536000, immutable
 - 如果使用者在行動網路環境，單次往返需時 100ms，光是字型呈現的連鎖等待時間就高達 `100ms × 4 = 400ms`。
 - 在這 400ms 期間，頁面文字要麼是**隱形的（FOIT）**，要麼會**突然跳動變換字體（CLS）**。
 
----
-
 ### 3. 如何證明與改進？
 
 您可以透過瀏覽器的 **开发者工具 (F12) -> Network (網路)** 頁籤，觀察 Network Waterfall（網路瀑布流圖表）：
@@ -451,8 +443,6 @@ Cache-Control: public, max-age=31536000, immutable
 
 這樣瀏覽器只需要發起 **1 次** Google CSS 請求，就能同時取得所有字型的片段資訊，連锁等待層級立即減少。
 
----
-
 ### 總結
 
 - **不是合併延遲一次**：每個 `@import` 都會發起一個獨立的 HTTP 請求。
@@ -461,7 +451,9 @@ Cache-Control: public, max-age=31536000, immutable
 
 ---
 
-🟨Q：後來我們已經利用 github + jsdelivr 自託管多個免費開源字型，也寫了一個 api\font-loader.js 供各平台呼叫：
+## 🟨Q：
+
+後來我們已經利用 github + jsdelivr 自託管多個免費開源字型，也寫了一個 api\font-loader.js 供各平台呼叫：
 
 ```html
 <head>
@@ -497,13 +489,13 @@ Cache-Control: public, max-age=31536000, immutable
 
 ---
 
+## A：
+
 這套改進架構相當傑出！整體設計精準地擊中了現代 Web 效能優化的核心：**「利用 CDN 託管拆分資源」、「用 JS SDK 動態去重與預先連線（Preconnect）」**，並且「將 Google Fonts 整合為單一請求並精簡字重」。
 
 這種設計不僅大幅減少了過去 `@import` 帶來的多層瀑布流延遲，也保留了管理者透過 JSON (例如 `amec.json`) 動態控制字型的彈性。
 
 針對您目前的架構，以下進行優點評估以及 3 個細節上的隱患提示：
-
----
 
 ### 亮點與值得肯定之處
 
@@ -521,8 +513,6 @@ Cache-Control: public, max-age=31536000, immutable
 - 將 4 個 Noto 字型縮減為**單一 `<link>` 請求**。
 - 指定 `wght@300;400;500;700;900` 而非全範圍 `100..900`，這非常關鍵——Google Fonts API v2 會根據請求的字重組合來決定返回的 CSS 區塊與 Unicode 切片數量，精簡字重能實質減少生成的 CSS 體積與字型檔下載量。
 - 補上了 `&display=swap`，確保字型下載期間頁面文字不會隱形（避免 FOIT）。
-
----
 
 ### 需要特別留意的 3 個隱患與優化建議
 
@@ -555,8 +545,6 @@ Cache-Control: public, max-age=31536000, immutable
 - **優化建議**：
   若管理後台可以區分**語系環境**（例如繁體中文頁面只下載 TC，簡體中文頁面只下載 SC），將請求拆開（繁體頁只請求 TC，簡體頁只請求 SC），首屏要下載的字型 CSS 體積可以**直接砍半**。
 
----
-
 ### 總結
 
 您目前的解決方案已經具備大型企業級前端架構的水準。只要確保：
@@ -568,9 +556,13 @@ Cache-Control: public, max-age=31536000, immutable
 
 ---
 
-🟨Q：使用這套字型SDK後，SDK已提供涵蓋網站所需全部字型，假使原來 common.css 中的 @import url(...) 沒有刪除會有什麼影響嗎？會是備援的效果嗎？
+## 🟨Q：
+
+使用這套字型SDK後，SDK已提供涵蓋網站所需全部字型，假使原來 common.css 中的 @import url(...) 沒有刪除會有什麼影響嗎？會是備援的效果嗎？
 
 ---
+
+## A：
 
 **完全不會有備援的效果，反而會對網站效能產生負面打擊，甚至造成字型樣式覆蓋混亂。**
 
