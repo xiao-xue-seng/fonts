@@ -17,16 +17,7 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-kai/result.css"
-  />
-  ```
-
-  或使用 tag 方式，如：`v1.0.0`，cdn 快取會更穩定：(以下各字型皆同，不再重複贅述)
-
-  ```html
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1.0.0/chill-kai/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-kai/result.css"
   />
   ```
 
@@ -49,11 +40,11 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-kai-extb/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-extb/result.css"
   />
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-sung-extb/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-extb/result.css"
   />
   ```
 
@@ -72,13 +63,13 @@
   <!-- 1. 引入主要字型 (寒蝉正楷體) -->
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-kai/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-kai/result.css"
   />
 
   <!-- 2. 引入備援字型 (全字庫 Ext-B) -->
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-kai-extb/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-extb/result.css"
   />
 
   <style>
@@ -99,7 +90,7 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/zhuque-fangsong/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/zhuque-fangsong/result.css"
   />
   ```
 
@@ -121,7 +112,7 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/chill-huo-fangsong/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-huo-fangsong/result.css"
   />
   ```
 
@@ -143,7 +134,7 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/huiwen-fangsong/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/huiwen-fangsong/result.css"
   />
   ```
 
@@ -165,7 +156,7 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/iansui/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/iansui/result.css"
   />
   ```
 
@@ -190,11 +181,11 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-kai-punct/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-punct/result.css"
   />
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/tw-sung-punct/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-punct/result.css"
   />
   ```
 
@@ -221,19 +212,19 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/ukai-tw/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-tw/result.css"
   />
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/ukai-cn/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-cn/result.css"
   />
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/uming-tw/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/uming-tw/result.css"
   />
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/uming-cn/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/uming-cn/result.css"
   />
   ```
 
@@ -270,7 +261,7 @@
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/instrument-sans/result.css"
+    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/instrument-sans/result.css"
   />
   ```
 
