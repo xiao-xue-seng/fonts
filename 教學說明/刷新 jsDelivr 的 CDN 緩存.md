@@ -137,3 +137,43 @@ https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@main/api/amec.json?v=1.0.1
 手動打 Tag 與執行 Purge 不僅繁瑣且容易遺漏，強烈建議在 GitHub 倉庫設定 **GitHub Actions** 自動處理此流程。
 
 (請參考 .github/workflows/purge-v1-release.yml )
+
+---
+
+## 🟨Q：如果其他人一直不斷的訪問`purge.jsdelivr.net`，是否會造成CDN運作失能？
+
+---
+
+## A：
+
+**答案是：完全不會！**
+
+jsDelivr 每月處理超過 1,500 億次請求，對於這種防範「快取雪崩（Cache Stampede）」或惡意刷新 Purge API 的行為，背後有非常嚴密的防禦機制：
+
+---
+
+### 1. 嚴格的 API 頻率限制 (Rate Limiting)
+
+`purge.jsdelivr.net` 接口設有嚴格的 Rate Limit。如果有人（或機器人）透過程式狂刷 Purge 網址，jsDelivr 很快就會回傳 **`HTTP 429 Too Many Requests`**，並直接將該 IP 封鎖一段時間。
+
+### 2. 請求合併機制 (Request Collapsing / Single Flight)
+
+假設惡意使用者成功 Purge 了快取，並動用大量機器人同時請求你的 `amec.json`（這稱為快取雪崩，Cache Stampede）：
+
+- 一般沒防護的伺服器會因為 1,000 個請求同時打回 GitHub 而崩潰。
+- 但 jsDelivr CDN 具備 **Single Flight 機制**：當邊緣快取失效且有 1,000 個請求同時湧入時，CDN **只會派「1 個」請求回去 GitHub 抓新檔案**，其餘 999 個請求會在 CDN 節點原地等待。等那 1 個請求抓完後，瞬間分發給所有等待中的使用者，GitHub 完全不會被砸垮。
+
+### 3. 後端 S3 永久備份層 (Origin Shield)
+
+jsDelivr 在全球 CDN 邊緣節點（Edge）與 GitHub 之間，還有一層自己的 **S3 備份快取層**。
+即使你 Purge 了 CDN 邊緣節點的快取，CDN 回源抓資料時，也是優先去 jsDelivr 的 S3 備份伺服器抓取，而不是每次都跑去 GitHub 倉庫拉檔案，整體資源消耗極低。
+
+### 4. 精確版本 (Exact Tag) 根本無法 Purge
+
+如果你使用的是帶有精確 Commit Hash 或完整 Tag 的網址（例如 `fonts@v1.0.3/api/amec.json`），jsDelivr 的 Purge API 是**直接拒絕 Purge** 的。因為精確版本被視為不可變的靜態資源（Immutable），Purge 只對 `@main` 或 `@v1` 這種動態別名生效。
+
+---
+
+### 總結
+
+Purge API 是 jsDelivr 官方公開提供且受到嚴格保護的服務，你完全不需要擔心其他人惡意發起 Purge 導致你的 CDN 服務失能或故障！
