@@ -11,5 +11,22 @@
     "tw-sung-extb": "全字庫正宋體 Ext-B",
     "tw-sung-punct": "全字庫正宋體標點符號",
     "zhuque-fangsong": "朱雀仿宋"
+  },
+  "ttfBaseUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/",
+  "ttfFilenames": {
+    "chill-huo-fangsong": "ChillHuoFangSong_Regular.otf",
+    "chill-kai": "ChillKai-Merged.ttf",
+    "huiwen-fangsong": "huiwen-fangsong.ttf",
+    "iansui": "Iansui-Regular.ttf",
+    "instrument-sans": "InstrumentSans-Subset.ttf",
+    "tw-kai-extb": "TW-Kai-Ext-B-98_1.ttf",
+    "tw-kai-punct": "TW-Kai-Punct.ttf",
+    "tw-sung-extb": "TW-Sung-Ext-B-98_1.ttf",
+    "tw-sung-punct": "TW-Sung-Punct.ttf",
+    "ukai-cn": "ukai-cn.ttf",
+    "ukai-tw": "ukai-tw.ttf",
+    "uming-cn": "uming-cn.ttf",
+    "uming-tw": "uming-tw.ttf",
+    "zhuque-fangsong": "ZhuqueFangsong-Regular.ttf"
   }
 }

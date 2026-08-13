@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Collect font metadata from every immediate subdirectory containing result.css.
+Collect font metadata from every immediate subdirectory containing result.css
 """
 
 from __future__ import annotations
@@ -85,6 +85,8 @@ def display_name(css: str, font_id: str, name: str, configured: dict) -> str:
 def build_font_list(root: Path, config: dict, base_url: str) -> list[dict[str, str]]:
     excluded_config = config.get("excludeFolders", [])
     names = config.get("displayNames", {})
+    ttf_base_url = config.get("ttfBaseUrl", base_url)
+    ttf_filenames = config.get("ttfFilenames", {})
     if not isinstance(excluded_config, list) or not isinstance(names, dict):
         raise ValueError("excludeFolders 必須是陣列，displayNames 必須是物件")
     excluded = set(excluded_config)
@@ -100,14 +102,19 @@ def build_font_list(root: Path, config: dict, base_url: str) -> list[dict[str, s
 
         css = css_path.read_text(encoding="utf-8")
         name = first_font_family(css, css_path)
-        fonts.append(
-            {
-                "id": folder.name,
-                "name": name,
-                "displayName": display_name(css, folder.name, name, names),
-                "cssUrl": f"{base_url.rstrip('/')}/{folder.name}/result.css",
-            }
-        )
+        font_item = {
+            "id": folder.name,
+            "name": name,
+            "displayName": display_name(css, folder.name, name, names),
+            "cssUrl": f"{base_url.rstrip('/')}/{folder.name}/result.css",
+        }
+
+        # 只有在 ttfFilenames 中有該子資料夾的檔名時，才新增 ttfUrl
+        if folder.name in ttf_filenames:
+            ttf_filename = ttf_filenames[folder.name]
+            font_item["ttfUrl"] = f"{ttf_base_url.rstrip('/')}/{ttf_filename}"
+
+        fonts.append(font_item)
     return fonts
 
 

@@ -3,84 +3,98 @@
     "id": "chill-huo-fangsong",
     "name": "ChillHuoFangSong",
     "displayName": "寒蟬活仿宋",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-huo-fangsong/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-huo-fangsong/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ChillHuoFangSong_Regular.otf"
   },
   {
     "id": "chill-kai",
     "name": "ChillKai",
     "displayName": "寒蟬正楷體",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-kai/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/chill-kai/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ChillKai-Merged.ttf"
   },
   {
     "id": "huiwen-fangsong",
     "name": "Huiwen-Fangsong",
     "displayName": "匯文仿宋",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/huiwen-fangsong/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/huiwen-fangsong/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/huiwen-fangsong.ttf"
   },
   {
     "id": "iansui",
     "name": "Iansui",
     "displayName": "芫荽體",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/iansui/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/iansui/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/Iansui-Regular.ttf"
   },
   {
     "id": "instrument-sans",
     "name": "InstrumentSansLatinSubset",
     "displayName": "Instrument Sans 拉丁子集",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/instrument-sans/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/instrument-sans/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/InstrumentSans-Subset.ttf"
   },
   {
     "id": "tw-kai-extb",
     "name": "TW-Kai-Ext-B",
     "displayName": "全字庫正楷體 Ext-B",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-extb/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-extb/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Kai-Ext-B-98_1.ttf"
   },
   {
     "id": "tw-kai-punct",
     "name": "TW-Kai-Punct",
     "displayName": "全字庫正楷體標點符號",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-punct/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-punct/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Kai-Punct.ttf"
   },
   {
     "id": "tw-sung-extb",
     "name": "TW-Sung-Ext-B",
     "displayName": "全字庫正宋體 Ext-B",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-extb/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-extb/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Sung-Ext-B-98_1.ttf"
   },
   {
     "id": "tw-sung-punct",
     "name": "TW-Sung-Punct",
     "displayName": "全字庫正宋體標點符號",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-punct/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-punct/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Sung-Punct.ttf"
   },
   {
     "id": "ukai-cn",
     "name": "AR PL UKai CN",
     "displayName": "AR PL UKai CN",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-cn/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-cn/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ukai-cn.ttf"
   },
   {
     "id": "ukai-tw",
     "name": "AR PL UKai TW",
     "displayName": "AR PL UKai TW",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-tw/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-tw/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ukai-tw.ttf"
   },
   {
     "id": "uming-cn",
     "name": "AR PL UMing CN",
     "displayName": "AR PL UMing CN",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/uming-cn/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/uming-cn/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/uming-cn.ttf"
   },
   {
     "id": "uming-tw",
     "name": "AR PL UMing TW",
     "displayName": "AR PL UMing TW",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/uming-tw/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/uming-tw/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/uming-tw.ttf"
   },
   {
     "id": "zhuque-fangsong",
     "name": "Zhuque Fangsong (technical preview)",
     "displayName": "朱雀仿宋",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/zhuque-fangsong/result.css"
+    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/zhuque-fangsong/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ZhuqueFangsong-Regular.ttf"
   }
 ]
