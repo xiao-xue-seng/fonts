@@ -1,4 +1,7 @@
+
 *.ttf
 *.ttc
+*.otf
 temp/**/*
 .vscode/
+__pycache__/
