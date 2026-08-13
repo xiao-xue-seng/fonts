@@ -1,11 +1,17 @@
+"""
+產生 APP 所需的 ttf 檔
+
+刪除原始 ttf 中不需要的資料，以降低檔案大小。
+"""
+
 import sys
 import argparse
 import subprocess
 import time
 from pathlib import Path
 
-DEFAULT_INPUT_DIR = "tools/ttf-raw"
-DEFAULT_OUTPUT_DIR = "tools/ttf-optimized"
+DEFAULT_INPUT_DIR = "temp/ttf-raw"
+DEFAULT_OUTPUT_DIR = "temp/ttf-optimized"
 
 def check_fonttools_installed():
     try:
