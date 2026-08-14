@@ -26,12 +26,12 @@
 
 ### **🚀 使用說明**
 
-#### **1\. 基本用法 (指定來源與輸出資料夾)**
+#### **1. 基本用法 (指定來源與輸出資料夾)**
 
 `python optimize_fonts.py -i ./raw_fonts -o ./app_fonts`
 
-#### **2\. 遞迴搜尋子資料夾 (-r 或 \--recursive)**
+#### **2. 遞迴搜尋子資料夾 (-r 或 --recursive)**
 
-如果你的字型散落在子資料夾中，加入 \-r 參數會自動維持原有的目錄結構並輸出到目標資料夾：
+如果你的字型散落在子資料夾中，加入 -r 參數會自動維持原有的目錄結構並輸出到目標資料夾：
 
 `python optimize_fonts.py -i ./my_font_library -o ./optimized_output -r`
