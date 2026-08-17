@@ -8,8 +8,7 @@
 
 ## 🟨SDK 使用方式
 
-請參考 [Font Loader SDK 說明文件](教學說明/sdk/字型動態載入器%20(Font%20Loader%20SDK)%20使用說明文件.md)
-
+請參考 [Font Loader SDK 說明文件](<教學說明/sdk/字型動態載入器%20(Font%20Loader%20SDK)%20使用說明文件.md>)
 
 ## 📦 字型列表與引入方式
 
@@ -56,8 +55,10 @@
 - **CSS 中使用**：
 
   ```css
-  .my-text-style {
+  .my-kai-ext-b {
     font-family: "TW-Kai-Ext-B", serif;
+  }
+  .my-sung-ext-b {
     font-family: "TW-Sung-Ext-B", serif;
   }
   ```
@@ -287,9 +288,9 @@
 | :------------------------------ | :------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
 | **寒蝉正楷體 / 寒蟬活仿宋**     | Warren2060                                   | [GitHub](https://github.com/Warren2060) (SIL OFL 1.1)                                                                    |
 | **朱雀仿宋**                    | 璇璣造字 (TrionesType)                       | [GitHub](https://github.com/TrionesType/zhuque) (SIL OFL 1.1)                                                            |
-| **匯文仿宋**                    | 特里王 (Terry Wang)                          | 復刻自 59-4 活字 (SIL OFL 1.1)                                                                                           |
+| **匯文仿宋**                    | 特里王 (Terry Wang)                          | 復刻自 59-4 活字 (作者自訂免費商用)                                                                                      |
 | **芫荽體**                      | ButTaiwan                                    | [GitHub](https://github.com/ButTaiwan/iansui) (SIL OFL 1.1)                                                              |
 | **文鼎楷體（台灣版 / 大陸版）** | 文鼎科技 / Debian / Ubuntu CJK-Unifonts 社群 | [ARPHICPL](ukai-tw/license/zh_TW.UTF-8/ARPHICPL.TXT) / [ARPHICPL](ukai-cn/license/zh_CN.UTF-8/ARPHICPL.TXT) (ARPHICPL)   |
 | **文鼎明體（台灣版 / 大陸版）** | 文鼎科技 / Debian / Ubuntu CJK-Unifonts 社群 | [ARPHICPL](uming-tw/license/zh_TW.UTF-8/ARPHICPL.txt) / [ARPHICPL](uming-cn/license/zh_CN.utf-8/ARPHICPL.txt) (ARPHICPL) |
-| **全字庫正楷體、正宋體**        | 數位發展部 / 國家發展委員會                  | [全字庫](https://www.fonts.org.tw/) (OGDL 1.0 / OFL 1.1)                                                                 |
+| **全字庫正楷體、正宋體**        | 數位發展部 / 國家發展委員會                  | [全字庫](https://www.fonts.org.tw/) (OGDL 1.0)                                                                           |
 | **Instrument Sans**             | Instrument / Rodrigo Fuenzalida              | [Google Fonts](https://fonts.google.com/specimen/Instrument+Sans) (SIL OFL 1.1)                                          |
