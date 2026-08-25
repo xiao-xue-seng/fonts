@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TW-Kai 向量縮放與位移參數校準工具</title>
+
+    <!-- 預設透過相對路徑載入字型 🟡請修改為實際路徑 -->
+    <style id="font-definitions">
+      /* 基準字型：文鼎楷體 */
+      @font-face {
+        font-family: "Font-UKai-TW";
+        src: url("../../temp/ttf-to-next/ukai-tw.ttf") format("truetype");
+      }
+      /* 調整目標：全字庫楷體 */
+      @font-face {
+        font-family: "Font-TW-Kai";
+        src: url("../../temp/ttf-raw/TW-Kai-98_1.ttf") format("truetype");
+      }
+      /* 基準字型：文鼎明體 */
+      @font-face {
+        font-family: "Font-UMing-TW";
+        src: url("../../temp/ttf-to-next/uming-tw.ttf") format("truetype");
+      }
+      /* 調整目標：全字庫宋體 */
+      @font-face {
+        font-family: "Font-TW-Sung";
+        src: url("../../temp/ttf-raw/TW-Sung-98_1.ttf") format("truetype");
+      }
+    </style>
+
+    <style>
+      :root {
+        --base-font: "Font-UKai-TW";
+        --target-font: "Font-TW-Kai";
+      }
+
+      .compare-base {
+        font-family: var(--base-font), serif;
+        color: #1d4ed8; /* 藍色：基準字型 */
+      }
+      .compare-raw {
+        font-family: var(--target-font), serif;
+        color: #94a3b8; /* 淺灰色：未調整原樣 */
+      }
+      .compare-target {
+        font-family: var(--target-font), serif;
+        color: #059669; /* 綠色：調整目標 */
+        display: inline-block;
+        transform-origin: center center;
+      }
+
+      :root {
+        --bg: #f8fafc;
+        --card-bg: #ffffff;
+        --border: #cbd5e1;
+        --text: #0f172a;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        padding: 24px;
+        line-height: 1.5;
+      }
+
+      .container {
+        max-width: 1050px;
+        margin: 0 auto;
+      }
+
+      /* 頂部固定控制列 */
+      .toolbar {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+        position: sticky;
+        top: 0px;
+        z-index: 100;
+      }
+
+      .controls-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 16px;
+      }
+
+      @media (max-width: 800px) {
+        .controls-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .control-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .control-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .control-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      input[type="range"] {
+        flex: 1;
+        accent-color: #059669;
+        height: 6px;
+      }
+
+      .btn-step {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.85rem;
+      }
+      .btn-step:hover {
+        background: #e2e8f0;
+      }
+
+      /* 參數即時換算面板 */
+      .metrics-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        background: #0f172a;
+        color: #f8fafc;
+        padding: 14px 18px;
+        border-radius: 8px;
+        font-family: monospace;
+      }
+
+      .metric-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .metric-label {
+        font-size: 0.75rem;
+        color: #94a3b8;
+      }
+
+      .metric-val {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #38bdf8;
+      }
+
+      .metric-val.highlight {
+        color: #4ade80;
+      }
+
+      /* Python 矩陣快速複製框 */
+      .python-code-box {
+        margin-top: 12px;
+        background: #1e293b;
+        padding: 10px 14px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.82rem;
+        color: #cbd5e1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* 圖例說明 */
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 10px 16px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        margin-bottom: 20px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+      }
+
+      /* 區塊卡片 */
+      .section-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .section-title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #334155;
+      }
+
+      /* 單行字型渲染框 (64px) */
+      .row-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        position: relative;
+      }
+
+      .line-text {
+        font-family: var(--base-font), serif;
+        font-size: 64px;
+        line-height: 1.6;
+        white-space: nowrap;
+        display: inline-block;
+        position: relative;
+      }
+
+      /* 水平基準參考線 */
+      .guide-active .row-card {
+        background-image:
+          linear-gradient(
+            to bottom,
+            transparent 49.5%,
+            rgba(239, 68, 68, 0.45) 49.5%,
+            rgba(239, 68, 68, 0.45) 50.5%,
+            transparent 50.5%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 80.5%,
+            rgba(37, 99, 235, 0.4) 80.5%,
+            rgba(37, 99, 235, 0.4) 82%,
+            transparent 82%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 18.5%,
+            rgba(16, 185, 129, 0.4) 18.5%,
+            rgba(16, 185, 129, 0.4) 20%,
+            transparent 20%
+          );
+      }
+
+      .char-badge {
+        display: inline-block;
+        padding: 0 2px;
+      }
+
+      /* 疊合透光比對區 (同基線疊合) */
+      .overlay-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 16px;
+      }
+
+      .overlay-box {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 8px;
+        text-align: center;
+        background: #ffffff;
+        position: relative;
+      }
+
+      /* 透過同行負邊距達成 100% 絕對基線重疊 */
+      .overlay-baseline-stage {
+        font-size: 72px;
+        line-height: 1.5;
+        display: inline-block;
+        white-space: nowrap;
+        position: relative;
+      }
+
+      .overlay-baseline-stage .compare-base {
+        opacity: 0.6;
+      }
+
+      .overlay-baseline-stage .compare-target {
+        opacity: 0.6;
+        margin-left: -1em; /* 將第二個字拉回前一個字的基線上 */
+      }
+
+      /* 楷體／明體切換開關 */
+      .font-toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 20px;
+      }
+      .font-toggle-label {
+        color: #334155;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 52px;
+        height: 26px;
+        flex-shrink: 0;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        border-radius: 13px;
+        background: #059669;
+        transition: background 0.25s;
+        cursor: pointer;
+      }
+      .toggle-switch input:checked + .toggle-track {
+        background: #059669;
+      }
+      .toggle-track::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      }
+      .toggle-switch input:checked + .toggle-track::after {
+        transform: translateX(26px);
+      }
+    </style>
+  </head>
+  <body class="guide-active">
+    <div class="container">
+      <!-- 頂部控制面板 -->
+      <div class="toolbar">
+        <div class="controls-grid">
+          <!-- 控制項 1: 向上平移 -->
+          <div class="control-item">
+            <div class="control-header">
+              <span>1. 向上平移 (Shift Y)</span>
+              <span
+                id="display-shift"
+                style="color: #059669; font-family: monospace"
+                >+7.50 px</span
+              >
+            </div>
+            <div class="control-row">
+              <button class="btn-step" id="btn-shift-minus">-0.1</button>
+              <input
+                type="range"
+                id="shift-slider"
+                min="-2.0"
+                max="15.0"
+                step="0.1"
+                value="6.1"
+              />
+              <button class="btn-step" id="btn-shift-plus">+0.1</button>
+            </div>
+          </div>
+
+          <!-- 控制項 2: 大小縮放 -->
+          <div class="control-item">
+            <div class="control-header">
+              <span>2. 尺寸縮放比例 (Scale)</span>
+              <span
+                id="display-scale"
+                style="color: #059669; font-family: monospace"
+                >101.0% (1.010)</span
+              >
+            </div>
+            <div class="control-row">
+              <button class="btn-step" id="btn-scale-minus">-0.5%</button>
+              <input
+                type="range"
+                id="scale-slider"
+                min="95.0"
+                max="115.0"
+                step="0.1"
+                value="101.0"
+              />
+              <button class="btn-step" id="btn-scale-plus">+0.5%</button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+          "
+        >
+          <!-- 楷體／明體切換開關 -->
+          <span class="font-toggle-wrap">
+            <span
+              class="font-toggle-label"
+              id="font-toggle-label-kai"
+              style="color: #059669"
+              >楷體</span
+            >
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggle-font" />
+              <span class="toggle-track"></span>
+            </label>
+            <span
+              class="font-toggle-label"
+              id="font-toggle-label-ming"
+              style="color: #94a3b8"
+              >明體</span
+            >
+          </span>
+          <label
+            ><input type="checkbox" id="toggle-guide" checked /> 顯示水平參考線
+            (紅:中心 / 藍:基線 / 綠:頂線)</label
+          >
+        </div>
+
+        <!-- 換算參數面板 -->
+        <div class="metrics-panel">
+          <div class="metric-item">
+            <span class="metric-label">縮放比例係數 (Scale)</span>
+            <span class="metric-val" id="val-scale">1.040</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">相對字級位移 (em)</span>
+            <span class="metric-val" id="val-em">+0.0547 em</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">UPM 1024 (TrueType dy)</span>
+            <span class="metric-val highlight" id="val-upm1024">dy = +56</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">UPM 1000 (OpenType dy)</span>
+            <span class="metric-val highlight" id="val-upm1000">dy = +55</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Python 矩陣預覽 -->
+      <div class="python-code-box">
+        <span id="python-matrix-code">matrix = (1.04, 0, 0, 1.04, dx, 56)</span>
+        <span style="color: #94a3b8; font-size: 0.75rem"
+          >fonttools TransformingPen 變換矩陣</span
+        >
+      </div>
+
+      <!-- 圖例 -->
+      <div class="legend">
+        <div class="legend-item">
+          <span class="dot" style="background: #1d4ed8"></span> 標準基準
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background: #059669"></span> 調整中(縮放 +
+          平移)
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background: #94a3b8"></span> 原始未調整
+        </div>
+      </div>
+
+      <!-- 區塊一：單行混排比對 -->
+      <div class="section-card">
+        <div class="section-title">1. 同行並列連續比對 (字級 64px)</div>
+        <div id="sentence-rows"></div>
+      </div>
+
+      <!-- 區塊二：同基線疊合比對 -->
+      <div class="section-card">
+        <div class="section-title">
+          2. 同基線疊合透光比對 (綠色完全融入藍色即代表外框與基線完全吻合)
+        </div>
+        <div class="overlay-grid" id="overlay-rows"></div>
+      </div>
+    </div>
+
+    <script>
+      const TEST_CHARS = ["永", "國", "一", "中", "鬱", "靈", "丁", "口", "龍"];
+      const BASE_FONT_SIZE = 64; // 鎖定 64px
+
+      const shiftSlider = document.getElementById("shift-slider");
+      const scaleSlider = document.getElementById("scale-slider");
+      const displayShift = document.getElementById("display-shift");
+      const displayScale = document.getElementById("display-scale");
+
+      const valScale = document.getElementById("val-scale");
+      const valEm = document.getElementById("val-em");
+      const valUpm1024 = document.getElementById("val-upm1024");
+      const valUpm1000 = document.getElementById("val-upm1000");
+      const pythonMatrixCode = document.getElementById("python-matrix-code");
+
+      const sentenceRows = document.getElementById("sentence-rows");
+      const overlayRows = document.getElementById("overlay-rows");
+      const toggleGuide = document.getElementById("toggle-guide");
+
+      // 建立 HTML
+      function initView() {
+        // 1. 同行比對
+        let sentenceHtml = "";
+        TEST_CHARS.forEach((char) => {
+          sentenceHtml += `
+          <div class="row-card">
+            <div class="line-text">
+              天地玄黃<span class="char-badge compare-base">${char}</span><span class="char-badge compare-target target-span">${char}</span><span class="char-badge compare-raw">${char}</span>宇宙洪荒
+            </div>
+          </div>
+        `;
+        });
+        sentenceRows.innerHTML = sentenceHtml;
+
+        // 2. 疊合比對 (採用同基線負邊距疊合)
+        let overlayHtml = "";
+        TEST_CHARS.forEach((char) => {
+          overlayHtml += `
+          <div class="overlay-box">
+            <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">「${char}」基線疊合</div>
+            <div class="overlay-baseline-stage">
+              <span class="compare-base">${char}</span><span class="compare-target target-span">${char}</span>
+            </div>
+          </div>
+        `;
+        });
+        overlayRows.innerHTML = overlayHtml;
+      }
+
+      // 更新計算與視覺樣式
+      function update() {
+        const shift = parseFloat(shiftSlider.value);
+        const scalePercent = parseFloat(scaleSlider.value);
+        const scale = scalePercent / 100.0;
+
+        // 數值計算
+        const em = shift / BASE_FONT_SIZE;
+        const dy1024 = Math.round(em * 1024);
+        const dy1000 = Math.round(em * 1000);
+
+        // 更新介面標籤
+        const sign = shift >= 0 ? "+" : "";
+        displayShift.textContent = `${sign}${shift.toFixed(2)} px`;
+        displayScale.textContent = `${scalePercent.toFixed(1)}% (${scale.toFixed(3)})`;
+
+        valScale.textContent = scale.toFixed(3);
+        valEm.textContent = `${sign}${em.toFixed(4)} em`;
+        valUpm1024.textContent = `dy = ${sign}${dy1024}`;
+        valUpm1000.textContent = `dy = ${sign}${dy1000}`;
+
+        pythonMatrixCode.textContent = `transform = (${scale.toFixed(3)}, 0, 0, ${scale.toFixed(3)}, dx, ${dy1024})`;
+
+        // 同時套用「向上平移」與「縮放」
+        const translateY = -shift;
+        document.querySelectorAll(".target-span").forEach((el) => {
+          el.style.transform = `translateY(${translateY}px) scale(${scale})`;
+        });
+      }
+
+      // 事件監聽
+      shiftSlider.addEventListener("input", update);
+      scaleSlider.addEventListener("input", update);
+
+      document
+        .getElementById("btn-shift-plus")
+        .addEventListener("click", () => {
+          shiftSlider.value = (parseFloat(shiftSlider.value) + 0.1).toFixed(1);
+          update();
+        });
+      document
+        .getElementById("btn-shift-minus")
+        .addEventListener("click", () => {
+          shiftSlider.value = (parseFloat(shiftSlider.value) - 0.1).toFixed(1);
+          update();
+        });
+
+      document
+        .getElementById("btn-scale-plus")
+        .addEventListener("click", () => {
+          scaleSlider.value = (parseFloat(scaleSlider.value) + 0.5).toFixed(1);
+          update();
+        });
+      document
+        .getElementById("btn-scale-minus")
+        .addEventListener("click", () => {
+          scaleSlider.value = (parseFloat(scaleSlider.value) - 0.5).toFixed(1);
+          update();
+        });
+
+      toggleGuide.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.body.classList.add("guide-active");
+        } else {
+          document.body.classList.remove("guide-active");
+        }
+      });
+
+      // 楷體／明體切換
+      const toggleFont = document.getElementById("toggle-font");
+      const labelKai = document.getElementById("font-toggle-label-kai");
+      const labelMing = document.getElementById("font-toggle-label-ming");
+
+      toggleFont.addEventListener("change", (e) => {
+        const root = document.documentElement;
+        if (e.target.checked) {
+          // 切換為明體
+          root.style.setProperty("--base-font", '"Font-UMing-TW"');
+          root.style.setProperty("--target-font", '"Font-TW-Sung"');
+          labelKai.style.color = "#94a3b8";
+          labelMing.style.color = "#059669";
+        } else {
+          // 切換回楷體
+          root.style.setProperty("--base-font", '"Font-UKai-TW"');
+          root.style.setProperty("--target-font", '"Font-TW-Kai"');
+          labelKai.style.color = "#059669";
+          labelMing.style.color = "#94a3b8";
+        }
+      });
+
+      initView();
+      update();
+    </script>
+  </body>
+</html>

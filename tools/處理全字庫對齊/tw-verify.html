@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>三字型基線對齊檢驗工具</title>
+
+    <!-- 1. 預設透過相對路徑載入字型 🟡請修改為實際路徑 -->
+    <style id="font-definitions">
+      /* 基準字型：文鼎楷體 */
+      @font-face {
+        font-family: "Font-UKai-TW";
+        src: url("../../temp/ttf-to-next/ukai-tw.ttf")
+          format("truetype");
+      }
+      /* 修訂字型：全字庫楷體修訂版 */
+      @font-face {
+        font-family: "Font-TW-Kai-Aligned";
+        src: url("../../temp/ttf-to-next/TW-Kai-Aligned.ttf")
+          format("truetype");
+      }
+      /* 原始字型：全字庫楷體原始版 */
+      @font-face {
+        font-family: "Font-TW-Kai-Raw";
+        src: url("../../temp/ttf-raw/TW-Kai-98_1.ttf") format("truetype");
+      }
+      /* 基準字型：文鼎明體 */
+      @font-face {
+        font-family: "Font-UMing-TW";
+        src: url("../../temp/ttf-to-next/uming-tw.ttf")
+          format("truetype");
+      }
+      /* 修訂字型：全字庫宋體修訂版 */
+      @font-face {
+        font-family: "Font-TW-Sung-Aligned";
+        src: url("../../temp/ttf-to-next/TW-Sung-Aligned.ttf")
+          format("truetype");
+      }
+      /* 原始字型：全字庫宋體原始版 */
+      @font-face {
+        font-family: "Font-TW-Sung-Raw";
+        src: url("../../temp/ttf-raw/TW-Sung-98_1.ttf") format("truetype");
+      }
+    </style>
+
+    <style>
+      :root {
+        --base-font: "Font-UKai-TW";
+        --aligned-font: "Font-TW-Kai-Aligned";
+        --raw-font: "Font-TW-Kai-Raw";
+        --bg: #f8fafc;
+        --card-bg: #ffffff;
+        --border: #cbd5e1;
+        --text: #0f172a;
+      }
+
+      /* 字型宣告 Class */
+      .f-base,
+      .f-ukai {
+        font-family: var(--base-font), serif;
+        color: #1d4ed8; /* 藍色：基準字型 */
+      }
+      .f-aligned {
+        font-family: var(--aligned-font), serif;
+        color: #059669; /* 綠色：修訂對齊版 */
+      }
+      .f-raw {
+        font-family: var(--raw-font), serif;
+        color: #94a3b8; /* 灰色：原始未修訂版 */
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background-color: var(--bg);
+        color: var(--text);
+        padding: 24px;
+        line-height: 1.5;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      /* 頂部工具列 */
+      .toolbar {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 12px;
+        z-index: 100;
+      }
+
+      .toolbar-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .control-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      input[type="range"] {
+        width: 160px;
+        accent-color: #059669;
+      }
+
+      input[type="text"] {
+        padding: 6px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        width: 260px;
+      }
+
+      /* 楷體／明體切換開關 */
+      .font-toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .font-toggle-label {
+        color: #334155;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 52px;
+        height: 26px;
+        flex-shrink: 0;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+        position: absolute;
+      }
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        border-radius: 13px;
+        background: #059669;
+        transition: background 0.25s;
+        cursor: pointer;
+      }
+      .toggle-switch input:checked + .toggle-track {
+        background: #059669;
+      }
+      .toggle-track::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        top: 3px;
+        left: 3px;
+        transition: transform 0.25s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      }
+      .toggle-switch input:checked + .toggle-track::after {
+        transform: translateX(26px);
+      }
+
+      /* 手動上傳/狀態列 */
+      .file-loader-bar {
+        background: #f1f5f9;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+        color: #475569;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .file-btn-wrapper {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .file-btn-wrapper input[type="file"] {
+        display: none;
+      }
+
+      .custom-file-btn {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        color: #1e293b;
+        font-size: 0.75rem;
+      }
+      .custom-file-btn:hover {
+        background: #e2e8f0;
+      }
+
+      /* 圖例 */
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 12px 18px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        margin-bottom: 24px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+      }
+
+      /* 區塊卡片 */
+      .section-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .section-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #334155;
+      }
+
+      /* 文字行卡片 */
+      .row-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        overflow-x: auto;
+        position: relative;
+      }
+
+      .line-text {
+        /* 整行以基準字型為底 */
+        font-family: var(--base-font), serif;
+        white-space: nowrap;
+        line-height: 1.6;
+        display: inline-block;
+        position: relative;
+      }
+
+      .char-badge {
+        display: inline-block;
+        padding: 0 4px;
+        border-radius: 4px;
+      }
+
+      /* 水平基準線 */
+      .guide-active .row-card {
+        background-image:
+          linear-gradient(
+            to bottom,
+            transparent 49.5%,
+            rgba(239, 68, 68, 0.45) 49.5%,
+            rgba(239, 68, 68, 0.45) 50.5%,
+            transparent 50.5%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 80.5%,
+            rgba(37, 99, 235, 0.45) 80.5%,
+            rgba(37, 99, 235, 0.45) 82%,
+            transparent 82%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 18.5%,
+            rgba(16, 185, 129, 0.45) 18.5%,
+            rgba(16, 185, 129, 0.45) 20%,
+            transparent 20%
+          );
+      }
+
+      /* 疊合區塊 */
+      .overlay-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 16px;
+      }
+
+      .overlay-box {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px 8px;
+        text-align: center;
+        background: #ffffff;
+      }
+
+      .overlay-stage {
+        display: inline-block;
+        line-height: 1.5;
+        white-space: nowrap;
+      }
+
+      .overlay-stage span {
+        opacity: 0.6;
+      }
+
+      .para-text {
+        font-family: var(--base-font), serif;
+        font-size: 60px;
+        line-height: 1.6;
+        color: var(--text);
+      }
+      .para-text .f-aligned {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body class="guide-active">
+    <div class="container">
+      <!-- 頂部工具列 -->
+      <div class="toolbar">
+        <div class="toolbar-row">
+          <!-- 楷體／明體切換開關 -->
+          <div class="control-item">
+            <span class="font-toggle-wrap">
+              <span id="font-toggle-label-kai" style="color: #059669"
+                >楷體</span
+              >
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-font" />
+                <span class="toggle-track"></span>
+              </label>
+              <span id="font-toggle-label-ming" style="color: #94a3b8"
+                >明體</span
+              >
+            </span>
+          </div>
+
+          <div class="control-item">
+            <label>字級：</label>
+            <input
+              type="range"
+              id="font-size"
+              min="28"
+              max="96"
+              step="2"
+              value="64"
+            />
+            <span
+              id="val-fontsize"
+              style="font-family: monospace; min-width: 45px"
+              >64px</span
+            >
+          </div>
+
+          <div class="control-item">
+            <label>比對字：</label>
+            <input
+              type="text"
+              id="custom-chars"
+              value="永, 國, 一, 中, 鬱, 靈, 丁, 口, 龍, 臺"
+            />
+          </div>
+
+          <div class="control-item">
+            <label
+              ><input type="checkbox" id="toggle-guide" checked />
+              顯示基準水平線</label
+            >
+          </div>
+        </div>
+
+        <!-- 本地字型手動覆蓋按鈕 (若因 file:// 協議阻擋相對路徑時可用) -->
+        <div class="file-loader-bar">
+          <span>💡 若相對路徑載入失敗，可直接手動選取檔案：</span>
+          <div class="file-btn-wrapper">
+            <label class="custom-file-btn" id="label-file-base" for="file-base"
+              >選取 ukai-tw.ttf</label
+            >
+            <input type="file" id="file-base" accept=".ttf,.otf" />
+          </div>
+          <div class="file-btn-wrapper">
+            <label
+              class="custom-file-btn"
+              id="label-file-aligned"
+              for="file-aligned"
+              >選取 TW-Kai-Aligned.ttf</label
+            >
+            <input type="file" id="file-aligned" accept=".ttf,.otf" />
+          </div>
+          <div class="file-btn-wrapper">
+            <label class="custom-file-btn" id="label-file-raw" for="file-raw"
+              >選取 TW-Kai-98_1.ttf</label
+            >
+            <input type="file" id="file-raw" accept=".ttf,.otf" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 圖例 -->
+      <div class="legend">
+        <div class="legend-item">
+          <span class="dot" style="background: #1d4ed8"></span>
+          <span id="legend-base">基準字：AR PL UKai TW（藍）</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background: #059669"></span>
+          <span id="legend-aligned">修訂版：TW-Kai-Aligned（綠）</span>
+        </div>
+        <div class="legend-item">
+          <span class="dot" style="background: #94a3b8"></span>
+          <span id="legend-raw">原始版：TW-Kai-98_1（灰）</span>
+        </div>
+      </div>
+
+      <!-- 區塊一：單行連續穿插混排 -->
+      <div class="section-card">
+        <div class="section-title">
+          1. 同行並列連續比對 (觀察水平流暢度與基線一致性)
+        </div>
+        <div id="sentence-rows"></div>
+      </div>
+
+      <!-- 區塊二：同基線透光疊合 -->
+      <div class="section-card">
+        <div class="section-title">
+          2. 同基線透光疊合
+          (綠色若完美蓋住藍色，代表平移與縮放已精準對齊；灰色顯示原始偏低的位置)
+        </div>
+        <div class="overlay-grid" id="overlay-rows"></div>
+      </div>
+
+      <!-- 區塊三 -->
+      <div class="section-card">
+        <div class="section-title">
+          3. 段落內混排比對 (第一段含有修訂版字體，測試會不會察覺出差異)
+        </div>
+        <p class="para-text">
+          一瞋能摧毀千<span class="f-aligned">劫</span>所積聚施供善<span
+            class="f-aligned"
+            >逝</span
+          >等一切諸福善。罪惡莫過瞋<span class="f-aligned">，難</span
+          >行莫勝忍<span class="f-aligned">；</span>故應以<span
+            class="f-aligned"
+            >眾</span
+          >理努力修安忍。
+        </p>
+        <p class="para-text">
+          一瞋能摧毀千劫所積聚施供善逝等一切諸福善。罪惡莫過瞋，難行莫勝忍；故應以眾理努力修安忍。
+        </p>
+      </div>
+    </div>
+
+    <script>
+      const fontSizeSlider = document.getElementById("font-size");
+      const valFontSize = document.getElementById("val-fontsize");
+      const customCharsInput = document.getElementById("custom-chars");
+      const toggleGuide = document.getElementById("toggle-guide");
+      const sentenceRows = document.getElementById("sentence-rows");
+      const overlayRows = document.getElementById("overlay-rows");
+      const toggleFont = document.getElementById("toggle-font");
+      const labelKai = document.getElementById("font-toggle-label-kai");
+      const labelMing = document.getElementById("font-toggle-label-ming");
+      const legendBase = document.getElementById("legend-base");
+      const legendAligned = document.getElementById("legend-aligned");
+      const legendRaw = document.getElementById("legend-raw");
+      const labelFileBase = document.getElementById("label-file-base");
+      const labelFileAligned = document.getElementById("label-file-aligned");
+      const labelFileRaw = document.getElementById("label-file-raw");
+
+      let currentFontMode = "kai"; // 'kai' or 'ming'
+
+      function updateFontLabels() {
+        if (currentFontMode === "ming") {
+          legendBase.textContent = "基準字：AR PL UMing TW（藍）";
+          legendAligned.textContent = "修訂版：TW-Sung-Aligned（綠）";
+          legendRaw.textContent = "原始版：TW-Sung-98_1（灰）";
+          labelFileBase.textContent = "選取 uming-tw.ttf";
+          labelFileAligned.textContent = "選取 TW-Sung-Aligned.ttf";
+          labelFileRaw.textContent = "選取 TW-Sung-98_1.ttf";
+        } else {
+          legendBase.textContent = "基準字：AR PL UKai TW（藍）";
+          legendAligned.textContent = "修訂版：TW-Kai-Aligned（綠）";
+          legendRaw.textContent = "原始版：TW-Kai-98_1（灰）";
+          labelFileBase.textContent = "選取 ukai-tw.ttf";
+          labelFileAligned.textContent = "選取 TW-Kai-Aligned.ttf";
+          labelFileRaw.textContent = "選取 TW-Kai-98_1.ttf";
+        }
+      }
+
+      function render() {
+        const fSize = fontSizeSlider.value;
+        valFontSize.textContent = `${fSize}px`;
+
+        const chars = customCharsInput.value
+          .split(/[,，\s]+/)
+          .filter((c) => c.length > 0);
+
+        const baseTitle =
+          currentFontMode === "ming"
+            ? "基準: AR PL UMing TW"
+            : "基準: AR PL UKai TW";
+        const alignedTitle =
+          currentFontMode === "ming"
+            ? "修訂對齊: TW-Sung-Aligned"
+            : "修訂對齊: TW-Kai-Aligned";
+        const rawTitle =
+          currentFontMode === "ming"
+            ? "原始未修訂: TW-Sung-98_1"
+            : "原始未修訂: TW-Kai-98_1";
+
+        // 1. 同行混排
+        let sentenceHtml = "";
+        chars.forEach((char) => {
+          sentenceHtml += `
+          <div class="row-card">
+            <div class="line-text" style="font-size: ${fSize}px;">
+              天地玄黃<span class="char-badge f-base" title="${baseTitle}">${char}</span><span class="char-badge f-aligned" title="${alignedTitle}">${char}</span><span class="char-badge f-raw" title="${rawTitle}">${char}</span>宇宙洪荒
+            </div>
+          </div>
+        `;
+        });
+        sentenceRows.innerHTML = sentenceHtml;
+
+        // 2. 疊合比對 (透過 margin-left: -1em 確保 100% 絕對同基線重疊)
+        let overlayHtml = "";
+        chars.forEach((char) => {
+          overlayHtml += `
+          <div class="overlay-box">
+            <div style="font-size:0.75rem; color:#64748b; margin-bottom:6px;">「${char}」疊合</div>
+            <div class="overlay-stage" style="font-size: ${fSize * 1.15}px;">
+              <span class="f-raw">${char}</span><span class="f-base" style="margin-left: -1em;">${char}</span><span class="f-aligned" style="margin-left: -1em;">${char}</span>
+            </div>
+          </div>
+        `;
+        });
+        overlayRows.innerHTML = overlayHtml;
+      }
+
+      // 楷體／明體切換
+      toggleFont.addEventListener("change", (e) => {
+        const root = document.documentElement;
+        if (e.target.checked) {
+          // 切換為明體
+          root.style.setProperty("--base-font", '"Font-UMing-TW"');
+          root.style.setProperty("--aligned-font", '"Font-TW-Sung-Aligned"');
+          root.style.setProperty("--raw-font", '"Font-TW-Sung-Raw"');
+          labelKai.style.color = "#94a3b8";
+          labelMing.style.color = "#059669";
+          currentFontMode = "ming";
+        } else {
+          // 切換回楷體
+          root.style.setProperty("--base-font", '"Font-UKai-TW"');
+          root.style.setProperty("--aligned-font", '"Font-TW-Kai-Aligned"');
+          root.style.setProperty("--raw-font", '"Font-TW-Kai-Raw"');
+          labelKai.style.color = "#059669";
+          labelMing.style.color = "#94a3b8";
+          currentFontMode = "kai";
+        }
+        updateFontLabels();
+        render();
+      });
+
+      // 手動載入本機字型 (利用 FontFace API 繞過 CORS)
+      function setupFontLoader(fileInputId, getTargetFamily) {
+        const fileInput = document.getElementById(fileInputId);
+        fileInput.addEventListener("change", async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          try {
+            const buffer = await file.arrayBuffer();
+            const fontFamilyName =
+              typeof getTargetFamily === "function"
+                ? getTargetFamily()
+                : getTargetFamily;
+            const fontFace = new FontFace(fontFamilyName, buffer);
+            await fontFace.load();
+            document.fonts.add(fontFace);
+            e.target.previousElementSibling.textContent = `✅ 已載入 ${file.name}`;
+            e.target.previousElementSibling.style.borderColor = "#16a34a";
+            render();
+          } catch (err) {
+            alert(`載入字型失敗: ${err}`);
+          }
+        });
+      }
+
+      setupFontLoader("file-base", () =>
+        currentFontMode === "ming" ? "Font-UMing-TW" : "Font-UKai-TW",
+      );
+      setupFontLoader("file-aligned", () =>
+        currentFontMode === "ming"
+          ? "Font-TW-Sung-Aligned"
+          : "Font-TW-Kai-Aligned",
+      );
+      setupFontLoader("file-raw", () =>
+        currentFontMode === "ming" ? "Font-TW-Sung-Raw" : "Font-TW-Kai-Raw",
+      );
+
+      // 介面監聽事件
+      fontSizeSlider.addEventListener("input", render);
+      customCharsInput.addEventListener("input", render);
+      toggleGuide.addEventListener("change", (e) => {
+        if (e.target.checked) {
+          document.body.classList.add("guide-active");
+        } else {
+          document.body.classList.remove("guide-active");
+        }
+      });
+
+      // 初始渲染
+      render();
+    </script>
+  </body>
+</html>
