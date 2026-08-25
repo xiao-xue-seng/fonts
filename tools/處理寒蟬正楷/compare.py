@@ -1,12 +1,18 @@
 """
 比較 寒蟬 兩個檔案之間的差異
 """
-
+import os
 from fontTools.ttLib import TTFont
 
+# 取得當前腳本所在的目錄，確保路徑正確
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+file_big5 = os.path.join(script_dir, "ChillKai_Big5.ttf")
+file_large = os.path.join(script_dir, "ChillKai.ttf")
+
 # 載入兩個字型檔案（請替換成你實際的檔案名稱與路徑）
-font_large = TTFont('ChillKai.ttf')  # 33080字的版本
-font_big5 = TTFont('ChillKai_Big5.ttf')    # 21192字的 Big5 版本
+font_large = TTFont(file_large)  # 33080字的版本
+font_big5 = TTFont(file_big5)  # 21192字的 Big5 版本
 
 # 取得字碼集合 (Unicode CMAP)
 cmap_large = set(font_large.getBestCmap().keys())
