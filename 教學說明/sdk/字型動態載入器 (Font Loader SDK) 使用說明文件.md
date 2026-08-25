@@ -12,12 +12,10 @@
 <head>
   <meta charset="UTF-8" />
   <!--
-   以下三行非必要，因為 SDK 也會幫你加，但強烈建議提前加入，特別是第三行，可以加快 SDK 本身的下載。
+   以下這行非必要，因為 SDK 也會幫你加，但強烈建議提前加入，可以加快 SDK 本身的下載。
    要放在 <head> 內靠前的位置才能發揮良好效果。
-   現代瀏覽器在遇到 preconnect 時，若不支援，會自動降級為 dns-prefetch。所以不需要兩個都寫。
+   現代瀏覽器在遇到 preconnect 時，若不支援，會自動降級為 dns-prefetch。所以不需要兩種都寫。
   -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
   <!-- 💡 建議放在 <head> 靠前的位置，讓字型連線與下載最早開始發揮效能 -->
