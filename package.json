@@ -1,0 +1,28 @@
+{
+  "name": "fonts",
+  "version": "1.0.0",
+  "description": "收錄經過中文子集化（`cn-font-split`）切片之免費可商用 WebFont。",
+  "homepage": "https://github.com/xiao-xue-seng/fonts#readme",
+  "bugs": {
+    "url": "https://github.com/xiao-xue-seng/fonts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiao-xue-seng/fonts.git"
+  },
+  "license": "MIT",
+  "author": "xiao-xue-seng",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cn-font-split": "^7.4.3"
+  },
+  "allowScripts": {
+    "cn-font-split@7.4.3": true,
+    "koffi@2.10.0": true,
+    "protobufjs@7.6.5": true
+  }
+}
