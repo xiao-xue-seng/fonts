@@ -130,6 +130,15 @@
         height: 6px;
       }
 
+      input[type="text"] {
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        width: 280px;
+        max-width: 100%;
+      }
+
       .btn-step {
         background: #f1f5f9;
         border: 1px solid #cbd5e1;
@@ -455,6 +464,14 @@
             ><input type="checkbox" id="toggle-guide" checked /> 顯示水平參考線
             (紅:中心 / 藍:基線 / 綠:頂線)</label
           >
+          <div style="margin-left: 1em;">
+            <label for="custom-chars">比對字：</label>
+            <input
+              type="text"
+              id="custom-chars"
+              value="永, 國, 一, 中, 鬱, 靈, 丁, 口, 龍"
+            />
+          </div>
         </div>
 
         <!-- 換算參數面板 -->
@@ -516,11 +533,11 @@
     </div>
 
     <script>
-      const TEST_CHARS = ["永", "國", "一", "中", "鬱", "靈", "丁", "口", "龍"];
       const BASE_FONT_SIZE = 64; // 鎖定 64px
 
       const shiftSlider = document.getElementById("shift-slider");
       const scaleSlider = document.getElementById("scale-slider");
+      const customCharsInput = document.getElementById("custom-chars");
       const displayShift = document.getElementById("display-shift");
       const displayScale = document.getElementById("display-scale");
 
@@ -536,9 +553,13 @@
 
       // 建立 HTML
       function initView() {
+        const chars = customCharsInput.value
+          .split(/[,\s]+/)
+          .filter((char) => char.length > 0);
+
         // 1. 同行比對
         let sentenceHtml = "";
-        TEST_CHARS.forEach((char) => {
+        chars.forEach((char) => {
           sentenceHtml += `
           <div class="row-card">
             <div class="line-text">
@@ -551,7 +572,7 @@
 
         // 2. 疊合比對 (採用同基線負邊距疊合)
         let overlayHtml = "";
-        TEST_CHARS.forEach((char) => {
+        chars.forEach((char) => {
           overlayHtml += `
           <div class="overlay-box">
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:4px;">「${char}」基線疊合</div>
@@ -595,6 +616,10 @@
       }
 
       // 事件監聽
+      customCharsInput.addEventListener("input", () => {
+        initView();
+        update();
+      });
       shiftSlider.addEventListener("input", update);
       scaleSlider.addEventListener("input", update);
 
