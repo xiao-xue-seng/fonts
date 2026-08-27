@@ -23,7 +23,7 @@ from tools.utils.subset_font import subset_font
 # 待處理字型清單設定
 FONTS_TO_PROCESS = [
     {
-        "name": "Noto Serif SC",
+        "name": "Noto Serif SC 標點",
         "input": os.path.join(
             PROJECT_ROOT, "temp", "ttf-raw", "NotoSerifCJKsc-VF.otf"
         ),
@@ -35,7 +35,7 @@ FONTS_TO_PROCESS = [
         "suffix_zh": "標點",
     },
     {
-        "name": "Noto Serif TC",
+        "name": "Noto Serif TC 標點",
         "input": os.path.join(
             PROJECT_ROOT, "temp", "ttf-raw", "NotoSerifCJKtc-VF.otf"
         ),
@@ -43,6 +43,18 @@ FONTS_TO_PROCESS = [
             PROJECT_ROOT, "temp", "ttf-to-next", "Noto-Serif-TC-Punct.ttf"
         ),
         "fallback_input": os.path.join(script_dir, "NotoSerifCJKtc-VF.otf"),
+        "suffix_en": "Punct",
+        "suffix_zh": "標點",
+    },
+    {
+        "name": "全字齊楷 標點",
+        "input": os.path.join(
+            PROJECT_ROOT, "temp", "ttf-to-next", "TW-Kai-Aligned.ttf"
+        ),
+        "output": os.path.join(
+            PROJECT_ROOT, "temp", "ttf-to-next", "TW-Kai-Aligned-Punct.ttf"
+        ),
+        "fallback_input": os.path.join(script_dir, "TW-Kai-Aligned.ttf"),
         "suffix_en": "Punct",
         "suffix_zh": "標點",
     },
