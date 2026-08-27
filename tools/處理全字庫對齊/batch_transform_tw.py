@@ -41,8 +41,8 @@ PROCESS_SUNG = True  # 是否處理 全字庫宋體 (TW-Sung)
 # ==============================================================================
 KAI_BASE_NAME_EN = "TW-Kai-Aligned"  # 新英文字型家族名稱基礎
 KAI_BASE_NAME_ZH = "全字齊楷"  # 新中文字型家族名稱基礎
-KAI_SCALE_FACTOR = 1.010  # 縮放比例係數
-KAI_DY = 98  # UPM 1024 向上平移量
+KAI_SCALE_FACTOR = 1.006  # 縮放比例係數
+KAI_DY = 90  # UPM 1024 向上平移量
 
 # ==============================================================================
 # 4. 宋體 (TW-Sung) 專用參數設定 (主字集、Ext-B、Plus 共用此組參數)
@@ -50,7 +50,7 @@ KAI_DY = 98  # UPM 1024 向上平移量
 SUNG_BASE_NAME_EN = "TW-Sung-Aligned"  # 新英文字型家族名稱基礎
 SUNG_BASE_NAME_ZH = "全字齊宋"  # 新中文字型家族名稱基礎
 SUNG_SCALE_FACTOR = 1.000  # 縮放比例係數
-SUNG_DY = 96  # UPM 1024 向上平移量
+SUNG_DY = 90  # UPM 1024 向上平移量
 
 # ==============================================================================
 # 全字庫固定的三個字集擴展結構後綴規則
@@ -61,6 +61,8 @@ SUBSET_RULES = [
     {"suffix_file": "-Plus-98_1.ttf", "suffix_en": "-Plus", "suffix_zh": " Plus"},
 ]
 
+# 這些標點原本就已置中，不需要再調整。
+EXCLUDE_UNICODE_RANGES = "FE52,FE54,FE55,FF1A,FF1B"
 
 def generate_tasks() -> List[Dict]:
     """
@@ -178,6 +180,8 @@ def run_batch():
             dy=dy,
             decompose=True,
             verbose=True,
+            # unicode_ranges="",
+            exclude_unicode_ranges=EXCLUDE_UNICODE_RANGES,
         )
 
         item_elapsed = time.time() - item_start

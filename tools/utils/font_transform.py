@@ -10,14 +10,16 @@
     4. 可選強制「攤平 (Decompose)」所有複合字，避免破圖或相依遺失。
     5. 自動更名字型家族名稱與字型樣式名稱（支援英文與中文）。
     6. 輸出為全新的標準字型檔 (TTF)。
+    7. 可指定要調整及要排除的 Unicode 範圍（排除範圍優先）。
 ===============================================================================
 """
 
 import argparse
 import os
+import re
 import sys
 import time
-from typing import Dict, Optional, Union
+from typing import Dict, Iterable, Optional, Tuple, Union
 from fontTools.ttLib import TTFont
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.pens.transformPen import TransformPen
@@ -48,6 +50,56 @@ COMMON_DY_PRESETS: Dict[int, int] = {
 
 # 自訂/未列出 UPM 時的相對 em 位移量參考值 (位移 px / 64px)
 COMMON_FALLBACK_EM_SHIFT = 0.1094
+
+# Unicode 範圍可使用 U+ 前綴（可省略），例如：U+4E00-9FFF,U+3001-303F
+UnicodeRange = Tuple[int, int]
+
+
+def parse_unicode_ranges(
+    ranges: Optional[Union[str, Iterable[str]]],
+) -> Tuple[UnicodeRange, ...]:
+    """將 Unicode 範圍文字解析成包含端點的整數區間。
+
+    支援以逗號或空白分隔的單點及區間，例如 ``U+4E00-9FFF, 3001``。
+    空值代表未指定任何範圍。
+    """
+    if ranges is None:
+        return ()
+
+    if isinstance(ranges, str):
+        values = [ranges]
+    else:
+        values = list(ranges)
+
+    result = []
+    for value in values:
+        # 先移除區間連字號兩側的空白，讓「U+4E00 - U+9FFF」也能使用。
+        normalized_value = re.sub(
+            r"(?i)([0-9a-f])\s*-\s*(?=(?:U\+)?[0-9a-f])", r"\1-", value.strip()
+        )
+        for item in re.split(r"[\s,]+", normalized_value):
+            if not item:
+                continue
+            match = re.fullmatch(
+                r"(?:U\+)?([0-9A-Fa-f]+)(?:\s*-\s*(?:U\+)?([0-9A-Fa-f]+))?",
+                item,
+            )
+            if not match:
+                raise ValueError(
+                    f"無效的 Unicode 範圍「{item}」，格式應為 U+4E00-9FFF 或 U+3001"
+                )
+
+            start = int(match.group(1), 16)
+            end = int(match.group(2) or match.group(1), 16)
+            if start > end or end > 0x10FFFF:
+                raise ValueError(f"無效的 Unicode 範圍「{item}」")
+            result.append((start, end))
+
+    return tuple(result)
+
+
+def _codepoint_in_ranges(codepoint: int, ranges: Tuple[UnicodeRange, ...]) -> bool:
+    return any(start <= codepoint <= end for start, end in ranges)
 
 
 # ==========================================
@@ -137,6 +189,8 @@ def transform_font(
     dy_presets: Optional[Union[Dict[int, int], int]] = None,
     fallback_em_shift: Optional[float] = None,
     decompose: bool = True,
+    unicode_ranges: Optional[Union[str, Iterable[str]]] = None,
+    exclude_unicode_ranges: Optional[Union[str, Iterable[str]]] = None,
     verbose: bool = True,
 ) -> bool:
     """
@@ -153,6 +207,8 @@ def transform_font(
     :param dy_presets: UPM 平移量對應物件/字典 (例: {1024: 112, 1000: 109, 2048: 224})
     :param fallback_em_shift: 未匹配 UPM 時的相對 em 位移比例
     :param decompose: 是否強制攤平所有複合字元 (預設: True)
+    :param unicode_ranges: 要調整的 Unicode 範圍；空值表示不限制
+    :param exclude_unicode_ranges: 要排除的 Unicode 範圍，優先於 unicode_ranges
     :param verbose: 是否輸出詳細處理進度 (預設: True)
     :return: 轉換成功回傳 True，失敗回傳 False
     """
@@ -177,6 +233,13 @@ def transform_font(
         return False
 
     upm = font["head"].unitsPerEm
+    try:
+        included_ranges = parse_unicode_ranges(unicode_ranges)
+        excluded_ranges = parse_unicode_ranges(exclude_unicode_ranges)
+    except ValueError as e:
+        print(f"[錯誤] {e}", file=sys.stderr)
+        return False
+
     actual_dy = get_optimal_dy(
         upm=upm,
         dy=dy,
@@ -200,19 +263,54 @@ def transform_font(
     glyph_order = font.getGlyphOrder()
     total_glyphs = len(glyph_order)
 
+    # 以 cmap 建立需要調整的 glyph 集合。排除範圍先套用，確保優先權最高。
+    best_cmap = font.getBestCmap() or {}
+    excluded_glyphs = {
+        glyph_name
+        for codepoint, glyph_name in best_cmap.items()
+        if _codepoint_in_ranges(codepoint, excluded_ranges)
+    }
+    if included_ranges:
+        selected_glyphs = {
+            glyph_name
+            for codepoint, glyph_name in best_cmap.items()
+            if _codepoint_in_ranges(codepoint, included_ranges)
+        }
+    else:
+        selected_glyphs = set(glyph_order)
+    glyphs_to_transform = selected_glyphs - excluded_glyphs
+
     if verbose:
         print(
             f"字型內共有 {total_glyphs:,} 個字符 (Glyphs)，開始進行座標轉換與輪廓處理..."
         )
+        if included_ranges or excluded_ranges:
+            print(
+                f"符合調整範圍的 Glyphs: {len(glyphs_to_transform):,}，"
+                f"排除 Glyphs: {len(excluded_glyphs):,}"
+            )
 
     new_glyphs = {}
     new_metrics = {}
     success_count = 0
     empty_count = 0
+    skipped_count = 0
 
     # 逐一轉換所有字形
     for idx, glyph_name in enumerate(glyph_order, start=1):
         try:
+            if glyph_name not in glyphs_to_transform:
+                new_glyphs[glyph_name] = glyf_table[glyph_name]
+                new_metrics[glyph_name] = hmtx_table.metrics.get(glyph_name, (upm, 0))
+                skipped_count += 1
+                if verbose and (idx % 5000 == 0 or idx == total_glyphs):
+                    percent = (idx / total_glyphs) * 100
+                    elapsed = time.time() - start_time
+                    print(
+                        f"轉換進度: {idx:>6,}/{total_glyphs:,} ({percent:5.1f}%) | 耗時: {elapsed:.1f}s"
+                    )
+                continue
+
             # 讀取原始字寬
             orig_metrics = hmtx_table.metrics.get(glyph_name, (upm, 0))
             orig_width = orig_metrics[0]
@@ -288,6 +386,8 @@ def transform_font(
         print(
             f"成功轉換字符數 : {success_count:,} (實體字: {success_count - empty_count:,}, 空白/控制符: {empty_count:,})"
         )
+        if skipped_count:
+            print(f"略過未符合 Unicode 範圍的字符數 : {skipped_count:,}")
         print(f"輸出檔案大小   : {output_size_mb:.2f} MB")
         print(f"總耗時         : {total_time:.1f} 秒")
         print("=" * 65)
@@ -358,8 +458,31 @@ def main():
         action="store_true",
         help="停用複合字元強制攤平",
     )
+    parser.add_argument(
+        "--unicode-range",
+        "--include-unicode",
+        dest="unicode_ranges",
+        action="append",
+        default=None,
+        help="要調整的 Unicode 範圍，可重複指定；格式如 U+4E00-9FFF,U+3001",
+    )
+    parser.add_argument(
+        "--exclude-unicode-range",
+        "--exclude-unicode",
+        dest="exclude_unicode_ranges",
+        action="append",
+        default=None,
+        help="要排除的 Unicode 範圍，可重複指定；優先於 --unicode-range",
+    )
 
     args = parser.parse_args()
+
+    # 提前驗證範圍，讓 CLI 以標準 argparse 錯誤格式結束。
+    try:
+        parse_unicode_ranges(args.unicode_ranges)
+        parse_unicode_ranges(args.exclude_unicode_ranges)
+    except ValueError as e:
+        parser.error(str(e))
 
     # 組裝 dy_presets
     dy_presets = {}
@@ -382,6 +505,8 @@ def main():
         dy_presets=dy_presets if dy_presets else None,
         fallback_em_shift=args.fallback_shift,
         decompose=not args.no_decompose,
+        unicode_ranges=args.unicode_ranges,
+        exclude_unicode_ranges=args.exclude_unicode_ranges,
     )
 
     if not success:
