@@ -19,6 +19,11 @@ const TW_ALIGNED_COMMON_DETAILS = `全字庫傳承自早期 Windows 系統的字
 
 為避免排版時需額外撰寫 CSS (transform) 或標籤進行修正，本套件已於字型內部直接修正字形座標點，將字身垂直置中，確保全字庫在現代網頁與跨平台混排時能具備一致且完美的對齊表現。`;
 
+function getBasicDetails(name) {
+  return `## 字型介紹
+本專案收錄由 ${name} 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`;
+}
+
 export default [
   // ─── 🔵 範例 1：群組字型套件 ───
   {
@@ -56,7 +61,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
   },
   {
     name: "tw-sung-aligned",
-    title: "TW-Sung Aligned (全字齊楷)",
+    title: "TW-Sung Aligned (全字齊宋)",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -89,44 +94,26 @@ ${TW_ALIGNED_COMMON_DETAILS}
   },
 
   // ─── 🟢 範例 2：單一字型套件 ───
-//   {
-//     name: "tw-kai-aligned-punct",
-//     title: "TW-Kai Aligned Punct (全字齊楷-標點符號)",
-//     version: "1.0.0",
-//     license: "OFL-1.1",
-//     includeLocal: true,
-//     genericFamily: "serif",
-//     description:
-//       "全字齊楷-標點符號：全字庫正楷體經垂直對齊調整後之切片化 WebFont (僅包含標點符號)",
-//     details: `## 字型介紹
-// 本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，僅包含標點符號。
+  {
+    name: "tw-kai-aligned-punct",
+    title: "TW-Kai Aligned Punct (全字齊楷-標點)",
+    version: "1.0.0",
+    license: "OFL-1.1",
+    includeLocal: true,
+    genericFamily: "serif",
+    description:
+      "全字齊楷-標點：全字庫正楷體經垂直對齊調整後之切片化 WebFont (僅包含標點符號)",
+    details: `## 字型介紹
+本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，僅包含標點符號。
 
-// 適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
+適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
 
-// 「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
+「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
 
-// ${TW_ALIGNED_COMMON_DETAILS}`,
-//     file: "./temp/ttf-to-next/TW-Kai-Aligned-Punct.ttf",
-//   },
-//   {
-//     name: "tw-sung-aligned-punct",
-//     title: "TW-Sung Aligned Punct (全字齊宋-標點符號)",
-//     version: "1.0.0",
-//     license: "OFL-1.1",
-//     includeLocal: true,
-//     genericFamily: "serif",
-//     description:
-//       "全字齊宋-標點符號：全字庫正宋體經垂直對齊調整後之切片化 WebFont (僅包含標點符號)",
-//     details: `## 字型介紹
-// 本專案收錄由 全字庫正宋體 (TW-Sung) 經垂直對齊調整後之切片化 WebFont，僅包含標點符號。
-
-// 適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
-
-// 「全字齊宋」針對「全字庫正宋體」進行了垂直位置校正。
-
-// ${TW_ALIGNED_COMMON_DETAILS}`,
-//     file: "./temp/ttf-to-next/TW-Sung-Aligned-Punct.ttf",
-//   },
+${TW_ALIGNED_COMMON_DETAILS}`,
+    file: "./temp/ttf-to-next/TW-Kai-Aligned-Punct.ttf",
+  },
+  // 全字庫的標點應該都是一樣的，所以不需要另外製作宋體標點。
 
   {
     name: "chill-huo-fangsong",
@@ -136,8 +123,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "寒蟬活仿宋 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 寒蟬活仿宋 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`,
+    details: getBasicDetails("寒蟬活仿宋"),
     file: "./temp/ttf-to-next/ChillHuoFangSong_Regular.otf",
   },
 
@@ -149,8 +135,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "寒蟬正楷體 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 寒蟬正楷體 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`,
+    details: getBasicDetails("寒蟬正楷體"),
     file: "./temp/ttf-to-next/ChillKai.ttf",
   },
 
@@ -163,8 +148,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "匯文仿宋 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 匯文仿宋 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`,
+    details: getBasicDetails("匯文仿宋"),
     file: "./temp/ttf-to-next/huiwen-fangsong.ttf",
   },
 
@@ -176,8 +160,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "芫荽體 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 芫荽體 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`,
+    details: getBasicDetails("芫荽體"),
     file: "./temp/ttf-to-next/Iansui-Regular.ttf",
   },
 
@@ -189,8 +172,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "sans-serif",
     description: "Instrument Sans 自訂拉丁子集 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 Instrument Sans 自訂拉丁子集 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。
+    details: `${getBasicDetails("Instrument Sans 自訂拉丁子集")}
 
 適合用於替換 Noto Sans TC 的拉丁字元，增加排版的多樣性、美觀性。
 `,
@@ -206,10 +188,9 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "文鼎PL中楷 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 文鼎PL中楷 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。
+    details: `${getBasicDetails("文鼎PL中楷")}
 
-此字體從 ukai.ttc (0.1.20080216) 中擷取出 ukai-tw.ttf 再經 cn-font-split@7.4.3 切片化。並未修改字形內容。
+此專案從 ukai.ttc (0.1.20080216) 中擷取出 ukai-tw.ttf 再經切片化處理。並未修改字形內容。
 `,
     file: "./temp/ttf-to-next/ukai-tw.ttf",
   },
@@ -223,15 +204,16 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "文鼎PL細上海宋 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 文鼎PL細上海宋 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。
+    details: `${getBasicDetails("文鼎PL細上海宋")}
 
-此字體從 uming.ttc (0.1.20080216) 中擷取出 uming-tw.ttf 再經 cn-font-split@7.4.3 切片化。並未修改字形內容。
+此專案從 uming.ttc (0.1.20080216) 中擷取出 uming-tw.ttf 再經切片化處理。並未修改字形內容。
+
+註：此字體原本的「，：；！？」就是靠左下小型。若有需要，可用「全字齊楷 標點 (TW-Kai-Aligned-Punct)」於 CSS font-family 中，前置替換為置中標點。
 `,
     file: "./temp/ttf-to-next/uming-tw.ttf",
   },
 
-    {
+  {
     name: "zhuque-fangsong",
     title: "ZhuqueFangsong (朱雀仿宋)",
     version: "1.0.0",
@@ -239,9 +221,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     includeLocal: true,
     genericFamily: "serif",
     description: "朱雀仿宋 之切片化 WebFont",
-    details: `## 字型介紹
-本專案收錄由 朱雀仿宋(v.0.212) 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`,
+    details: getBasicDetails("朱雀仿宋(v.0.212)"),
     file: "./temp/ttf-to-next/ZhuqueFangsong-Regular.ttf",
   },
-
 ];
