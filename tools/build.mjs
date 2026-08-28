@@ -19,6 +19,21 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { NPM_SCOPE, OUTPUT_BASE, processFont, toKebabCase } from "./split.mjs";
 
+const DEFAULT_KEYWORDS = ["font", "webfont", "chinese-font"];
+
+/**
+ * 產生 package.json 的 keywords
+ *
+ * 未設定自訂 keywords 時沿用預設值；設定後則完全採用輸入值，並一律加入套件名。
+ */
+export function getPackageKeywords(config, pkgName) {
+  const keywords = Array.isArray(config.keywords)
+    ? config.keywords
+    : DEFAULT_KEYWORDS;
+
+  return [...new Set([...keywords, pkgName])];
+}
+
 /**
  * 從 CSS 內容中提取宣告的 font-family 名稱
  */
@@ -102,7 +117,7 @@ function writePackageJson(destDir, config, mainCssFile) {
       config.description || `Webfont subset for ${config.title || pkgName}`,
     main: mainCssFile,
     style: mainCssFile,
-    keywords: ["font", "webfont", "chinese-font", pkgName],
+    keywords: getPackageKeywords(config, pkgName),
     license: config.license || "OFL-1.1",
     publishConfig: {
       access: "public",

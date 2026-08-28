@@ -10,6 +10,7 @@
  * - genericFamily: 通用字型家族 ("sans-serif" | "serif"，預設: "sans-serif")
  * - includeLocal: 是否在 CSS 中包含 local() 本地字型引用 (預設: true)
  * - description: 簡短描述 (用於 package.json 與 README 標頭)
+ * - keywords: (選填) package.json 關鍵字陣列；未設定時使用建置工具的預設值
  * - details: README 詳細說明 (支援 Markdown，插入於 description 之後)
  * - file: 單一字型檔案路徑 (單一字型套件使用)
  * - items: 子集檔案清單陣列 (群組字型套件使用)
@@ -176,6 +177,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 
 適合用於替換 Noto Sans TC 的拉丁字元，增加排版的多樣性、美觀性。
 `,
+    keywords: ["font", "webfont"],
     file: "./temp/ttf-to-next/InstrumentSans-Subset.ttf",
   },
 
