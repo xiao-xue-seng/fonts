@@ -95,10 +95,21 @@ function ensureNpmIgnoreBuildOptions(destDir) {
   }
 }
 
-function needsReslice(filePath, destDir, subsetMode = "split") {
+function needsReslice(
+  filePath,
+  destDir,
+  subsetMode = "split",
+  fontFamily = "",
+) {
   const resultCssPath = path.join(destDir, "result.css");
   const buildOptionsPath = path.join(destDir, ".build-options.json");
   if (!fs.existsSync(resultCssPath)) return true;
+
+  let hasMatchingFontFamily = true;
+  if (fontFamily) {
+    const currentCss = fs.readFileSync(resultCssPath, "utf-8");
+    hasMatchingFontFamily = extractFontFamily(currentCss) === fontFamily;
+  }
 
   const fontStat = fs.statSync(filePath);
   const cssStat = fs.statSync(resultCssPath);
@@ -118,6 +129,7 @@ function needsReslice(filePath, destDir, subsetMode = "split") {
   const hasExpectedOutput = subsetMode !== "single" || woff2Count === 1;
 
   return (
+    !hasMatchingFontFamily ||
     cssStat.mtimeMs < fontStat.mtimeMs ||
     cachedMode !== subsetMode ||
     !hasExpectedOutput
@@ -313,7 +325,12 @@ async function buildSingleFont(config) {
   }
 
   const subsetMode = config.subsetMode || "split";
-  const shouldReslice = needsReslice(config.file, destDir, subsetMode);
+  const shouldReslice = needsReslice(
+    config.file,
+    destDir,
+    subsetMode,
+    config.fontFamily,
+  );
   const processDestDir = shouldReslice
     ? createResliceTempDir(destDir)
     : destDir;
@@ -347,9 +364,9 @@ async function buildSingleFont(config) {
     ensureNpmIgnoreBuildOptions(destDir);
   }
 
-  // 從產出的 result.css 中解析 fontFamily
+  // 從產出的 result.css 中解析 fontFamily，確保所用的值符合實際。
   const resultCssPath = path.join(destDir, "result.css");
-  let fontFamily = config.title || pkgName;
+  let fontFamily = config.fontFamily || pkgName;
   if (fs.existsSync(resultCssPath)) {
     const cssContent = fs.readFileSync(resultCssPath, "utf-8");
     fontFamily = extractFontFamily(cssContent, fontFamily);
@@ -404,7 +421,12 @@ async function buildFontGroup(config) {
     const subDirName = item.subDir || toKebabCase(item.name);
     const subDestDir = path.join(groupDestDir, subDirName);
     const subsetMode = item.subsetMode || config.subsetMode || "split";
-    const shouldReslice = needsReslice(item.file, subDestDir, subsetMode);
+    const shouldReslice = needsReslice(
+      item.file,
+      subDestDir,
+      subsetMode,
+      item.fontFamily,
+    );
     const processDestDir = shouldReslice
       ? createResliceTempDir(subDestDir)
       : subDestDir;

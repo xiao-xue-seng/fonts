@@ -115,9 +115,10 @@ ${TW_ALIGNED_COMMON_DETAILS}
 「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
 
 ${TW_ALIGNED_COMMON_DETAILS}`,
+    subsetMode: "single",
     file: "./temp/ttf-to-next/TW-Kai-Aligned-Punct.ttf",
   },
-  // 全字庫的標點應該都是一樣的，所以不需要另外製作宋體標點。
+  // 全字庫的標點字形應該都是一樣的，所以不需要另外製作宋體標點。
 
   {
     name: "chill-huo-fangsong",
@@ -229,5 +230,38 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "朱雀仿宋 之切片化 WebFont",
     details: getBasicDetails("朱雀仿宋(v.0.212)"),
     file: "./temp/ttf-to-next/ZhuqueFangsong-Regular.ttf",
+  },
+
+  {
+    name: "noto-serif-sc-punct",
+    title: "Noto Serif SC Punct (Noto-宋體-簡體-標點)",
+    version: "1.0.0",
+    license: "OFL-1.1",
+    includeLocal: false, // 標點刻意不用本地字型
+    fontFamily: "Noto Serif SC Punct",
+    genericFamily: "serif",
+    description: "Noto Serif SC 標點符號部分之切片化 WebFont",
+    details: `${getBasicDetails("Noto Serif SC 標點符號部分")}
+
+適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
+`,
+    subsetMode: "single",
+    file: "./temp/ttf-to-next/Noto-Serif-SC-Punct.ttf",
+  },
+  {
+    name: "noto-serif-tc-punct",
+    title: "Noto Serif TC Punct (Noto-宋體-繁體-標點)",
+    version: "1.0.0",
+    license: "OFL-1.1",
+    includeLocal: false, // 標點刻意不用本地字型
+    fontFamily: "Noto Serif TC Punct",
+    genericFamily: "serif",
+    description: "Noto Serif TC 標點符號部分之切片化 WebFont",
+    details: `${getBasicDetails("Noto Serif TC 標點符號部分")}
+
+適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
+`,
+    subsetMode: "single",
+    file: "./temp/ttf-to-next/Noto-Serif-TC-Punct.ttf",
   },
 ];

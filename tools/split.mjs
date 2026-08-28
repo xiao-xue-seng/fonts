@@ -40,6 +40,11 @@ export function toKebabCase(str) {
     .toLowerCase();
 }
 
+function extractFontFamily(cssContent) {
+  const match = cssContent.match(/font-family:\s*["']?([^;"'\r\n]+)["']?/i);
+  return match ? match[1].trim() : null;
+}
+
 function getFontCodepoints(filePath) {
   const buffer = fs.readFileSync(filePath);
   const view = new DataView(
@@ -190,6 +195,12 @@ export async function processFont(filePath, options = {}) {
 
   // 檢查輸出檔案 (result.css) 是否存在且較新
   if (fs.existsSync(resultCssPath)) {
+    let hasMatchingFontFamily = true;
+    if (fontFamily) {
+      const currentCss = fs.readFileSync(resultCssPath, "utf-8");
+      hasMatchingFontFamily = extractFontFamily(currentCss) === fontFamily;
+    }
+
     const fontStat = fs.statSync(filePath);
     const cssStat = fs.statSync(resultCssPath);
     let cachedMode = "split";
@@ -208,6 +219,7 @@ export async function processFont(filePath, options = {}) {
     const hasExpectedOutput = subsetMode !== "single" || woff2Count === 1;
     if (
       cssStat.mtimeMs >= fontStat.mtimeMs &&
+      hasMatchingFontFamily &&
       cachedMode === subsetMode &&
       hasExpectedOutput
     ) {
