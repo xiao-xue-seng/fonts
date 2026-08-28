@@ -13,9 +13,12 @@
 """
 
 import os
+import json
 import sys
 import time
 from typing import Dict, List
+
+from fontTools.ttLib import TTFont, TTLibError
 
 # 確保專案根目錄在 sys.path 中以利載入 tools.utils 模組
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -65,6 +68,51 @@ SUBSET_RULES = [
 
 # 這些標點原本就已置中，不需要再調整。
 EXCLUDE_UNICODE_RANGES = "FE52,FE54,FE55,FF1A,FF1B"
+
+
+def has_matching_transform_metadata(
+    input_font_path: str,
+    output_font_path: str,
+    scale_factor: float,
+    dy: int,
+    decompose: bool,
+    version: str,
+    unicode_ranges: object,
+    exclude_unicode_ranges: object,
+) -> bool:
+    """判斷輸出字型是否已使用相同的變形參數。"""
+    if not os.path.exists(output_font_path):
+        return False
+
+    try:
+        with TTFont(input_font_path, lazy=True) as input_font:
+            upm = input_font["head"].unitsPerEm
+
+        with TTFont(output_font_path, lazy=True) as output_font:
+            meta_table = output_font.get("meta")
+            if meta_table is None or "xfrm" not in meta_table.data:
+                return False
+            metadata = json.loads(meta_table.data["xfrm"].decode("utf-8"))
+    except (
+        OSError,
+        KeyError,
+        TypeError,
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+        TTLibError,
+    ):
+        return False
+
+    expected = {
+        "scale_factor": scale_factor,
+        "dy": dy,
+        "upm": upm,
+        "decompose": decompose,
+        "version": version,
+        "unicode_ranges": unicode_ranges,
+        "exclude_unicode_ranges": exclude_unicode_ranges,
+    }
+    return all(metadata.get(key) == value for key, value in expected.items())
 
 def generate_tasks() -> List[Dict]:
     """
@@ -172,6 +220,20 @@ def run_batch():
 
         if not os.path.exists(in_path):
             print(f"     ⏩ 來源檔案不存在，跳過此項。")
+            skip_count += 1
+            continue
+
+        if has_matching_transform_metadata(
+            input_font_path=in_path,
+            output_font_path=out_path,
+            scale_factor=scale_factor,
+            dy=dy,
+            decompose=True,
+            version=version,
+            unicode_ranges=None,
+            exclude_unicode_ranges=EXCLUDE_UNICODE_RANGES,
+        ):
+            print("     ⏩ 輸出檔案已存在且變形參數相同，跳過此項。")
             skip_count += 1
             continue
 
