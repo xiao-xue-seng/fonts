@@ -445,6 +445,9 @@ export async function main() {
   console.log(
     `📊 統計結果: 成功 ${successCount} 個, 略過 ${skippedCount} 個, 失敗 ${failCount} 個 (共 ${targetConfigs.length} 個)`,
   );
+  if (skippedCount > 0) {
+    console.log("略過者，仍會更新 package.json 與 README.md。");
+  }
   console.log(`========================================`);
 }
 
