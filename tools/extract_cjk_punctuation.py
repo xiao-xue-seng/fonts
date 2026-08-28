@@ -24,9 +24,7 @@ from tools.utils.subset_font import subset_font
 FONTS_TO_PROCESS = [
     {
         "name": "Noto Serif SC 標點",
-        "input": os.path.join(
-            PROJECT_ROOT, "temp", "ttf-raw", "NotoSerifCJKsc-VF.otf"
-        ),
+        "input": os.path.join(PROJECT_ROOT, "temp", "ttf-raw", "NotoSerifCJKsc-VF.otf"),
         "output": os.path.join(
             PROJECT_ROOT, "temp", "ttf-to-next", "Noto-Serif-SC-Punct.ttf"
         ),
@@ -36,9 +34,7 @@ FONTS_TO_PROCESS = [
     },
     {
         "name": "Noto Serif TC 標點",
-        "input": os.path.join(
-            PROJECT_ROOT, "temp", "ttf-raw", "NotoSerifCJKtc-VF.otf"
-        ),
+        "input": os.path.join(PROJECT_ROOT, "temp", "ttf-raw", "NotoSerifCJKtc-VF.otf"),
         "output": os.path.join(
             PROJECT_ROOT, "temp", "ttf-to-next", "Noto-Serif-TC-Punct.ttf"
         ),
@@ -132,7 +128,9 @@ def process_font(font_cfg, punct_unicode_range_str):
 def main():
     print("1. 正在分析 Unicode 區塊並篩選中文標點字碼...")
     punct_unicodes = sorted(get_punctuation_unicodes())
-    punct_unicode_range_str = ",".join(f"U+{codepoint:04X}" for codepoint in punct_unicodes)
+    punct_unicode_range_str = ",".join(
+        f"U+{codepoint:04X}" for codepoint in punct_unicodes
+    )
     print(f"   -> 共鎖定 {len(punct_unicodes)} 個標點/全形空白字碼。")
 
     for font_cfg in FONTS_TO_PROCESS:

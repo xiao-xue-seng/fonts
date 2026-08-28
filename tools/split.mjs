@@ -107,7 +107,7 @@ export async function processFont(filePath, options = {}) {
     const fontStat = fs.statSync(filePath);
     const cssStat = fs.statSync(resultCssPath);
     if (cssStat.mtimeMs >= fontStat.mtimeMs) {
-      console.log(`\n⏭️  略過 (輸出 result.css 已是最新): ${filename}`);
+      console.log(`\n⏭️  略過 (輸出的 result.css 已是最新): ${filename}`);
       return { status: "skipped", destDir, resultCssPath };
     }
   }
