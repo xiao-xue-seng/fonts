@@ -30,9 +30,12 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 try:
-    from tools.utils.font_metadata import update_font_metadata
+    from tools.utils.font_metadata import (
+        update_font_metadata,
+        update_font_transform_metadata,
+    )
 except ImportError:
-    from font_metadata import update_font_metadata
+    from font_metadata import update_font_metadata, update_font_transform_metadata
 
 # ==========================================
 # 預設常數設定
@@ -192,6 +195,7 @@ def transform_font(
     unicode_ranges: Optional[Union[str, Iterable[str]]] = None,
     exclude_unicode_ranges: Optional[Union[str, Iterable[str]]] = None,
     verbose: bool = True,
+    version: Optional[str] = None,
 ) -> bool:
     """
     執行單一字型檔案之座標變換、縮放、輪廓攤平與內部名稱更新。
@@ -202,6 +206,7 @@ def transform_font(
     :param font_name_zh: 新中文字型家族名稱 (例如: "全字齊楷")
     :param font_style_en: 新英文字型樣式名稱 (預設: "Regular")
     :param font_style_zh: 新中文字型樣式名稱 (預設: "標準")
+    :param version: 衍生字型版本號；未指定時保留來源版本
     :param scale_factor: 尺寸縮放比例係數 (預設: 1.0)
     :param dy: 直接指定垂直平移量 (優先權最高)
     :param dy_presets: UPM 平移量對應物件/字典 (例: {1024: 112, 1000: 109, 2048: 224})
@@ -370,6 +375,18 @@ def transform_font(
         en_style=font_style_en,
         zh_name=font_name_zh,
         zh_style=font_style_zh,
+        version=version,
+    )
+    update_font_transform_metadata(
+        font=font,
+        scale_factor=scale_factor,
+        dy=actual_dy,
+        upm=upm,
+        decompose=decompose,
+        version=version,
+        source_font_filename=os.path.basename(input_font_path),
+        unicode_ranges=unicode_ranges,
+        exclude_unicode_ranges=exclude_unicode_ranges,
     )
 
     # 儲存新字型
@@ -416,6 +433,9 @@ def main():
     )
     parser.add_argument(
         "--style-zh", default=DEFAULT_STYLE_ZH, help="新中文字型樣式名稱"
+    )
+    parser.add_argument(
+        "--version", default=None, help="衍生字型版本號；未指定時保留來源版本"
     )
     parser.add_argument(
         "--scale",

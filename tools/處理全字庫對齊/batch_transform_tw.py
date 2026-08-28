@@ -41,6 +41,7 @@ PROCESS_SUNG = True  # 是否處理 全字庫宋體 (TW-Sung)
 # ==============================================================================
 KAI_BASE_NAME_EN = "TW-Kai-Aligned"  # 新英文字型家族名稱基礎
 KAI_BASE_NAME_ZH = "全字齊楷"  # 新中文字型家族名稱基礎
+KAI_VERSION = "1.0.0"  # 楷體衍生字型版本號
 KAI_SCALE_FACTOR = 1.006  # 縮放比例係數
 KAI_DY = 90  # UPM 1024 向上平移量
 
@@ -49,6 +50,7 @@ KAI_DY = 90  # UPM 1024 向上平移量
 # ==============================================================================
 SUNG_BASE_NAME_EN = "TW-Sung-Aligned"  # 新英文字型家族名稱基礎
 SUNG_BASE_NAME_ZH = "全字齊宋"  # 新中文字型家族名稱基礎
+SUNG_VERSION = "1.0.0"  # 宋體衍生字型版本號
 SUNG_SCALE_FACTOR = 1.000  # 縮放比例係數
 SUNG_DY = 90  # UPM 1024 向上平移量
 
@@ -79,6 +81,7 @@ def generate_tasks() -> List[Dict]:
                     "filename": f"TW-Kai{rule['suffix_file']}",
                     "name_en": f"{KAI_BASE_NAME_EN}{rule['suffix_en']}",
                     "name_zh": f"{KAI_BASE_NAME_ZH}{rule['suffix_zh']}",
+                    "version": KAI_VERSION,
                     "scale_factor": KAI_SCALE_FACTOR,
                     "dy": KAI_DY,
                 }
@@ -93,6 +96,7 @@ def generate_tasks() -> List[Dict]:
                     "filename": f"TW-Sung{rule['suffix_file']}",
                     "name_en": f"{SUNG_BASE_NAME_EN}{rule['suffix_en']}",
                     "name_zh": f"{SUNG_BASE_NAME_ZH}{rule['suffix_zh']}",
+                    "version": SUNG_VERSION,
                     "scale_factor": SUNG_SCALE_FACTOR,
                     "dy": SUNG_DY,
                 }
@@ -112,12 +116,12 @@ def run_batch():
     print(f"處理楷體: {'啟用' if PROCESS_KAI else '停用'}")
     if PROCESS_KAI:
         print(
-            f"  └ 楷體名稱: {KAI_BASE_NAME_EN} / {KAI_BASE_NAME_ZH} | Scale: {KAI_SCALE_FACTOR:.3f} | dy: {KAI_DY}"
+            f"  └ 楷體名稱: {KAI_BASE_NAME_EN} / {KAI_BASE_NAME_ZH} | Version: {KAI_VERSION} | Scale: {KAI_SCALE_FACTOR:.3f} | dy: {KAI_DY}"
         )
     print(f"處理宋體: {'啟用' if PROCESS_SUNG else '停用'}")
     if PROCESS_SUNG:
         print(
-            f"  └ 宋體名稱: {SUNG_BASE_NAME_EN} / {SUNG_BASE_NAME_ZH} | Scale: {SUNG_SCALE_FACTOR:.3f} | dy: {SUNG_DY}"
+            f"  └ 宋體名稱: {SUNG_BASE_NAME_EN} / {SUNG_BASE_NAME_ZH} | Version: {SUNG_VERSION} | Scale: {SUNG_SCALE_FACTOR:.3f} | dy: {SUNG_DY}"
         )
     print(f"待處理字型數: {len(tasks)}")
     print("=" * 70)
@@ -152,6 +156,7 @@ def run_batch():
         name_en = task["name_en"]
         name_zh = task["name_zh"]
         font_type = task["font_type"]
+        version = task["version"]
         scale_factor = task["scale_factor"]
         dy = task["dy"]
 
@@ -163,7 +168,7 @@ def run_batch():
             f"\n[{idx}/{len(tasks)}] 正在處理 [{font_type}]：{filename} -> {out_filename}"
         )
         print(f"     名稱：{name_en} / {name_zh}")
-        print(f"     參數：scale = {scale_factor:.3f}, dy = {dy:+d}")
+        print(f"     版本：{version} | 參數：scale = {scale_factor:.3f}, dy = {dy:+d}")
 
         if not os.path.exists(in_path):
             print(f"     ⏩ 來源檔案不存在，跳過此項。")
@@ -182,6 +187,7 @@ def run_batch():
             verbose=True,
             # unicode_ranges="",
             exclude_unicode_ranges=EXCLUDE_UNICODE_RANGES,
+            version=version,
         )
 
         item_elapsed = time.time() - item_start
