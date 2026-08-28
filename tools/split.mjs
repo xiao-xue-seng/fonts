@@ -42,7 +42,11 @@ export function toKebabCase(str) {
 
 function getFontCodepoints(filePath) {
   const buffer = fs.readFileSync(filePath);
-  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+  const view = new DataView(
+    buffer.buffer,
+    buffer.byteOffset,
+    buffer.byteLength,
+  );
   const numTables = view.getUint16(4);
   let cmapOffset = 0;
   let cmapLength = 0;
@@ -72,12 +76,21 @@ function getFontCodepoints(filePath) {
     const encodingId = view.getUint16(recordOffset + 2);
     const subtableOffset = cmapOffset + view.getUint32(recordOffset + 4);
     const format = view.getUint16(subtableOffset);
-    const priority = format === 12 || format === 13
-      ? (platformId === 3 && encodingId === 10 ? 3 : 2)
-      : format === 4
-        ? (platformId === 3 ? 1 : 0)
-        : -1;
-    if (subtableOffset < cmapEnd && priority >= 0 && (!bestSubtable || priority > bestSubtable.priority)) {
+    const priority =
+      format === 12 || format === 13
+        ? platformId === 3 && encodingId === 10
+          ? 3
+          : 2
+        : format === 4
+          ? platformId === 3
+            ? 1
+            : 0
+          : -1;
+    if (
+      subtableOffset < cmapEnd &&
+      priority >= 0 &&
+      (!bestSubtable || priority > bestSubtable.priority)
+    ) {
       bestSubtable = { offset: subtableOffset, format, priority };
     }
   }
@@ -91,7 +104,8 @@ function getFontCodepoints(filePath) {
       const groupOffset = offset + 16 + index * 12;
       const start = view.getUint32(groupOffset);
       const end = view.getUint32(groupOffset + 4);
-      for (let codepoint = start; codepoint <= end; codepoint++) codepoints.add(codepoint);
+      for (let codepoint = start; codepoint <= end; codepoint++)
+        codepoints.add(codepoint);
     }
   } else {
     const segmentCount = view.getUint16(offset + 6) / 2;
@@ -168,7 +182,9 @@ export async function processFont(filePath, options = {}) {
   const filename = path.basename(filePath);
   const rawFontName = path.parse(filename).name;
   const kebabName = toKebabCase(rawFontName);
-  const destDir = outDir ? path.resolve(outDir) : path.join(OUTPUT_BASE, kebabName);
+  const destDir = outDir
+    ? path.resolve(outDir)
+    : path.join(OUTPUT_BASE, kebabName);
   const resultCssPath = path.join(destDir, "result.css");
   const buildOptionsPath = path.join(destDir, ".build-options.json");
 
@@ -179,15 +195,16 @@ export async function processFont(filePath, options = {}) {
     let cachedMode = "split";
     if (fs.existsSync(buildOptionsPath)) {
       try {
-        cachedMode = JSON.parse(fs.readFileSync(buildOptionsPath, "utf-8")).subsetMode;
+        cachedMode = JSON.parse(
+          fs.readFileSync(buildOptionsPath, "utf-8"),
+        ).subsetMode;
       } catch {
         cachedMode = null;
       }
     }
     const woff2Count = fs
       .readdirSync(destDir)
-      .filter((entry) => entry.toLowerCase().endsWith(".woff2"))
-      .length;
+      .filter((entry) => entry.toLowerCase().endsWith(".woff2")).length;
     const hasExpectedOutput = subsetMode !== "single" || woff2Count === 1;
     if (
       cssStat.mtimeMs >= fontStat.mtimeMs &&
@@ -260,11 +277,13 @@ export async function processFont(filePath, options = {}) {
       }
     }
 
-    fs.writeFileSync(
-      buildOptionsPath,
-      JSON.stringify({ subsetMode }, null, 2),
-      "utf-8",
-    );
+    if (subsetMode === "single") {
+      fs.writeFileSync(
+        buildOptionsPath,
+        JSON.stringify({ subsetMode }, null, 2),
+        "utf-8",
+      );
+    }
 
     // 寫入發布所需的設定檔 (若啟用)
     if (pkgFiles) {
@@ -288,14 +307,14 @@ export async function main() {
   // 解析命令列參數 (Node 18.3+ 內建支援)
   const { values } = parseArgs({
     options: {
-      file: { type: "string", short: "f" },
-      dir: { type: "string", short: "d" },
-      outDir: { type: "string", short: "o" },
-      license: { type: "string", short: "l", default: "OFL-1.1" },
-      version: { type: "string", short: "v", default: "1.0.0" },
-      local: { type: "boolean", default: true },
+      "file": { type: "string", short: "f" },
+      "dir": { type: "string", short: "d" },
+      "outDir": { type: "string", short: "o" },
+      "license": { type: "string", short: "l", default: "OFL-1.1" },
+      "version": { type: "string", short: "v", default: "1.0.0" },
+      "local": { type: "boolean", default: true },
       "no-local": { type: "boolean" },
-      pkgFiles: { type: "boolean", default: true },
+      "pkgFiles": { type: "boolean", default: true },
       "no-pkg": { type: "boolean" },
       "no-pkg-files": { type: "boolean" },
     },
@@ -361,7 +380,9 @@ export async function main() {
     );
     console.log(`  指定字型資料夾: node split.mjs -d ./raw-fonts`);
     console.log(`\n選用參數：`);
-    console.log(`  -o, --outDir <path>     自訂切片輸出目標目錄 (預設: .dist/<font-name>)`);
+    console.log(
+      `  -o, --outDir <path>     自訂切片輸出目標目錄 (預設: .dist/<font-name>)`,
+    );
     console.log(`  -l, --license <name>    指定授權條款 (預設: OFL-1.1)`);
     console.log(`  -v, --version <semver>  指定套件版本號 (預設: 1.0.0)`);
     console.log(
@@ -405,6 +426,9 @@ export async function main() {
 }
 
 // 若直接以 CLI 執行此檔案則啟動 main()
-if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href
+) {
   main();
 }
