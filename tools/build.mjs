@@ -138,6 +138,7 @@ function writeSingleReadme(destDir, config, fontFamily) {
   const pkgName = toKebabCase(config.name);
   const genericFamily = config.genericFamily || "sans-serif";
   const detailsSection = config.details ? `\n${config.details.trim()}\n` : "";
+  const version = config.version || "latest";
 
   const content = `# @${NPM_SCOPE}/${pkgName}
 
@@ -146,7 +147,7 @@ ${detailsSection}
 ## 引用方式 (jsDelivr CDN)
 
 \`\`\`html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@latest/result.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/result.css" />
 \`\`\`
 
 ## CSS 使用範例
@@ -167,12 +168,13 @@ function writeGroupReadme(destDir, config, fontFamily) {
   const pkgName = toKebabCase(config.name);
   const genericFamily = config.genericFamily || "sans-serif";
   const detailsSection = config.details ? `\n${config.details.trim()}\n` : "";
+  const version = config.version || "latest";
   const items = config.items || [];
 
   const subsetListMd = items
     .map(
       (it) =>
-        `- **${it.name || it.subDir}**: \`https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@latest/${it.subDir}/result.css\``,
+        `- **${it.name || it.subDir}**: \`https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${it.subDir}/result.css\``,
     )
     .join("\n");
 
@@ -187,7 +189,7 @@ ${detailsSection}
 ### 1. 載入完整字集 (所有子集整合版)
 
 \`\`\`html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@latest/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/index.css" />
 \`\`\`
 
 ### 2. 按需載入個別子集
@@ -196,7 +198,7 @@ ${subsetListMd}
 
 \`\`\`html
 <!-- 範例：僅載入 ${items[0]?.name || firstSubDir} 子集 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@latest/${firstSubDir}/result.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${firstSubDir}/result.css" />
 \`\`\`
 
 ## CSS 使用範例
