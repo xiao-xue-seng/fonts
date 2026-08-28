@@ -40,6 +40,74 @@ export function toKebabCase(str) {
     .toLowerCase();
 }
 
+function getFontCodepoints(filePath) {
+  const buffer = fs.readFileSync(filePath);
+  const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+  const numTables = view.getUint16(4);
+  let cmapOffset = 0;
+  let cmapLength = 0;
+
+  for (let index = 0; index < numTables; index++) {
+    const recordOffset = 12 + index * 16;
+    const tag = String.fromCharCode(
+      view.getUint8(recordOffset),
+      view.getUint8(recordOffset + 1),
+      view.getUint8(recordOffset + 2),
+      view.getUint8(recordOffset + 3),
+    );
+    if (tag === "cmap") {
+      cmapOffset = view.getUint32(recordOffset + 8);
+      cmapLength = view.getUint32(recordOffset + 12);
+      break;
+    }
+  }
+  if (!cmapOffset || !cmapLength) throw new Error("字型缺少有效的 cmap 表");
+
+  const cmapEnd = cmapOffset + cmapLength;
+  const numSubtables = view.getUint16(cmapOffset + 2);
+  let bestSubtable = null;
+  for (let index = 0; index < numSubtables; index++) {
+    const recordOffset = cmapOffset + 4 + index * 8;
+    const platformId = view.getUint16(recordOffset);
+    const encodingId = view.getUint16(recordOffset + 2);
+    const subtableOffset = cmapOffset + view.getUint32(recordOffset + 4);
+    const format = view.getUint16(subtableOffset);
+    const priority = format === 12 || format === 13
+      ? (platformId === 3 && encodingId === 10 ? 3 : 2)
+      : format === 4
+        ? (platformId === 3 ? 1 : 0)
+        : -1;
+    if (subtableOffset < cmapEnd && priority >= 0 && (!bestSubtable || priority > bestSubtable.priority)) {
+      bestSubtable = { offset: subtableOffset, format, priority };
+    }
+  }
+  if (!bestSubtable) throw new Error("字型缺少支援的 cmap 格式");
+
+  const codepoints = new Set();
+  const offset = bestSubtable.offset;
+  if (bestSubtable.format === 12 || bestSubtable.format === 13) {
+    const groupCount = view.getUint32(offset + 12);
+    for (let index = 0; index < groupCount; index++) {
+      const groupOffset = offset + 16 + index * 12;
+      const start = view.getUint32(groupOffset);
+      const end = view.getUint32(groupOffset + 4);
+      for (let codepoint = start; codepoint <= end; codepoint++) codepoints.add(codepoint);
+    }
+  } else {
+    const segmentCount = view.getUint16(offset + 6) / 2;
+    const endCodeOffset = offset + 14;
+    const startCodeOffset = endCodeOffset + segmentCount * 2 + 2;
+    for (let segment = 0; segment < segmentCount; segment++) {
+      const start = view.getUint16(startCodeOffset + segment * 2);
+      const end = view.getUint16(endCodeOffset + segment * 2);
+      for (let codepoint = start; codepoint <= end; codepoint++) {
+        if (codepoint !== 0xffff) codepoints.add(codepoint);
+      }
+    }
+  }
+  return [...codepoints].sort((left, right) => left - right);
+}
+
 // 自動生成 package.json 與 README.md
 export function generatePackageFiles(
   destDir,
@@ -94,6 +162,7 @@ export async function processFont(filePath, options = {}) {
     outDir = null,
     pkgFiles = true,
     fontFamily = "",
+    subsetMode = "split",
   } = options;
 
   const filename = path.basename(filePath);
@@ -101,12 +170,30 @@ export async function processFont(filePath, options = {}) {
   const kebabName = toKebabCase(rawFontName);
   const destDir = outDir ? path.resolve(outDir) : path.join(OUTPUT_BASE, kebabName);
   const resultCssPath = path.join(destDir, "result.css");
+  const buildOptionsPath = path.join(destDir, ".build-options.json");
 
   // 檢查輸出檔案 (result.css) 是否存在且較新
   if (fs.existsSync(resultCssPath)) {
     const fontStat = fs.statSync(filePath);
     const cssStat = fs.statSync(resultCssPath);
-    if (cssStat.mtimeMs >= fontStat.mtimeMs) {
+    let cachedMode = "split";
+    if (fs.existsSync(buildOptionsPath)) {
+      try {
+        cachedMode = JSON.parse(fs.readFileSync(buildOptionsPath, "utf-8")).subsetMode;
+      } catch {
+        cachedMode = null;
+      }
+    }
+    const woff2Count = fs
+      .readdirSync(destDir)
+      .filter((entry) => entry.toLowerCase().endsWith(".woff2"))
+      .length;
+    const hasExpectedOutput = subsetMode !== "single" || woff2Count === 1;
+    if (
+      cssStat.mtimeMs >= fontStat.mtimeMs &&
+      cachedMode === subsetMode &&
+      hasExpectedOutput
+    ) {
       console.log(`\n⏭️  略過 (輸出的 result.css 已是最新): ${filename}`);
       return { status: "skipped", destDir, resultCssPath };
     }
@@ -131,7 +218,7 @@ export async function processFont(filePath, options = {}) {
 
   try {
     // 執行切片
-    await fontSplit({
+    const splitOptions = {
       input: filePath,
       outDir: destDir,
       ...(fontFamily ? { css: { fontFamily } } : {}),
@@ -140,7 +227,17 @@ export async function processFont(filePath, options = {}) {
       testHTML: false, // 兼容不同版本的命名大小寫
       reporter: false, // 關閉生成 reporter.bin 及 index.proto (分析報告)
       previewImage: null, // 確保不額外產生 preview.svg 預覽圖
-    });
+    };
+    if (subsetMode === "single") {
+      for (const entry of fs.readdirSync(destDir)) {
+        if (entry.toLowerCase().endsWith(".woff2")) {
+          fs.unlinkSync(path.join(destDir, entry));
+        }
+      }
+      splitOptions.subsets = [getFontCodepoints(filePath)];
+      splitOptions.autoSubset = false;
+    }
+    await fontSplit(splitOptions);
 
     // 若設定不包含 local()，自輸出的 result.css 中移除 local(...)
     if (!includeLocal && fs.existsSync(resultCssPath)) {
@@ -162,6 +259,12 @@ export async function processFont(filePath, options = {}) {
         fs.unlinkSync(target);
       }
     }
+
+    fs.writeFileSync(
+      buildOptionsPath,
+      JSON.stringify({ subsetMode }, null, 2),
+      "utf-8",
+    );
 
     // 寫入發布所需的設定檔 (若啟用)
     if (pkgFiles) {

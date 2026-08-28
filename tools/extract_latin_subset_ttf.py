@@ -1,5 +1,7 @@
 """
 從預先下載的 google 字型 ttf 檔案中，擷取 拉丁字子集 ttf
+
+輸出的 ttf 供"切片化"及"app端最佳化"作為輸入。
 """
 
 import json

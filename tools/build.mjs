@@ -73,6 +73,25 @@ export function rewriteCssUrls(cssContent, subDir) {
   );
 }
 
+function ensureNpmIgnoreBuildOptions(destDir) {
+  const npmIgnorePath = path.join(destDir, ".npmignore");
+  const requiredRules = [".build-options.json", "**/.build-options.json"];
+  let existingContent = fs.existsSync(npmIgnorePath)
+    ? fs.readFileSync(npmIgnorePath, "utf-8")
+    : "";
+  const existingRules = new Set(existingContent.split(/\r?\n/).map((line) => line.trim()));
+  const missingRules = requiredRules.filter((rule) => !existingRules.has(rule));
+
+  if (missingRules.length > 0) {
+    const separator = existingContent && !existingContent.endsWith("\n") ? "\n" : "";
+    fs.writeFileSync(
+      npmIgnorePath,
+      existingContent + separator + missingRules.join("\n") + "\n",
+      "utf-8",
+    );
+  }
+}
+
 /**
  * 複製原始授權檔案或目錄至輸出目錄
  */
@@ -237,6 +256,7 @@ async function buildSingleFont(config) {
     license: config.license,
     version: config.version,
     fontFamily: config.fontFamily,
+    subsetMode: config.subsetMode,
     includeLocal: config.includeLocal !== false,
     outDir: destDir,
     pkgFiles: false,
@@ -244,6 +264,10 @@ async function buildSingleFont(config) {
 
   if (result.status === "error") {
     return { status: "error", name: config.name };
+  }
+
+  if (config.subsetMode === "single") {
+    ensureNpmIgnoreBuildOptions(destDir);
   }
 
   // 從產出的 result.css 中解析 fontFamily
@@ -277,6 +301,13 @@ async function buildFontGroup(config) {
     fs.mkdirSync(groupDestDir, { recursive: true });
   }
 
+  if (
+    config.subsetMode === "single" ||
+    config.items.some((item) => item.subsetMode === "single")
+  ) {
+    ensureNpmIgnoreBuildOptions(groupDestDir);
+  }
+
   console.log(
     `\n📦 開始處理群組套件: [${config.name}] (包含 ${config.items.length} 個子集)`,
   );
@@ -300,6 +331,7 @@ async function buildFontGroup(config) {
       license: config.license,
       version: config.version,
       fontFamily: item.fontFamily,
+      subsetMode: item.subsetMode || config.subsetMode,
       includeLocal: config.includeLocal !== false,
       outDir: subDestDir,
       pkgFiles: false,
@@ -308,6 +340,10 @@ async function buildFontGroup(config) {
     if (result.status === "error") {
       hasError = true;
       continue;
+    }
+
+    if ((item.subsetMode || config.subsetMode) === "single") {
+      ensureNpmIgnoreBuildOptions(subDestDir);
     }
 
     if (result.status === "success") {

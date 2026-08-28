@@ -15,6 +15,7 @@
  - details: README 詳細說明 (支援 Markdown，插入於 description 之後)
  - file: 單一字型檔案路徑 (單一字型套件使用)
  - items: 子集檔案清單陣列 (群組字型套件使用)
+ - subsetMode: (選填) 子集模式，"single" 表示僅保留單一子集輸出，"split" 表示保留多個子集輸出 (預設: "split")
 */
 
 const TW_ALIGNED_COMMON_DETAILS = `全字庫傳承自早期 Windows 系統的字型設計規範，其字型內部座標系（EM Square）將字身位置刻意偏下繪製。全字庫常是缺字備援的首選字型，當瀏覽器或排版軟體將不同字型的基線（Baseline）對齊於同條水平線時，全字庫字體會顯得比「文鼎楷體/宋體」等現代標準字型矮上一截，且無法單純透過 CSS 的 @font-face 參數進行垂直平移。
@@ -180,6 +181,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 適合用於替換 Noto Sans TC 的拉丁字元，增加排版的多樣性、美觀性。
 `,
     keywords: ["font", "webfont"],
+    subsetMode: "single",
     file: "./temp/ttf-to-next/InstrumentSans-Subset.ttf",
   },
 
