@@ -225,6 +225,7 @@ async function buildSingleFont(config) {
   const result = await processFont(config.file, {
     license: config.license,
     version: config.version,
+    fontFamily: config.fontFamily,
     includeLocal: config.includeLocal !== false,
     outDir: destDir,
     pkgFiles: false,
@@ -287,6 +288,7 @@ async function buildFontGroup(config) {
     const result = await processFont(item.file, {
       license: config.license,
       version: config.version,
+      fontFamily: item.fontFamily,
       includeLocal: config.includeLocal !== false,
       outDir: subDestDir,
       pkgFiles: false,
