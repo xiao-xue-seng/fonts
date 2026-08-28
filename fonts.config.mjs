@@ -196,7 +196,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 
 此專案從 ukai.ttc (0.1.20080216) 中擷取出 ukai-tw.ttf 再經切片化處理。並未修改字形內容。
 `,
-    file: "./temp/ttf-to-next/ukai-tw.ttf",
+    file: "./temp/ttf-to-next/AR-PL-UKai-TW.ttf",
   },
 
   {
@@ -214,7 +214,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 
 註：此字體原本的「，：；！？」就是靠左下小型。若有需要，可用「全字齊楷 標點 (TW-Kai-Aligned-Punct)」於 CSS font-family 中，前置替換為置中標點。
 `,
-    file: "./temp/ttf-to-next/uming-tw.ttf",
+    file: "./temp/ttf-to-next/AR-PL-UMing-TW.ttf",
   },
 
   {
