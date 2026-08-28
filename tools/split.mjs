@@ -93,6 +93,7 @@ export async function processFont(filePath, options = {}) {
     includeLocal = true,
     outDir = null,
     pkgFiles = true,
+    fontFamily = "",
   } = options;
 
   const filename = path.basename(filePath);
@@ -133,9 +134,7 @@ export async function processFont(filePath, options = {}) {
     await fontSplit({
       input: filePath,
       outDir: destDir,
-      css: {
-        fontFamily: rawFontName, // 保留原字型名稱作為 CSS font-family
-      },
+      ...(fontFamily ? { css: { fontFamily } } : {}),
       // ─── 關閉不需要的額外檔案 ───
       testHtml: false, // 關閉生成 index.html (測試頁面)
       testHTML: false, // 兼容不同版本的命名大小寫
