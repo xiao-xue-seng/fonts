@@ -33,7 +33,7 @@ import {
   toKebabCase,
 } from "./split.mjs";
 import {
-  ensureNpmIgnoreBuildOptions,
+  BUILD_OPTIONS_SCHEMA_VERSION,
   extractFontFamily,
 } from "./utils/font-output.mjs";
 
@@ -130,6 +130,12 @@ function writePackageJson(destDir, config, mainCssFile) {
     license: config.license || "OFL-1.1",
     publishConfig: {
       access: "public",
+    },
+    buildOptions: {
+      schemaVersion: BUILD_OPTIONS_SCHEMA_VERSION,
+      includeLocal: config.includeLocal !== false,
+      fontFamily: config.fontFamily || "",
+      subsetMode: config.subsetMode || "split",
     },
   };
 
@@ -278,7 +284,6 @@ async function buildFontGroup(config) {
   if (!fs.existsSync(groupDestDir)) {
     fs.mkdirSync(groupDestDir, { recursive: true });
   }
-  ensureNpmIgnoreBuildOptions(groupDestDir);
 
   console.log(
     `\n📦 開始處理群組套件: [${config.name}] (包含 ${config.items.length} 個子集)`,

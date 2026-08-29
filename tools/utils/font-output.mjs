@@ -9,28 +9,6 @@ export function extractFontFamily(cssContent, fallback = "") {
   return match ? match[1].trim() : fallback;
 }
 
-export function ensureNpmIgnoreBuildOptions(destDir) {
-  const npmIgnorePath = path.join(destDir, ".npmignore");
-  const requiredRules = [".build-options.json", "**/.build-options.json"];
-  const existingContent = fs.existsSync(npmIgnorePath)
-    ? fs.readFileSync(npmIgnorePath, "utf-8")
-    : "";
-  const existingRules = new Set(
-    existingContent.split(/\r?\n/).map((line) => line.trim()),
-  );
-  const missingRules = requiredRules.filter((rule) => !existingRules.has(rule));
-
-  if (missingRules.length > 0) {
-    const separator =
-      existingContent && !existingContent.endsWith("\n") ? "\n" : "";
-    fs.writeFileSync(
-      npmIgnorePath,
-      existingContent + separator + missingRules.join("\n") + "\n",
-      "utf-8",
-    );
-  }
-}
-
 export function createResliceTempDir(destDir) {
   const resolvedDestDir = path.resolve(destDir);
   fs.mkdirSync(path.dirname(resolvedDestDir), { recursive: true });

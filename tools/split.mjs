@@ -27,9 +27,10 @@ import { parseArgs } from "node:util";
 import {
   BUILD_OPTIONS_SCHEMA_VERSION,
   createResliceTempDir,
-  ensureNpmIgnoreBuildOptions,
   replaceOutputDirectory,
 } from "./utils/font-output.mjs";
+
+export { BUILD_OPTIONS_SCHEMA_VERSION } from "./utils/font-output.mjs";
 
 // ---------------------- 設定區域 ----------------------
 // 你的 npm 帳號名稱（發布 Scoped Package 時使用，例如 @xiao-xue-seng/chill-kai）
@@ -44,6 +45,44 @@ export function toKebabCase(str) {
     .replace(/[\s_]+/g, "-")
     .replace(/[^a-zA-Z0-9-]/g, "")
     .toLowerCase();
+}
+
+export function readPackageBuildOptions(destDir) {
+  const packageJsonPath = path.join(destDir, "package.json");
+  if (!fs.existsSync(packageJsonPath)) return null;
+
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+    const buildOptions = packageJson?.buildOptions;
+    if (!buildOptions || typeof buildOptions !== "object") return null;
+    return buildOptions;
+  } catch {
+    return null;
+  }
+}
+
+export function writePackageBuildOptions(destDir, buildOptions) {
+  const packageJsonPath = path.join(destDir, "package.json");
+  let packageJson = {};
+
+  if (fs.existsSync(packageJsonPath)) {
+    try {
+      packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+    } catch {
+      packageJson = {};
+    }
+  }
+
+  packageJson.buildOptions = {
+    schemaVersion: BUILD_OPTIONS_SCHEMA_VERSION,
+    ...buildOptions,
+  };
+
+  fs.writeFileSync(
+    packageJsonPath,
+    JSON.stringify(packageJson, null, 2),
+    "utf-8",
+  );
 }
 
 function getFontCodepoints(filePath) {
@@ -132,7 +171,11 @@ export function generatePackageFiles(
   destDir,
   pkgName,
   rawFontName,
-  { license = "OFL-1.1", version = "1.0.0" } = {},
+  {
+    license = "OFL-1.1",
+    version = "1.0.0",
+    buildOptions = null,
+  } = {},
 ) {
   const packageJson = {
     name: `@${NPM_SCOPE}/${pkgName}`,
@@ -145,6 +188,7 @@ export function generatePackageFiles(
     publishConfig: {
       access: "public", // Scoped package 必須設定 public 才能免費公開發布
     },
+    ...(buildOptions ? { buildOptions } : {}),
   };
 
   const readmeContent = `# @${NPM_SCOPE}/${pkgName}
@@ -191,7 +235,6 @@ export async function processFont(filePath, options = {}) {
     ? path.resolve(outDir)
     : path.join(OUTPUT_BASE, kebabName);
   const resultCssPath = path.join(destDir, "result.css");
-  const buildOptionsPath = path.join(destDir, ".build-options.json");
   const buildOptions = {
     schemaVersion: BUILD_OPTIONS_SCHEMA_VERSION,
     includeLocal,
@@ -201,14 +244,7 @@ export async function processFont(filePath, options = {}) {
 
   // 檢查輸出檔案 (result.css) 是否存在且較新
   if (fs.existsSync(resultCssPath)) {
-    let cachedOptions = null;
-    if (fs.existsSync(buildOptionsPath)) {
-      try {
-        cachedOptions = JSON.parse(fs.readFileSync(buildOptionsPath, "utf-8"));
-      } catch {
-        cachedOptions = null;
-      }
-    }
+    const cachedOptions = readPackageBuildOptions(destDir);
 
     const fontStat = fs.statSync(filePath);
     const cssStat = fs.statSync(resultCssPath);
@@ -241,10 +277,6 @@ export async function processFont(filePath, options = {}) {
   try {
     processDir = createResliceTempDir(destDir);
     const processResultCssPath = path.join(processDir, "result.css");
-    const processBuildOptionsPath = path.join(
-      processDir,
-      ".build-options.json",
-    );
 
     // 執行切片
     const splitOptions = {
@@ -285,18 +317,14 @@ export async function processFont(filePath, options = {}) {
       }
     }
 
-    fs.writeFileSync(
-      processBuildOptionsPath,
-      JSON.stringify(buildOptions, null, 2),
-      "utf-8",
-    );
-    ensureNpmIgnoreBuildOptions(processDir);
-
     if (pkgFiles) {
       generatePackageFiles(processDir, kebabName, rawFontName, {
         license,
         version,
+        buildOptions,
       });
+    } else {
+      writePackageBuildOptions(processDir, buildOptions);
     }
 
     replaceOutputDirectory(processDir, destDir);
