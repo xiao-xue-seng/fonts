@@ -24,6 +24,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import {
+  BUILD_OPTIONS_SCHEMA_VERSION,
+  createResliceTempDir,
+  ensureNpmIgnoreBuildOptions,
+  replaceOutputDirectory,
+} from "./utils/font-output.mjs";
 
 // ---------------------- 設定區域 ----------------------
 // 你的 npm 帳號名稱（發布 Scoped Package 時使用，例如 @xiao-xue-seng/chill-kai）
@@ -38,67 +44,6 @@ export function toKebabCase(str) {
     .replace(/[\s_]+/g, "-")
     .replace(/[^a-zA-Z0-9-]/g, "")
     .toLowerCase();
-}
-
-function extractFontFamily(cssContent) {
-  const match = cssContent.match(/font-family:\s*["']?([^;"'\r\n]+)["']?/i);
-  return match ? match[1].trim() : null;
-}
-
-export function ensureNpmIgnoreBuildOptions(destDir) {
-  const npmIgnorePath = path.join(destDir, ".npmignore");
-  const requiredRules = [".build-options.json", "**/.build-options.json"];
-  const existingContent = fs.existsSync(npmIgnorePath)
-    ? fs.readFileSync(npmIgnorePath, "utf-8")
-    : "";
-  const existingRules = new Set(
-    existingContent.split(/\r?\n/).map((line) => line.trim()),
-  );
-  const missingRules = requiredRules.filter((rule) => !existingRules.has(rule));
-
-  if (missingRules.length > 0) {
-    const separator =
-      existingContent && !existingContent.endsWith("\n") ? "\n" : "";
-    fs.writeFileSync(
-      npmIgnorePath,
-      existingContent + separator + missingRules.join("\n") + "\n",
-      "utf-8",
-    );
-  }
-}
-
-function createResliceTempDir(destDir) {
-  const resolvedDestDir = path.resolve(destDir);
-  fs.mkdirSync(path.dirname(resolvedDestDir), { recursive: true });
-  return fs.mkdtempSync(
-    path.join(path.dirname(resolvedDestDir), `.${path.basename(destDir)}.tmp-`),
-  );
-}
-
-function replaceOutputDirectory(tempDir, destDir) {
-  const resolvedDestDir = path.resolve(destDir);
-  const backupDir = `${resolvedDestDir}.backup-${Date.now()}`;
-  let hasBackup = false;
-
-  try {
-    if (fs.existsSync(resolvedDestDir)) {
-      fs.renameSync(resolvedDestDir, backupDir);
-      hasBackup = true;
-    }
-    fs.renameSync(tempDir, resolvedDestDir);
-    if (hasBackup) {
-      try {
-        fs.rmSync(backupDir, { recursive: true, force: true });
-      } catch (err) {
-        console.warn(`  ⚠ 無法清理舊輸出備份: ${backupDir}`, err.message);
-      }
-    }
-  } catch (err) {
-    if (hasBackup && !fs.existsSync(resolvedDestDir)) {
-      fs.renameSync(backupDir, resolvedDestDir);
-    }
-    throw err;
-  }
 }
 
 function getFontCodepoints(filePath) {
@@ -247,7 +192,12 @@ export async function processFont(filePath, options = {}) {
     : path.join(OUTPUT_BASE, kebabName);
   const resultCssPath = path.join(destDir, "result.css");
   const buildOptionsPath = path.join(destDir, ".build-options.json");
-  const buildOptions = { includeLocal, fontFamily, subsetMode };
+  const buildOptions = {
+    schemaVersion: BUILD_OPTIONS_SCHEMA_VERSION,
+    includeLocal,
+    fontFamily,
+    subsetMode,
+  };
 
   // 檢查輸出檔案 (result.css) 是否存在且較新
   if (fs.existsSync(resultCssPath)) {
@@ -274,9 +224,7 @@ export async function processFont(filePath, options = {}) {
     }
   }
 
-  const processDir = createResliceTempDir(destDir);
-  const processResultCssPath = path.join(processDir, "result.css");
-  const processBuildOptionsPath = path.join(processDir, ".build-options.json");
+  let processDir = null;
 
   console.log(`\n========================================`);
   console.log(`▶ 開始處理: ${filename}`);
@@ -291,6 +239,13 @@ export async function processFont(filePath, options = {}) {
   const startTime = Date.now();
 
   try {
+    processDir = createResliceTempDir(destDir);
+    const processResultCssPath = path.join(processDir, "result.css");
+    const processBuildOptionsPath = path.join(
+      processDir,
+      ".build-options.json",
+    );
+
     // 執行切片
     const splitOptions = {
       input: filePath,

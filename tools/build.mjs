@@ -27,12 +27,15 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import {
-  ensureNpmIgnoreBuildOptions,
   NPM_SCOPE,
   OUTPUT_BASE,
   processFont,
   toKebabCase,
 } from "./split.mjs";
+import {
+  ensureNpmIgnoreBuildOptions,
+  extractFontFamily,
+} from "./utils/font-output.mjs";
 
 const DEFAULT_KEYWORDS = ["font", "webfont", "chinese-font"];
 
@@ -47,15 +50,6 @@ export function getPackageKeywords(config, pkgName) {
     : DEFAULT_KEYWORDS;
 
   return [...new Set([...keywords, pkgName])];
-}
-
-/**
- * 從 CSS 內容中提取宣告的 font-family 名稱
- */
-export function extractFontFamily(cssContent, fallback = "") {
-  if (!cssContent) return fallback;
-  const match = cssContent.match(/font-family:\s*["']?([^;"'\r\n]+)["']?/i);
-  return match ? match[1].trim() : fallback;
 }
 
 /**
