@@ -250,6 +250,7 @@ export async function processFont(filePath, options = {}) {
     const splitOptions = {
       input: filePath,
       outDir: processDir,
+      silent: true,
       ...(fontFamily ? { css: { fontFamily } } : {}),
       // ─── 關閉不需要的額外檔案 ───
       testHtml: false, // 關閉生成 index.html (測試頁面)
