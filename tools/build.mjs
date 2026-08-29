@@ -26,7 +26,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import { NPM_SCOPE, OUTPUT_BASE, processFont, toKebabCase } from "./split.mjs";
+import {
+  ensureNpmIgnoreBuildOptions,
+  NPM_SCOPE,
+  OUTPUT_BASE,
+  processFont,
+  toKebabCase,
+} from "./split.mjs";
 
 const DEFAULT_KEYWORDS = ["font", "webfont", "chinese-font"];
 
@@ -71,97 +77,6 @@ export function rewriteCssUrls(cssContent, subDir) {
       return `url(${q}${newPath}${q})`;
     },
   );
-}
-
-function ensureNpmIgnoreBuildOptions(destDir) {
-  const npmIgnorePath = path.join(destDir, ".npmignore");
-  const requiredRules = [".build-options.json", "**/.build-options.json"];
-  let existingContent = fs.existsSync(npmIgnorePath)
-    ? fs.readFileSync(npmIgnorePath, "utf-8")
-    : "";
-  const existingRules = new Set(
-    existingContent.split(/\r?\n/).map((line) => line.trim()),
-  );
-  const missingRules = requiredRules.filter((rule) => !existingRules.has(rule));
-
-  if (missingRules.length > 0) {
-    const separator =
-      existingContent && !existingContent.endsWith("\n") ? "\n" : "";
-    fs.writeFileSync(
-      npmIgnorePath,
-      existingContent + separator + missingRules.join("\n") + "\n",
-      "utf-8",
-    );
-  }
-}
-
-function needsReslice(
-  filePath,
-  destDir,
-  subsetMode = "split",
-  fontFamily = "",
-) {
-  const resultCssPath = path.join(destDir, "result.css");
-  const buildOptionsPath = path.join(destDir, ".build-options.json");
-  if (!fs.existsSync(resultCssPath)) return true;
-
-  let hasMatchingFontFamily = true;
-  if (fontFamily) {
-    const currentCss = fs.readFileSync(resultCssPath, "utf-8");
-    hasMatchingFontFamily = extractFontFamily(currentCss) === fontFamily;
-  }
-
-  const fontStat = fs.statSync(filePath);
-  const cssStat = fs.statSync(resultCssPath);
-  let cachedMode = "split";
-  if (fs.existsSync(buildOptionsPath)) {
-    try {
-      cachedMode = JSON.parse(
-        fs.readFileSync(buildOptionsPath, "utf-8"),
-      ).subsetMode;
-    } catch {
-      cachedMode = null;
-    }
-  }
-  const woff2Count = fs
-    .readdirSync(destDir)
-    .filter((entry) => entry.toLowerCase().endsWith(".woff2")).length;
-  const hasExpectedOutput = subsetMode !== "single" || woff2Count === 1;
-
-  return (
-    !hasMatchingFontFamily ||
-    cssStat.mtimeMs < fontStat.mtimeMs ||
-    cachedMode !== subsetMode ||
-    !hasExpectedOutput
-  );
-}
-
-function createResliceTempDir(destDir) {
-  const parentDir = path.dirname(path.resolve(destDir));
-  fs.mkdirSync(parentDir, { recursive: true });
-  return fs.mkdtempSync(
-    path.join(parentDir, `.${path.basename(destDir)}.tmp-`),
-  );
-}
-
-function replaceOutputDirectory(tempDir, destDir) {
-  const resolvedDestDir = path.resolve(destDir);
-  const backupDir = `${resolvedDestDir}.backup-${Date.now()}`;
-  let hasBackup = false;
-
-  try {
-    if (fs.existsSync(resolvedDestDir)) {
-      fs.renameSync(resolvedDestDir, backupDir);
-      hasBackup = true;
-    }
-    fs.renameSync(tempDir, resolvedDestDir);
-    if (hasBackup) fs.rmSync(backupDir, { recursive: true, force: true });
-  } catch (err) {
-    if (hasBackup && !fs.existsSync(resolvedDestDir)) {
-      fs.renameSync(backupDir, resolvedDestDir);
-    }
-    throw err;
-  }
 }
 
 /**
@@ -325,43 +240,18 @@ async function buildSingleFont(config) {
   }
 
   const subsetMode = config.subsetMode || "split";
-  const shouldReslice = needsReslice(
-    config.file,
-    destDir,
+  const result = await processFont(config.file, {
+    license: config.license,
+    version: config.version,
+    fontFamily: config.fontFamily,
     subsetMode,
-    config.fontFamily,
-  );
-  const processDestDir = shouldReslice
-    ? createResliceTempDir(destDir)
-    : destDir;
-
-  let result;
-  try {
-    result = await processFont(config.file, {
-      license: config.license,
-      version: config.version,
-      fontFamily: config.fontFamily,
-      subsetMode,
-      includeLocal: config.includeLocal !== false,
-      outDir: processDestDir,
-      pkgFiles: false,
-    });
-
-    if (shouldReslice && result.status === "success") {
-      replaceOutputDirectory(processDestDir, destDir);
-    }
-  } finally {
-    if (shouldReslice && fs.existsSync(processDestDir)) {
-      fs.rmSync(processDestDir, { recursive: true, force: true });
-    }
-  }
+    includeLocal: config.includeLocal !== false,
+    outDir: destDir,
+    pkgFiles: false,
+  });
 
   if (result.status === "error") {
     return { status: "error", name: config.name };
-  }
-
-  if (subsetMode === "single") {
-    ensureNpmIgnoreBuildOptions(destDir);
   }
 
   // 從產出的 result.css 中解析 fontFamily，確保所用的值符合實際。
@@ -394,13 +284,7 @@ async function buildFontGroup(config) {
   if (!fs.existsSync(groupDestDir)) {
     fs.mkdirSync(groupDestDir, { recursive: true });
   }
-
-  if (
-    config.subsetMode === "single" ||
-    config.items.some((item) => item.subsetMode === "single")
-  ) {
-    ensureNpmIgnoreBuildOptions(groupDestDir);
-  }
+  ensureNpmIgnoreBuildOptions(groupDestDir);
 
   console.log(
     `\n📦 開始處理群組套件: [${config.name}] (包含 ${config.items.length} 個子集)`,
@@ -421,44 +305,19 @@ async function buildFontGroup(config) {
     const subDirName = item.subDir || toKebabCase(item.name);
     const subDestDir = path.join(groupDestDir, subDirName);
     const subsetMode = item.subsetMode || config.subsetMode || "split";
-    const shouldReslice = needsReslice(
-      item.file,
-      subDestDir,
+    const result = await processFont(item.file, {
+      license: config.license,
+      version: config.version,
+      fontFamily: item.fontFamily,
       subsetMode,
-      item.fontFamily,
-    );
-    const processDestDir = shouldReslice
-      ? createResliceTempDir(subDestDir)
-      : subDestDir;
-
-    let result;
-    try {
-      result = await processFont(item.file, {
-        license: config.license,
-        version: config.version,
-        fontFamily: item.fontFamily,
-        subsetMode,
-        includeLocal: config.includeLocal !== false,
-        outDir: processDestDir,
-        pkgFiles: false,
-      });
-
-      if (shouldReslice && result.status === "success") {
-        replaceOutputDirectory(processDestDir, subDestDir);
-      }
-    } finally {
-      if (shouldReslice && fs.existsSync(processDestDir)) {
-        fs.rmSync(processDestDir, { recursive: true, force: true });
-      }
-    }
+      includeLocal: config.includeLocal !== false,
+      outDir: subDestDir,
+      pkgFiles: false,
+    });
 
     if (result.status === "error") {
       hasError = true;
       continue;
-    }
-
-    if (subsetMode === "single") {
-      ensureNpmIgnoreBuildOptions(subDestDir);
     }
 
     if (result.status === "success") {

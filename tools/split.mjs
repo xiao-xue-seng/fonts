@@ -45,6 +45,62 @@ function extractFontFamily(cssContent) {
   return match ? match[1].trim() : null;
 }
 
+export function ensureNpmIgnoreBuildOptions(destDir) {
+  const npmIgnorePath = path.join(destDir, ".npmignore");
+  const requiredRules = [".build-options.json", "**/.build-options.json"];
+  const existingContent = fs.existsSync(npmIgnorePath)
+    ? fs.readFileSync(npmIgnorePath, "utf-8")
+    : "";
+  const existingRules = new Set(
+    existingContent.split(/\r?\n/).map((line) => line.trim()),
+  );
+  const missingRules = requiredRules.filter((rule) => !existingRules.has(rule));
+
+  if (missingRules.length > 0) {
+    const separator =
+      existingContent && !existingContent.endsWith("\n") ? "\n" : "";
+    fs.writeFileSync(
+      npmIgnorePath,
+      existingContent + separator + missingRules.join("\n") + "\n",
+      "utf-8",
+    );
+  }
+}
+
+function createResliceTempDir(destDir) {
+  const resolvedDestDir = path.resolve(destDir);
+  fs.mkdirSync(path.dirname(resolvedDestDir), { recursive: true });
+  return fs.mkdtempSync(
+    path.join(path.dirname(resolvedDestDir), `.${path.basename(destDir)}.tmp-`),
+  );
+}
+
+function replaceOutputDirectory(tempDir, destDir) {
+  const resolvedDestDir = path.resolve(destDir);
+  const backupDir = `${resolvedDestDir}.backup-${Date.now()}`;
+  let hasBackup = false;
+
+  try {
+    if (fs.existsSync(resolvedDestDir)) {
+      fs.renameSync(resolvedDestDir, backupDir);
+      hasBackup = true;
+    }
+    fs.renameSync(tempDir, resolvedDestDir);
+    if (hasBackup) {
+      try {
+        fs.rmSync(backupDir, { recursive: true, force: true });
+      } catch (err) {
+        console.warn(`  ⚠ 無法清理舊輸出備份: ${backupDir}`, err.message);
+      }
+    }
+  } catch (err) {
+    if (hasBackup && !fs.existsSync(resolvedDestDir)) {
+      fs.renameSync(backupDir, resolvedDestDir);
+    }
+    throw err;
+  }
+}
+
 function getFontCodepoints(filePath) {
   const buffer = fs.readFileSync(filePath);
   const view = new DataView(
@@ -67,7 +123,6 @@ function getFontCodepoints(filePath) {
     if (tag === "cmap") {
       cmapOffset = view.getUint32(recordOffset + 8);
       cmapLength = view.getUint32(recordOffset + 12);
-      break;
     }
   }
   if (!cmapOffset || !cmapLength) throw new Error("字型缺少有效的 cmap 表");
@@ -192,46 +247,36 @@ export async function processFont(filePath, options = {}) {
     : path.join(OUTPUT_BASE, kebabName);
   const resultCssPath = path.join(destDir, "result.css");
   const buildOptionsPath = path.join(destDir, ".build-options.json");
+  const buildOptions = { includeLocal, fontFamily, subsetMode };
 
   // 檢查輸出檔案 (result.css) 是否存在且較新
   if (fs.existsSync(resultCssPath)) {
-    let hasMatchingFontFamily = true;
-    if (fontFamily) {
-      const currentCss = fs.readFileSync(resultCssPath, "utf-8");
-      hasMatchingFontFamily = extractFontFamily(currentCss) === fontFamily;
+    let cachedOptions = null;
+    if (fs.existsSync(buildOptionsPath)) {
+      try {
+        cachedOptions = JSON.parse(fs.readFileSync(buildOptionsPath, "utf-8"));
+      } catch {
+        cachedOptions = null;
+      }
     }
 
     const fontStat = fs.statSync(filePath);
     const cssStat = fs.statSync(resultCssPath);
-    let cachedMode = "split";
-    if (fs.existsSync(buildOptionsPath)) {
-      try {
-        cachedMode = JSON.parse(
-          fs.readFileSync(buildOptionsPath, "utf-8"),
-        ).subsetMode;
-      } catch {
-        cachedMode = null;
-      }
-    }
-    const woff2Count = fs
-      .readdirSync(destDir)
-      .filter((entry) => entry.toLowerCase().endsWith(".woff2")).length;
-    const hasExpectedOutput = subsetMode !== "single" || woff2Count === 1;
     if (
       cssStat.mtimeMs >= fontStat.mtimeMs &&
-      hasMatchingFontFamily &&
-      cachedMode === subsetMode &&
-      hasExpectedOutput
+      cachedOptions &&
+      Object.entries(buildOptions).every(
+        ([key, value]) => cachedOptions[key] === value,
+      )
     ) {
       console.log(`\n⏭️  略過 (輸出的 result.css 已是最新): ${filename}`);
       return { status: "skipped", destDir, resultCssPath };
     }
   }
 
-  // 如果 destDir 不存在，則自行建立
-  if (!fs.existsSync(destDir)) {
-    fs.mkdirSync(destDir, { recursive: true });
-  }
+  const processDir = createResliceTempDir(destDir);
+  const processResultCssPath = path.join(processDir, "result.css");
+  const processBuildOptionsPath = path.join(processDir, ".build-options.json");
 
   console.log(`\n========================================`);
   console.log(`▶ 開始處理: ${filename}`);
@@ -249,7 +294,7 @@ export async function processFont(filePath, options = {}) {
     // 執行切片
     const splitOptions = {
       input: filePath,
-      outDir: destDir,
+      outDir: processDir,
       ...(fontFamily ? { css: { fontFamily } } : {}),
       // ─── 關閉不需要的額外檔案 ───
       testHtml: false, // 關閉生成 index.html (測試頁面)
@@ -258,21 +303,16 @@ export async function processFont(filePath, options = {}) {
       previewImage: null, // 確保不額外產生 preview.svg 預覽圖
     };
     if (subsetMode === "single") {
-      for (const entry of fs.readdirSync(destDir)) {
-        if (entry.toLowerCase().endsWith(".woff2")) {
-          fs.unlinkSync(path.join(destDir, entry));
-        }
-      }
       splitOptions.subsets = [getFontCodepoints(filePath)];
       splitOptions.autoSubset = false;
     }
     await fontSplit(splitOptions);
 
     // 若設定不包含 local()，自輸出的 result.css 中移除 local(...)
-    if (!includeLocal && fs.existsSync(resultCssPath)) {
-      const originalCss = fs.readFileSync(resultCssPath, "utf-8");
+    if (!includeLocal && fs.existsSync(processResultCssPath)) {
+      const originalCss = fs.readFileSync(processResultCssPath, "utf-8");
       const updatedCss = originalCss.replace(/local\([^)]*\)\s*,\s*/g, "");
-      fs.writeFileSync(resultCssPath, updatedCss, "utf-8");
+      fs.writeFileSync(processResultCssPath, updatedCss, "utf-8");
     }
 
     // ─── 自動清理不需要的殘留檔案 ───
@@ -283,27 +323,27 @@ export async function processFont(filePath, options = {}) {
       "preview.svg",
     ];
     for (const file of filesToRemove) {
-      const target = path.join(destDir, file);
+      const target = path.join(processDir, file);
       if (fs.existsSync(target)) {
         fs.unlinkSync(target);
       }
     }
 
-    if (subsetMode === "single") {
-      fs.writeFileSync(
-        buildOptionsPath,
-        JSON.stringify({ subsetMode }, null, 2),
-        "utf-8",
-      );
-    }
+    fs.writeFileSync(
+      processBuildOptionsPath,
+      JSON.stringify(buildOptions, null, 2),
+      "utf-8",
+    );
+    ensureNpmIgnoreBuildOptions(processDir);
 
-    // 寫入發布所需的設定檔 (若啟用)
     if (pkgFiles) {
-      generatePackageFiles(destDir, kebabName, rawFontName, {
+      generatePackageFiles(processDir, kebabName, rawFontName, {
         license,
         version,
       });
     }
+
+    replaceOutputDirectory(processDir, destDir);
 
     console.log(
       `✔ 完成！耗時: ${((Date.now() - startTime) / 1000).toFixed(2)} 秒`,
@@ -312,6 +352,10 @@ export async function processFont(filePath, options = {}) {
   } catch (err) {
     console.error(`✖ 處理失敗 [${filename}]:`, err);
     return { status: "error", destDir, error: err };
+  } finally {
+    if (fs.existsSync(processDir)) {
+      fs.rmSync(processDir, { recursive: true, force: true });
+    }
   }
 }
 
