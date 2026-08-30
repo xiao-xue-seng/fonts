@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import warnings
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -30,14 +31,23 @@ def sync_amec_by_id(
 ) -> list[dict[str, Any]]:
     font_by_id = {item["id"]: deepcopy(item) for item in fonts}
     synced: list[dict[str, Any]] = []
+    missing_ids: list[str] = []
 
     for item in amec:
         font_id = item["id"]
         if font_id not in font_by_id:
+            missing_ids.append(font_id)
             continue
         synced.append(deepcopy(font_by_id[font_id]))
 
-    return synced
+    if missing_ids:
+        unique_missing_ids = sorted(set(missing_ids))
+        warnings.warn(
+            "AMEC ids missing from fonts.json: " + ", ".join(unique_missing_ids),
+            stacklevel=2,
+        )
+
+    return sorted(synced, key=lambda item: item["id"])
 
 
 def main() -> None:

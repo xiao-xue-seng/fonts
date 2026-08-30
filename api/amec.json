@@ -1,51 +1,44 @@
 [
   {
-    "id": "instrument-sans",
-    "name": "InstrumentSansLatinSubset",
-    "displayName": "Instrument Sans 拉丁子集",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/instrument-sans/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/InstrumentSans-Subset.ttf"
-  },
-  {
-    "id": "ukai-cn",
-    "name": "AR PL UKai CN",
-    "displayName": "AR PL UKai CN",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-cn/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ukai-cn.ttf"
-  },
-  {
-    "id": "ukai-tw",
+    "id": "ar-pl-ukai",
     "name": "AR PL UKai TW",
-    "displayName": "AR PL UKai TW",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-tw/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ukai-tw.ttf"
+    "displayName": "文鼎PL中楷",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@1.0.0/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/AR-PL-UKai-TW.ttf"
   },
   {
-    "id": "tw-kai-punct",
-    "name": "TW-Kai-Punct",
-    "displayName": "全字庫正楷體標點符號",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-kai-punct/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Kai-Punct.ttf"
+    "id": "instrument-sans-subset",
+    "name": "Instrument Sans Subset",
+    "displayName": "Instrument Sans 拉丁子集",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/instrument-sans-subset@1.0.0/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/InstrumentSans-Subset.ttf"
   },
   {
-    "id": "tw-sung-extb",
-    "name": "TW-Sung-Ext-B",
-    "displayName": "全字庫正宋體 Ext-B",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-extb/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Sung-Ext-B-98_1.ttf"
+    "id": "tw-kai-aligned-punct",
+    "name": "TW-Kai-Aligned Punct",
+    "displayName": "全字齊楷 標點",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned-punct@1.0.0/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Punct.ttf"
   },
   {
-    "id": "tw-sung-punct",
-    "name": "TW-Sung-Punct",
-    "displayName": "全字庫正宋體標點符號",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/tw-sung-punct/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/TW-Sung-Punct.ttf"
+    "id": "tw-kai-aligned/ext-b",
+    "name": "TW-Kai-Aligned-Ext-B",
+    "displayName": "全字齊楷 Ext-B",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/ext-b/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Ext-B.ttf"
+  },
+  {
+    "id": "tw-sung-aligned/ext-b",
+    "name": "TW-Sung-Aligned-Ext-B",
+    "displayName": "全字齊宋 Ext-B",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/ext-b/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned-Ext-B.ttf"
   },
   {
     "id": "zhuque-fangsong",
     "name": "Zhuque Fangsong (technical preview)",
     "displayName": "朱雀仿宋",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/zhuque-fangsong/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ZhuqueFangsong-Regular.ttf"
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/zhuque-fangsong@1.0.0/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/ZhuqueFangsong-Regular.ttf"
   }
 ]
