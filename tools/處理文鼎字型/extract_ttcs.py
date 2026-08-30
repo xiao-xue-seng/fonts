@@ -8,11 +8,12 @@
 🟡註：cn版與tw版在字形方面並沒有差別，標點符號也沒有差別(都是置中)，所以只需要拿字碼較多的tw版去切片即可。
 """
 
-import os
+from pathlib import Path
+
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.sfnt import readTTCHeader
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+script_dir = Path(__file__).resolve().parent
 
 # 定義要處理的 TTC 檔案資訊
 TARGET_TTCS = [
@@ -28,18 +29,18 @@ for target in TARGET_TTCS:
     filename = target["filename"]
     prefix = target["prefix"]
     label = target["label"]
-    ttc_path = os.path.join(script_dir, filename)
+    ttc_path = script_dir / filename
 
     print(f"📦 正在分析 [{label}] ({filename})...")
 
     # 檢查檔案是否存在
-    if not os.path.exists(ttc_path):
+    if not ttc_path.exists():
         print(f"   ⚠️ 在同目錄下找不到 {filename}，已跳過該檔案。\n")
         print("-" * 50 + "\n")
         continue
 
     # 讀取 TTC 標頭
-    with open(ttc_path, "rb") as f:
+    with ttc_path.open("rb") as f:
         header = readTTCHeader(f)
         num_fonts = header.numFonts
 
@@ -50,7 +51,7 @@ for target in TARGET_TTCS:
 
     # 掃描並印出內部子字型名稱
     for i in range(num_fonts):
-        font = TTFont(ttc_path, fontNumber=i)
+        font = TTFont(str(ttc_path), fontNumber=i)
         name_table = font["name"]
         font_name = name_table.getDebugName(4) or name_table.getDebugName(1)
         print(f"   - Index [{i}]: {font_name}")
@@ -67,12 +68,12 @@ for target in TARGET_TTCS:
 
     # 匯出 TW 版本
     if tw_index is not None:
-        output_tw = os.path.join(script_dir, f"{prefix}-TW.ttf")
+        output_tw = script_dir / f"{prefix}-TW.ttf"
         print(
             f"   ✨ 正在匯出 TW 台灣標準版 ➔ [{prefix}-TW.ttf] (Index [{tw_index}])..."
         )
-        tw_font = TTFont(ttc_path, fontNumber=tw_index)
-        tw_font.save(output_tw)
+        tw_font = TTFont(str(ttc_path), fontNumber=tw_index)
+        tw_font.save(str(output_tw))
         total_extracted += 1
     else:
         print(f"   ❌ 在 {filename} 中未找到 TW 版本。")

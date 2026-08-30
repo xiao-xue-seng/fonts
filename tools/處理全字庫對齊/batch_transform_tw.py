@@ -12,26 +12,26 @@
 ===============================================================================
 """
 
-import os
 import json
 import sys
 import time
+from pathlib import Path
 from typing import Dict, List
 
 from fontTools.ttLib import TTFont, TTLibError
 
 # 確保專案根目錄在 sys.path 中以利載入 tools.utils 模組
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from tools.utils.font_transform import transform_font
 
 # ==============================================================================
 # 1. 資料夾路徑常數設定
 # ==============================================================================
-INPUT_DIR = os.path.join(PROJECT_ROOT, "temp", "ttf-raw")  # 來源字型資料夾
-OUTPUT_DIR = os.path.join(PROJECT_ROOT, "temp", "ttf-to-next")  # 輸出字型資料夾
+INPUT_DIR = PROJECT_ROOT / "temp" / "ttf-raw"  # 來源字型資料夾
+OUTPUT_DIR = PROJECT_ROOT / "temp" / "ttf-to-next"  # 輸出字型資料夾
 
 # ==============================================================================
 # 2. 處理開關常數設定 (True: 處理 / False: 跳過)
@@ -71,8 +71,8 @@ EXCLUDE_UNICODE_RANGES = "FE52,FE54,FE55,FF1A,FF1B"
 
 
 def has_matching_transform_metadata(
-    input_font_path: str,
-    output_font_path: str,
+    input_font_path: str | Path,
+    output_font_path: str | Path,
     scale_factor: float,
     dy: int,
     decompose: bool,
@@ -81,14 +81,17 @@ def has_matching_transform_metadata(
     exclude_unicode_ranges: object,
 ) -> bool:
     """判斷輸出字型是否已使用相同的變形參數。"""
-    if not os.path.exists(output_font_path):
+    input_font_path = Path(input_font_path)
+    output_font_path = Path(output_font_path)
+
+    if not output_font_path.exists():
         return False
 
     try:
-        with TTFont(input_font_path, lazy=True) as input_font:
+        with TTFont(str(input_font_path), lazy=True) as input_font:
             upm = input_font["head"].unitsPerEm
 
-        with TTFont(output_font_path, lazy=True) as output_font:
+        with TTFont(str(output_font_path), lazy=True) as output_font:
             meta_table = output_font.get("meta")
             if meta_table is None or "xfrm" not in meta_table.data:
                 return False
@@ -159,8 +162,8 @@ def run_batch():
     print("=" * 70)
     print(" 全字庫字型批次座標對齊、縮放與自動更名處理作業")
     print("=" * 70)
-    print(f"來源目錄: {os.path.abspath(INPUT_DIR)}")
-    print(f"輸出目錄: {os.path.abspath(OUTPUT_DIR)}")
+    print(f"來源目錄: {INPUT_DIR.resolve()}")
+    print(f"輸出目錄: {OUTPUT_DIR.resolve()}")
     print(f"處理楷體: {'啟用' if PROCESS_KAI else '停用'}")
     if PROCESS_KAI:
         print(
@@ -179,13 +182,13 @@ def run_batch():
         return
 
     # 確保輸出目錄存在
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # 檢查來源檔案完整度
     missing_files = []
     for task in tasks:
-        in_path = os.path.join(INPUT_DIR, task["filename"])
-        if not os.path.exists(in_path):
+        in_path = INPUT_DIR / task["filename"]
+        if not in_path.exists():
             missing_files.append(in_path)
 
     if missing_files:
@@ -208,9 +211,9 @@ def run_batch():
         scale_factor = task["scale_factor"]
         dy = task["dy"]
 
-        in_path = os.path.join(INPUT_DIR, filename)
+        in_path = INPUT_DIR / filename
         out_filename = f"{name_en}.ttf"
-        out_path = os.path.join(OUTPUT_DIR, out_filename)
+        out_path = OUTPUT_DIR / out_filename
 
         print(
             f"\n[{idx}/{len(tasks)}] 正在處理 [{font_type}]：{filename} -> {out_filename}"
@@ -218,7 +221,7 @@ def run_batch():
         print(f"     名稱：{name_en} / {name_zh}")
         print(f"     版本：{version} | 參數：scale = {scale_factor:.3f}, dy = {dy:+d}")
 
-        if not os.path.exists(in_path):
+        if not in_path.exists():
             print(f"     ⏩ 來源檔案不存在，跳過此項。")
             skip_count += 1
             continue
@@ -239,8 +242,8 @@ def run_batch():
 
         item_start = time.time()
         ok = transform_font(
-            input_font_path=in_path,
-            output_font_path=out_path,
+            input_font_path=str(in_path),
+            output_font_path=str(out_path),
             font_name_en=name_en,
             font_name_zh=name_zh,
             scale_factor=scale_factor,

@@ -5,8 +5,8 @@
 """
 
 import json
-import os
 import sys
+from pathlib import Path
 from typing import Any
 
 from fontTools.ttLib import TTFont, TTLibError
@@ -16,9 +16,9 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 # 確保路徑以專案根目錄為基準
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from tools.utils.subset_font import (
     SUBSET_METADATA_TAG,
@@ -29,15 +29,8 @@ from tools.utils.subset_font import (
 # 呼叫端可依此結構增加其他字型，進行批次處理。
 FONTS_TO_PROCESS = [
     {
-        "input": os.path.join(
-            PROJECT_ROOT,
-            "temp",
-            "ttf-raw",
-            "InstrumentSans-VariableFont_wdth,wght.ttf",
-        ),
-        "output": os.path.join(
-            PROJECT_ROOT, "temp", "ttf-to-next", "InstrumentSans-Subset.ttf"
-        ),
+        "input": PROJECT_ROOT / "temp" / "ttf-raw" / "InstrumentSans-VariableFont_wdth,wght.ttf",
+        "output": PROJECT_ROOT / "temp" / "ttf-to-next" / "InstrumentSans-Subset.ttf",
         "unicode_range_str": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD",
         "suffix_en": "Subset",
         "suffix_zh": "子集",
@@ -46,13 +39,14 @@ FONTS_TO_PROCESS = [
 
 
 def has_matching_subset_metadata(
-    output_path: str,
+    output_path: str | Path,
     unicode_range_str: str,
     suffix_en: str,
     suffix_zh: Any,
 ) -> bool:
     """判斷輸出檔是否已使用相同的 Unicode range 與名稱後綴。"""
-    if not os.path.isfile(output_path):
+    output_path = Path(output_path)
+    if not output_path.is_file():
         return False
 
     try:
@@ -62,7 +56,7 @@ def has_matching_subset_metadata(
             "suffix_en": suffix_en,
             "suffix_zh": suffix_zh,
         }
-        with TTFont(output_path, lazy=True) as font:
+        with TTFont(str(output_path), lazy=True) as font:
             meta_table = font.get("meta")
             if meta_table is None or SUBSET_METADATA_TAG not in meta_table.data:
                 return False
@@ -85,8 +79,8 @@ def has_matching_subset_metadata(
 
 def run_subsetter():
     for font_config in FONTS_TO_PROCESS:
-        input_path = font_config["input"]
-        output_path = font_config["output"]
+        input_path = Path(font_config["input"])
+        output_path = Path(font_config["output"])
         print(f"\n來源字型：{input_path}")
         print(f"輸出字型：{output_path}")
         try:
@@ -102,8 +96,8 @@ def run_subsetter():
                 continue
 
             subset_font(
-                input_path=input_path,
-                output_path=output_path,
+                input_path=str(input_path),
+                output_path=str(output_path),
                 unicode_range_str=font_config["unicode_range_str"],
                 suffix_en=suffix_en,
                 suffix_zh=suffix_zh,

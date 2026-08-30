@@ -19,15 +19,16 @@ import os
 import re
 import sys
 import time
+from pathlib import Path
 from typing import Dict, Iterable, Optional, Tuple, Union
 from fontTools.ttLib import TTFont
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.pens.transformPen import TransformPen
 
 # 確保專案根目錄在 sys.path 中
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
     from tools.utils.font_metadata import (
@@ -217,14 +218,17 @@ def transform_font(
     :param verbose: 是否輸出詳細處理進度 (預設: True)
     :return: 轉換成功回傳 True，失敗回傳 False
     """
-    if not os.path.exists(input_font_path):
+    input_font_path = Path(input_font_path)
+    output_font_path = Path(output_font_path)
+
+    if not input_font_path.exists():
         print(f"[錯誤] 找不到字型檔案：{input_font_path}", file=sys.stderr)
         return False
 
     # 確保輸出目錄存在
-    output_dir = os.path.dirname(os.path.abspath(output_font_path))
-    if output_dir and not os.path.exists(output_dir):
-        os.makedirs(output_dir, exist_ok=True)
+    output_dir = output_font_path.parent.resolve()
+    if output_dir and not output_dir.exists():
+        output_dir.mkdir(parents=True, exist_ok=True)
 
     if verbose:
         print("=" * 65)
@@ -232,7 +236,7 @@ def transform_font(
 
     start_time = time.time()
     try:
-        font = TTFont(input_font_path)
+        font = TTFont(str(input_font_path))
     except Exception as e:
         print(f"[錯誤] 無法讀取字型檔案 {input_font_path}: {e}", file=sys.stderr)
         return False
@@ -393,10 +397,10 @@ def transform_font(
     if verbose:
         print("=" * 65)
         print(f"正在寫入輸出檔案：{output_font_path} ...")
-    font.save(output_font_path)
+    font.save(str(output_font_path))
 
     total_time = time.time() - start_time
-    output_size_mb = os.path.getsize(output_font_path) / (1024 * 1024)
+    output_size_mb = output_font_path.stat().st_size / (1024 * 1024)
 
     if verbose:
         print("✨ 轉換完成！")
