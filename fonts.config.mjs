@@ -27,6 +27,7 @@ const TW_ALIGNED_COMMON_DETAILS = `全字庫傳承自早期 Windows 系統的字
 
 function getBasicDetails(name) {
   return `## 字型介紹
+
 本專案收錄由 ${name} 經 cn-font-split@7.4.3 切片化(Font Slicing)後之 WebFont。`;
 }
 
@@ -41,6 +42,7 @@ export default [
     genericFamily: "serif",
     description: "全字齊楷：全字庫正楷體經垂直對齊調整後之切片化 WebFont",
     details: `## 字型介紹
+
 本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
 
 「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
@@ -81,6 +83,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     genericFamily: "serif",
     description: "全字齊宋：全字庫正宋體經垂直對齊調整後之切片化 WebFont",
     details: `## 字型介紹
+
 本專案收錄由 全字庫正宋體 (TW-Sung) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
 
 「全字齊宋」針對「全字庫正宋體」進行了垂直位置校正。
@@ -123,6 +126,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
     description:
       "全字齊楷-標點：全字庫正楷體經垂直對齊調整後之切片化 WebFont (僅包含標點符號)",
     details: `## 字型介紹
+
 本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，僅包含標點符號。
 
 適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。

@@ -113,7 +113,7 @@ export function copyLicenseSource(destDir, licenseSource) {
         );
       }
     } catch (err) {
-      console.error(`  ✖ 複製授權來源失敗 [${src}]:`, err.message);
+      console.error(`  ❌ 複製授權來源失敗 [${src}]:`, err.message);
     }
   }
 }
@@ -180,21 +180,44 @@ body {
 /**
  * 產出群組字型的 README.md
  */
-function writeGroupReadme(destDir, config, fontFamily) {
+export function writeGroupReadme(destDir, config, fontFamily) {
   const pkgName = toKebabCase(config.name);
   const genericFamily = config.genericFamily || "sans-serif";
   const detailsSection = config.details ? `\n${config.details.trim()}\n` : "";
   const version = config.version || "latest";
   const items = config.items || [];
 
-  const subsetListMd = items
+  const subsetLinkBlocks = items
     .map(
-      (it) =>
-        `- **${it.name || it.subDir}**: \`https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${it.subDir}/result.css\``,
+      (it) => {
+        const label = it.name || it.subDir || "base";
+        const subDirName = it.subDir || toKebabCase(label);
+        return `### ${label}\n\n\`\`\`html\n<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${subDirName}/result.css" />\n\`\`\``;
+      },
     )
-    .join("\n");
+    .join("\n\n");
 
   const firstSubDir = items[0]?.subDir || "base";
+  const subsetExamples = items.map((it) => {
+    const subDirName = it.subDir || toKebabCase(it.name || firstSubDir);
+    const cssPath = path.join(destDir, subDirName, "result.css");
+    const detectedFamily = fs.existsSync(cssPath)
+      ? extractFontFamily(fs.readFileSync(cssPath, "utf-8"), it.fontFamily || fontFamily)
+      : it.fontFamily || fontFamily;
+
+    return {
+      name: it.name || subDirName,
+      subDir: subDirName,
+      fontFamily: detectedFamily || fontFamily || config.title || pkgName,
+    };
+  });
+
+  const cssUsageExamples = subsetExamples
+    .map(
+      ({ name, fontFamily: subsetFontFamily }) =>
+        `### ${name}\n\n\`\`\`css\nbody {\n  font-family: "${subsetFontFamily}", ${genericFamily};\n}\n\`\`\``,
+    )
+    .join("\n\n");
 
   const content = `# @${NPM_SCOPE}/${pkgName}
 
@@ -210,20 +233,11 @@ ${detailsSection}
 
 ### 2. 按需載入個別子集
 
-${subsetListMd}
-
-\`\`\`html
-<!-- 範例：僅載入 ${items[0]?.name || firstSubDir} 子集 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${firstSubDir}/result.css" />
-\`\`\`
+${subsetLinkBlocks}
 
 ## CSS 使用範例
 
-\`\`\`css
-body {
-  font-family: "${fontFamily}", ${genericFamily};
-}
-\`\`\`
+${cssUsageExamples}
 `;
   fs.writeFileSync(path.join(destDir, "README.md"), content, "utf-8");
 }
