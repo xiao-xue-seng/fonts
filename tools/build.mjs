@@ -35,7 +35,11 @@ import {
 import {
   extractFontFamily,
 } from "./utils/font-output.mjs";
-import { createPackageJson, writePackageJson } from "./utils/package-json.mjs";
+import {
+  createPackageJson,
+  writePackageJson,
+  writePackageMetadata,
+} from "./utils/package-json.mjs";
 
 const DEFAULT_KEYWORDS = ["font", "webfont", "chinese-font"];
 
@@ -129,6 +133,10 @@ function writeBuildPackageJson(destDir, config, mainCssFile) {
     main: mainCssFile,
     keywords: getPackageKeywords(config, pkgName),
     license: config.license || "OFL-1.1",
+    fontMetadata: {
+      title: config.title || pkgName,
+      ...(config.ttfUrl ? { ttfUrl: config.ttfUrl } : {}),
+    },
     buildOptions: {
       includeLocal: config.includeLocal !== false,
       fontFamily: config.fontFamily || "",
@@ -335,6 +343,11 @@ async function buildFontGroup(config) {
           rewrittenCss.trim(),
       );
     }
+
+    writePackageMetadata(subDestDir, {
+      title: item.title || item.name || subDirName,
+      ...(item.ttfUrl ? { ttfUrl: item.ttfUrl } : {}),
+    });
   }
 
   if (hasError) {

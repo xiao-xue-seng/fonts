@@ -1,162 +1,164 @@
 #!/usr/bin/env python3
-"""
-Collect font metadata from every immediate subdirectory containing result.css
-"""
+"""從 .dist 中已建置的 npm 字型套件產生 api/fonts.json。"""
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
-import subprocess
 from pathlib import Path
+from typing import Any
 
-FONT_FAMILY_RE = re.compile(r"font-family\s*:\s*(['\"])(.*?)\1", re.IGNORECASE)
-METADATA_RE = re.compile(
-    r"^Windows\s+(?:zh-TW|zh)\s+(?:FontFamilyName|TypographicFamilyName)\s+(.+?)\s*$",
-    re.IGNORECASE | re.MULTILINE,
+DEFAULT_BASE_URL = "https://cdn.jsdelivr.net/npm/"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_ROOT = PROJECT_ROOT / ".dist"
+DEFAULT_OUTPUT = PROJECT_ROOT / "api" / "fonts.json"
+FONT_FAMILY_RE = re.compile(
+    r"font-family\s*:\s*(?:\"([^\"]+)\"|'([^']+)'|([^;]+))",
+    re.IGNORECASE,
 )
-# 用於匹配語意化版本號（SemVer）並提取 Major 主版本號
-TAG_MAJOR_RE = re.compile(r"^v?(\d+)(?:\.\d+)*", re.IGNORECASE)
 
 
-def load_config(path: Path) -> dict:
-    if not path.exists():
-        return {}
-    with path.open(encoding="utf-8") as file:
-        config = json.load(file)
-    if not isinstance(config, dict):
-        raise ValueError(f"設定檔必須是 JSON 物件：{path}")
-    return config
+def load_package_json(package_dir: Path) -> dict[str, Any]:
+    package_path = package_dir / "package.json"
+    if not package_path.is_file():
+        raise ValueError(f"找不到 package.json：{package_path}")
+    try:
+        data = json.loads(package_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError(f"package.json 格式錯誤：{package_path}") from error
+    if not isinstance(data, dict):
+        raise ValueError(f"package.json 必須是 JSON 物件：{package_path}")
+    return data
 
 
-def get_latest_git_tag(repo_root: Path) -> str | None:
-    raw_tag = None
+def require_package_identity(package_json: dict[str, Any], package_dir: Path) -> tuple[str, str]:
+    name = package_json.get("name")
+    version = package_json.get("version")
+    if not isinstance(name, str) or not name:
+        raise ValueError(f"package.json 缺少有效的 name：{package_dir}")
+    if not isinstance(version, str) or not version:
+        raise ValueError(f"package.json 缺少有效的 version：{package_dir}")
+    return name, version
 
-    # 1. 優先判斷：如果在 GitHub Actions 環境中且是由 Tag 觸發
-    if os.environ.get("GITHUB_REF_TYPE") == "tag":
-        raw_tag = os.environ.get("GITHUB_REF_NAME")
 
-    # 2. 次要判斷：直接列出所有標籤並取最高版本號
-    if not raw_tag:
-        try:
-            result = subprocess.run(
-                ["git", "tag", "--sort=-v:refname"],
-                cwd=repo_root,
-                capture_output=True,
-                text=True,
-                check=True,
+def first_font_family(css_path: Path) -> str:
+    match = FONT_FAMILY_RE.search(css_path.read_text(encoding="utf-8"))
+    if match:
+        return next(value for value in match.groups() if value is not None).strip()
+    raise ValueError(f"找不到 font-family：{css_path}")
+
+
+def font_metadata(package_json: dict[str, Any], package_dir: Path) -> dict[str, Any]:
+    metadata = package_json.get("fontMetadata")
+    if not isinstance(metadata, dict):
+        raise ValueError(f"package.json 缺少有效的 fontMetadata：{package_dir}")
+    title = metadata.get("title")
+    if not isinstance(title, str) or not title:
+        raise ValueError(f"fontMetadata.title 必須是非空字串：{package_dir}")
+    return metadata
+
+
+def css_url(base_url: str, package_name: str, version: str, css_path: str) -> str:
+    return f"{base_url.rstrip('/')}/{package_name}@{version}/{css_path.lstrip('/')}"
+
+
+def build_font_item(
+    *,
+    item_id: str,
+    css_path: Path,
+    css_url_path: str,
+    metadata_package_dir: Path,
+    identity_package_json: dict[str, Any],
+    base_url: str,
+) -> dict[str, str]:
+    metadata = font_metadata(load_package_json(metadata_package_dir), metadata_package_dir)
+    package_name, version = require_package_identity(
+        identity_package_json, metadata_package_dir
+    )
+    item: dict[str, str] = {
+        "id": item_id,
+        "name": first_font_family(css_path),
+        "displayName": metadata["title"],
+        "cssUrl": css_url(base_url, package_name, version, css_url_path),
+    }
+    ttf_url = metadata.get("ttfUrl")
+    if isinstance(ttf_url, str) and ttf_url:
+        item["ttfUrl"] = ttf_url
+    return item
+
+
+def build_font_list(root: Path, base_url: str) -> list[dict[str, str]]:
+    fonts: list[dict[str, str]] = []
+    for package_dir in sorted(root.iterdir(), key=lambda item: item.name):
+        if not package_dir.is_dir():
+            continue
+        package_json = load_package_json(package_dir)
+        child_dirs = [
+            child
+            for child in sorted(package_dir.iterdir(), key=lambda item: item.name)
+            if child.is_dir() and (child / "result.css").is_file()
+        ]
+
+        if child_dirs:
+            index_css = package_dir / "index.css"
+            if not index_css.is_file():
+                raise ValueError(f"群組套件缺少 index.css：{package_dir}")
+            require_package_identity(package_json, package_dir)
+            fonts.append(
+                build_font_item(
+                    item_id=package_dir.name,
+                    css_path=index_css,
+                    css_url_path="index.css",
+                    metadata_package_dir=package_dir,
+                    identity_package_json=package_json,
+                    base_url=base_url,
+                )
             )
-            tags = [t.strip() for t in result.stdout.splitlines() if t.strip()]
-            if tags:
-                raw_tag = tags[0]  # 取最大的版本號 (例如 v1.1.0)
-        except (subprocess.SubprocessError, FileNotFoundError):
-            pass
-
-    if not raw_tag:
-        return None
-
-    # 3. 將完整版本號 (如 v1.1.0, 1.0.0) 轉為主版本號格式 (如 v1)
-    match = TAG_MAJOR_RE.match(raw_tag)
-    if match:
-        return f"v{match.group(1)}"
-
-    return raw_tag
-
-
-def first_font_family(css: str, css_path: Path) -> str:
-    match = FONT_FAMILY_RE.search(css)
-    if not match:
-        raise ValueError(f"找不到 font-family：{css_path}")
-    return match.group(2).strip()
-
-
-def display_name(css: str, font_id: str, name: str, configured: dict) -> str:
-    if font_id in configured:
-        return configured[font_id]
-
-    match = METADATA_RE.search(css)
-    if match:
-        return re.sub(r"\s+(?:Regular|常規|標準)$", "", match.group(1)).strip()
-    return name
-
-
-def build_font_list(root: Path, config: dict, base_url: str) -> list[dict[str, str]]:
-    excluded_config = config.get("excludeFolders", [])
-    names = config.get("displayNames", {})
-    ttf_base_url = config.get("ttfBaseUrl", base_url)
-    ttf_filenames = config.get("ttfFilenames", {})
-    if not isinstance(excluded_config, list) or not isinstance(names, dict):
-        raise ValueError("excludeFolders 必須是陣列，displayNames 必須是物件")
-    excluded = set(excluded_config)
-
-    fonts = []
-    for folder in sorted(root.iterdir(), key=lambda item: item.name):
-        if not folder.is_dir() or folder.name in excluded:
+            for child_dir in child_dirs:
+                fonts.append(
+                    build_font_item(
+                        item_id=f"{package_dir.name}/{child_dir.name}",
+                        css_path=child_dir / "result.css",
+                        css_url_path=f"{child_dir.name}/result.css",
+                        metadata_package_dir=child_dir,
+                        identity_package_json=package_json,
+                        base_url=base_url,
+                    )
+                )
             continue
 
-        css_path = folder / "result.css"
-        if not css_path.is_file():
-            continue
-
-        css = css_path.read_text(encoding="utf-8")
-        name = first_font_family(css, css_path)
-        font_item = {
-            "id": folder.name,
-            "name": name,
-            "displayName": display_name(css, folder.name, name, names),
-            "cssUrl": f"{base_url.rstrip('/')}/{folder.name}/result.css",
-        }
-
-        # 只有在 ttfFilenames 中有該子資料夾的檔名時，才新增 ttfUrl
-        if folder.name in ttf_filenames:
-            ttf_filename = ttf_filenames[folder.name]
-            font_item["ttfUrl"] = f"{ttf_base_url.rstrip('/')}/{ttf_filename}"
-
-        fonts.append(font_item)
+        result_css = package_dir / "result.css"
+        if result_css.is_file():
+            fonts.append(
+                build_font_item(
+                    item_id=package_dir.name,
+                    css_path=result_css,
+                    css_url_path="result.css",
+                    metadata_package_dir=package_dir,
+                    identity_package_json=package_json,
+                    base_url=base_url,
+                )
+            )
     return fonts
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="從字型資料夾產生全部字型清單 JSON")
-    parser.add_argument(
-        "--root", type=Path, default=Path(__file__).resolve().parent.parent
-    )
-    parser.add_argument(
-        "--config", type=Path, default=Path(__file__).with_name("font-list.config.json")
-    )
-    parser.add_argument("--output", type=Path, default=None)
-    parser.add_argument(
-        "--tag",
-        type=str,
-        default=None,
-        help="指定 Git tag（預設自動取得最新的 tag 主版本號，若無則使用 main）",
-    )
-    parser.add_argument(
-        "--base-url",
-        default=None,
-        help="result.css 所使用的 CDN 根網址（若未指定，則自動使用 https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@{TAG_OR_MAIN}）",
-    )
-    parser.add_argument(
-        "--exclude", action="append", default=[], help="額外排除的資料夾，可重複指定"
-    )
+    parser = argparse.ArgumentParser(description="從 .dist 產生字型清單 JSON")
+    parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--base-url", default=DEFAULT_BASE_URL)
     args = parser.parse_args()
-
-    tag = args.tag or get_latest_git_tag(args.root) or "main"
-    base_url = args.base_url or f"https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@{tag}"
-
-    config = load_config(args.config)
-    config["excludeFolders"] = list(
-        set(config.get("excludeFolders", [])) | set(args.exclude)
-    )
-    output = args.output or args.root / "api" / "fonts.json"
+    root = args.root.resolve()
+    output = args.output.resolve()
+    if not root.is_dir():
+        raise SystemExit(f"找不到字型輸出資料夾：{root}")
+    fonts = build_font_list(root, args.base_url)
     output.parent.mkdir(parents=True, exist_ok=True)
-    fonts = build_font_list(args.root, config, base_url)
     output.write_text(
         json.dumps(fonts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    print(f"已產生 {len(fonts)} 個字型：{output} (使用 base_url: {base_url})")
+    print(f"已產生 {len(fonts)} 個字型：{output}")
 
 
 if __name__ == "__main__":

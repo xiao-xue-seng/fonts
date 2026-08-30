@@ -97,3 +97,12 @@ export function writePackageBuildOptions(destDir, buildOptions) {
   packageJson.buildOptions = normalizeBuildOptions(buildOptions);
   writePackageJson(destDir, packageJson);
 }
+
+export function writePackageMetadata(destDir, fontMetadata) {
+  const packageJson = readPackageJson(destDir) || {};
+  packageJson.fontMetadata = {
+    ...(packageJson.fontMetadata || {}),
+    ...fontMetadata,
+  };
+  writePackageJson(destDir, packageJson);
+}

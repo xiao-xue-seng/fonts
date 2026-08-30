@@ -18,6 +18,9 @@
  - subsetMode: (選填) 子集模式，"single" 表示僅保留單一子集輸出，"split" 表示保留多個子集輸出 (預設: "split")
 */
 
+const TTF_BASE_URL =
+  "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/";
+
 const TW_ALIGNED_COMMON_DETAILS = `全字庫傳承自早期 Windows 系統的字型設計規範，其字型內部座標系（EM Square）將字身位置刻意偏下繪製。全字庫常是缺字備援的首選字型，當瀏覽器或排版軟體將不同字型的基線（Baseline）對齊於同條水平線時，全字庫字體會顯得比「文鼎楷體/宋體」等現代標準字型矮上一截，且無法單純透過 CSS 的 @font-face 參數進行垂直平移。
 
 為避免排版時需額外撰寫 CSS (transform) 或標籤進行修正，本套件已於字型內部直接修正字形座標點，將字身垂直置中，確保全字庫在現代網頁與跨平台混排時能具備一致且完美的對齊表現。`;
@@ -31,7 +34,7 @@ export default [
   // ─── 🔵 範例 1：群組字型套件 ───
   {
     name: "tw-kai-aligned",
-    title: "TW-Kai Aligned (全字齊楷)",
+    title: "全字齊楷 完整",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -47,25 +50,31 @@ ${TW_ALIGNED_COMMON_DETAILS}
     items: [
       {
         name: "Base (基本字集)",
+        title: "全字齊楷 基本",
         // fontFamily: "TW-Kai-Aligned", 這裡都不需要指定fontFamily，因為對齊時已經修改內建名稱了，維持使用字型檔內定值即可。
         file: "./temp/ttf-to-next/TW-Kai-Aligned.ttf",
         subDir: "base",
+        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned.ttf`,
       },
       {
         name: "Ext-B (擴充 B 字集)",
+        title: "全字齊楷 Ext-B",
         file: "./temp/ttf-to-next/TW-Kai-Aligned-Ext-B.ttf",
         subDir: "ext-b",
+        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Ext-B.ttf`
       },
       {
         name: "Plus (自造字區)",
+        title: "全字齊楷 Plus",
         file: "./temp/ttf-to-next/TW-Kai-Aligned-Plus.ttf",
         subDir: "plus",
+        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Plus.ttf`
       },
     ],
   },
   {
     name: "tw-sung-aligned",
-    title: "TW-Sung Aligned (全字齊宋)",
+    title: "全字齊宋",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -81,18 +90,24 @@ ${TW_ALIGNED_COMMON_DETAILS}
     items: [
       {
         name: "Base (基本字集)",
+        title: "全字齊宋 基本",
         file: "./temp/ttf-to-next/TW-Sung-Aligned.ttf",
         subDir: "base",
+        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned.ttf`
       },
       {
         name: "Ext-B (擴充 B 字集)",
+        title: "全字齊宋 Ext-B",
         file: "./temp/ttf-to-next/TW-Sung-Aligned-Ext-B.ttf",
         subDir: "ext-b",
+        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned-Ext-B.ttf`
       },
       {
         name: "Plus (自造字區)",
+        title: "全字齊宋 Plus",
         file: "./temp/ttf-to-next/TW-Sung-Aligned-Plus.ttf",
         subDir: "plus",
+        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned-Plus.ttf`
       },
     ],
   },
@@ -100,7 +115,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
   // ─── 🟢 範例 2：單一字型套件 ───
   {
     name: "tw-kai-aligned-punct",
-    title: "TW-Kai Aligned Punct (全字齊楷-標點)",
+    title: "全字齊楷 標點",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: false, // 標點刻意不用本地字型
@@ -117,12 +132,13 @@ ${TW_ALIGNED_COMMON_DETAILS}
 ${TW_ALIGNED_COMMON_DETAILS}`,
     subsetMode: "single",
     file: "./temp/ttf-to-next/TW-Kai-Aligned-Punct.ttf",
+    ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Punct.ttf`
   },
   // 全字庫的標點字形應該都是一樣的，所以不需要另外製作宋體標點。
 
   {
     name: "chill-huo-fangsong",
-    title: "ChillHuoFangSong (寒蟬活仿宋)",
+    title: "寒蟬活仿宋",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -130,11 +146,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "寒蟬活仿宋 之切片化 WebFont",
     details: getBasicDetails("寒蟬活仿宋"),
     file: "./temp/ttf-to-next/ChillHuoFangSong_Regular.otf",
+    ttfUrl: `${TTF_BASE_URL}ChillHuoFangSong_Regular.otf`
   },
 
   {
     name: "chill-kai",
-    title: "ChillKai (寒蟬正楷體)",
+    title: "寒蟬正楷體",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -142,11 +159,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "寒蟬正楷體 之切片化 WebFont",
     details: getBasicDetails("寒蟬正楷體"),
     file: "./temp/ttf-to-next/ChillKai.ttf",
+    ttfUrl: `${TTF_BASE_URL}ChillKai.ttf`
   },
 
   {
     name: "huiwen-fangsong",
-    title: "Huiwen-Fangsong (匯文仿宋)",
+    title: "匯文仿宋",
     version: "1.0.0",
     license: "SEE LICENSE IN LICENSE",
     licenseSource: "temp/licenseSource/huiwen-fangsong/LICENSE",
@@ -155,11 +173,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "匯文仿宋 之切片化 WebFont",
     details: getBasicDetails("匯文仿宋"),
     file: "./temp/ttf-to-next/huiwen-fangsong.ttf",
+    ttfUrl: `${TTF_BASE_URL}huiwen-fangsong.ttf`
   },
 
   {
     name: "iansui",
-    title: "Iansui (芫荽體)",
+    title: "芫荽體",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -167,11 +186,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "芫荽體 之切片化 WebFont",
     details: getBasicDetails("芫荽體"),
     file: "./temp/ttf-to-next/Iansui-Regular.ttf",
+    ttfUrl: `${TTF_BASE_URL}Iansui-Regular.ttf`
   },
 
   {
     name: "instrument-sans-subset",
-    title: "InstrumentSans-Subset (Instrument Sans 拉丁子集)",
+    title: "Instrument Sans 拉丁子集",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: false,
@@ -184,11 +204,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     keywords: ["font", "webfont"],
     subsetMode: "single",
     file: "./temp/ttf-to-next/InstrumentSans-Subset.ttf",
+    ttfUrl: `${TTF_BASE_URL}InstrumentSans-Subset.ttf`
   },
 
   {
     name: "ar-pl-ukai",
-    title: "AR PL UKai (文鼎PL中楷)",
+    title: "文鼎PL中楷",
     version: "1.0.0",
     license: "SEE LICENSE IN LICENSE",
     licenseSource: "temp/licenseSource/ar-pl-ukai/license",
@@ -200,11 +221,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 此專案從 ukai.ttc (0.1.20080216) 中擷取出 ukai-tw.ttf 再經切片化處理。並未修改字形內容。
 `,
     file: "./temp/ttf-to-next/AR-PL-UKai-TW.ttf",
+    ttfUrl: `${TTF_BASE_URL}AR-PL-UKai-TW.ttf`
   },
 
   {
     name: "ar-pl-uming",
-    title: "AR PL UMing (文鼎PL細上海宋)",
+    title: "文鼎PL細上海宋",
     version: "1.0.0",
     license: "SEE LICENSE IN LICENSE",
     licenseSource: "temp/licenseSource/ar-pl-uming/license",
@@ -218,11 +240,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 註：此字體原本的「，：；！？」就是靠左下小型。若有需要，可用「全字齊楷 標點 (TW-Kai-Aligned-Punct)」於 CSS font-family 中，前置替換為置中標點。
 `,
     file: "./temp/ttf-to-next/AR-PL-UMing-TW.ttf",
+    ttfUrl: `${TTF_BASE_URL}AR-PL-UMing-TW.ttf`
   },
 
   {
     name: "zhuque-fangsong",
-    title: "ZhuqueFangsong (朱雀仿宋)",
+    title: "朱雀仿宋",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
@@ -230,11 +253,12 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "朱雀仿宋 之切片化 WebFont",
     details: getBasicDetails("朱雀仿宋(v.0.212)"),
     file: "./temp/ttf-to-next/ZhuqueFangsong-Regular.ttf",
+    ttfUrl: `${TTF_BASE_URL}ZhuqueFangsong-Regular.ttf`
   },
 
   {
     name: "noto-serif-sc-punct",
-    title: "Noto Serif SC Punct (Noto-宋體-簡體-標點)",
+    title: "Noto 簡宋 標點",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: false, // 標點刻意不用本地字型
@@ -247,10 +271,11 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 `,
     subsetMode: "single",
     file: "./temp/ttf-to-next/Noto-Serif-SC-Punct.ttf",
+    ttfUrl: `${TTF_BASE_URL}Noto-Serif-SC-Punct.ttf`
   },
   {
     name: "noto-serif-tc-punct",
-    title: "Noto Serif TC Punct (Noto-宋體-繁體-標點)",
+    title: "Noto 繁宋 標點",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: false, // 標點刻意不用本地字型
@@ -263,5 +288,6 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 `,
     subsetMode: "single",
     file: "./temp/ttf-to-next/Noto-Serif-TC-Punct.ttf",
+    ttfUrl: `${TTF_BASE_URL}Noto-Serif-TC-Punct.ttf`
   },
 ];

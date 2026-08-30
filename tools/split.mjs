@@ -20,6 +20,7 @@ node tools/split.mjs -d ./raw-fonts -l "OFL-1.1" -v "1.0.1" --no-local
 
 🟩備忘：
 🟢輸出資料夾的原則：一旦判定需要執行切片，一定是透過暫存資料夾中繼，完全重新建立所有檔案，以免舊檔殘留。
+🟢此工具不讀取 fonts.config.mjs，在產生 package.json 時，只寫入已知的欄位。
 */
 
 import { fontSplit } from "cn-font-split";
