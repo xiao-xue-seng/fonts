@@ -17,6 +17,9 @@ node tools/split.mjs -f ./fonts/ChillKai-Merged.ttf --no-local
 
 # 5. 指定資料夾批次處理
 node tools/split.mjs -d ./raw-fonts -l "OFL-1.1" -v "1.0.1" --no-local
+
+🟩備忘：
+🟢輸出資料夾的原則：一旦判定需要執行切片，一定是透過暫存資料夾中繼，完全重新建立所有檔案，以免舊檔殘留。
 */
 
 import { fontSplit } from "cn-font-split";
@@ -29,6 +32,12 @@ import {
   createResliceTempDir,
   replaceOutputDirectory,
 } from "./utils/font-output.mjs";
+import {
+  createPackageJson,
+  readPackageBuildOptions,
+  writePackageBuildOptions,
+  writePackageJson,
+} from "./utils/package-json.mjs";
 
 export { BUILD_OPTIONS_SCHEMA_VERSION } from "./utils/font-output.mjs";
 
@@ -47,43 +56,7 @@ export function toKebabCase(str) {
     .toLowerCase();
 }
 
-export function readPackageBuildOptions(destDir) {
-  const packageJsonPath = path.join(destDir, "package.json");
-  if (!fs.existsSync(packageJsonPath)) return null;
-
-  try {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-    const buildOptions = packageJson?.buildOptions;
-    if (!buildOptions || typeof buildOptions !== "object") return null;
-    return buildOptions;
-  } catch {
-    return null;
-  }
-}
-
-export function writePackageBuildOptions(destDir, buildOptions) {
-  const packageJsonPath = path.join(destDir, "package.json");
-  let packageJson = {};
-
-  if (fs.existsSync(packageJsonPath)) {
-    try {
-      packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-    } catch {
-      packageJson = {};
-    }
-  }
-
-  packageJson.buildOptions = {
-    schemaVersion: BUILD_OPTIONS_SCHEMA_VERSION,
-    ...buildOptions,
-  };
-
-  fs.writeFileSync(
-    packageJsonPath,
-    JSON.stringify(packageJson, null, 2),
-    "utf-8",
-  );
-}
+export { readPackageBuildOptions, writePackageBuildOptions } from "./utils/package-json.mjs";
 
 function getFontCodepoints(filePath) {
   const buffer = fs.readFileSync(filePath);
@@ -177,19 +150,14 @@ export function generatePackageFiles(
     buildOptions = null,
   } = {},
 ) {
-  const packageJson = {
-    name: `@${NPM_SCOPE}/${pkgName}`,
-    version: version,
-    description: `Webfont subset for ${rawFontName}`,
-    main: "result.css",
-    style: "result.css",
-    keywords: ["font", "webfont", "chinese-font", pkgName],
-    license: license,
-    publishConfig: {
-      access: "public", // Scoped package 必須設定 public 才能免費公開發布
-    },
-    ...(buildOptions ? { buildOptions } : {}),
-  };
+  const packageJson = createPackageJson({
+    scope: NPM_SCOPE,
+    pkgName,
+    rawFontName,
+    version,
+    license,
+    buildOptions,
+  });
 
   const readmeContent = `# @${NPM_SCOPE}/${pkgName}
 
@@ -208,11 +176,7 @@ body {
 \`\`\`
 `;
 
-  fs.writeFileSync(
-    path.join(destDir, "package.json"),
-    JSON.stringify(packageJson, null, 2),
-    "utf-8",
-  );
+  writePackageJson(destDir, packageJson);
   fs.writeFileSync(path.join(destDir, "README.md"), readmeContent, "utf-8");
 }
 

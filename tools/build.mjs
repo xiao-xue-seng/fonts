@@ -33,9 +33,9 @@ import {
   toKebabCase,
 } from "./split.mjs";
 import {
-  BUILD_OPTIONS_SCHEMA_VERSION,
   extractFontFamily,
 } from "./utils/font-output.mjs";
+import { createPackageJson, writePackageJson } from "./utils/package-json.mjs";
 
 const DEFAULT_KEYWORDS = ["font", "webfont", "chinese-font"];
 
@@ -117,33 +117,26 @@ export function copyLicenseSource(destDir, licenseSource) {
 /**
  * 產出 package.json
  */
-function writePackageJson(destDir, config, mainCssFile) {
+function writeBuildPackageJson(destDir, config, mainCssFile) {
   const pkgName = toKebabCase(config.name);
-  const packageJson = {
-    name: `@${NPM_SCOPE}/${pkgName}`,
+  const packageJson = createPackageJson({
+    scope: NPM_SCOPE,
+    pkgName,
+    rawFontName: config.title || pkgName,
     version: config.version || "1.0.0",
     description:
       config.description || `Webfont subset for ${config.title || pkgName}`,
     main: mainCssFile,
-    style: mainCssFile,
     keywords: getPackageKeywords(config, pkgName),
     license: config.license || "OFL-1.1",
-    publishConfig: {
-      access: "public",
-    },
     buildOptions: {
-      schemaVersion: BUILD_OPTIONS_SCHEMA_VERSION,
       includeLocal: config.includeLocal !== false,
       fontFamily: config.fontFamily || "",
       subsetMode: config.subsetMode || "split",
     },
-  };
+  });
 
-  fs.writeFileSync(
-    path.join(destDir, "package.json"),
-    JSON.stringify(packageJson, null, 2),
-    "utf-8",
-  );
+  writePackageJson(destDir, packageJson);
 }
 
 /**
@@ -263,7 +256,7 @@ async function buildSingleFont(config) {
   }
 
   // 產生根目錄設定與說明檔
-  writePackageJson(destDir, config, "result.css");
+  writeBuildPackageJson(destDir, config, "result.css");
   writeSingleReadme(destDir, config, fontFamily);
 
   // 複製授權檔案或資料夾
@@ -368,7 +361,7 @@ async function buildFontGroup(config) {
   const finalFontFamily = detectedFontFamily || config.title || pkgName;
 
   // 產生群組根目錄 package.json 與 README.md
-  writePackageJson(groupDestDir, config, "index.css");
+  writeBuildPackageJson(groupDestDir, config, "index.css");
   writeGroupReadme(groupDestDir, config, finalFontFamily);
 
   // 複製授權檔案或資料夾
