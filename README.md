@@ -23,16 +23,16 @@
 
 - **在網頁 `<head>` 中引入字型**：
 
-```html
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@1.0.0/result.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@1.0.0/result.css"
-/>
-```
+  ```html
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@1.0.0/result.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@1.0.0/result.css"
+  />
+  ```
 
 - **CSS 使用範例**：
 
@@ -47,6 +47,10 @@
 
 - **版權聲明**：
   本字型源自文鼎科技之 ARPHIC PUBLIC LICENSE 授權字型，包含原始版權註明「Copyright (C) 1999 Arphic Technology Co., Ltd.」與相關授權說明；本倉庫已將授權檔案一併收錄於各字型資料夾中，請於散布時一併保留。
+
+- 備註：
+  - 文鼎這兩種字型的TW與CN版，在字形方面沒有差異，標點符號也都是"置中式"，所以只取字碼較多的TW版進行切片化。
+  - 呈現簡體字時，若須"靠下式"標點，可用`"Noto Serif SC Punct"`替換標點。
 
 ---
 
@@ -86,11 +90,18 @@
   ```
 
 - **CSS 使用範例**：
+
   ```css
   body {
     font-family: "ChillKai", serif;
   }
   ```
+
+- 備註：
+  - `寒蟬正楷`源自`全字庫`具有：
+    - 垂直位置偏低的歷史包袱。
+    - 原設計目的是補齊中文字碼，未特別考慮字形之間的協調性等等，較適合用於補缺字，而非長篇排版。
+  - 標點符號是簡體左下風格。
 
 ---
 
@@ -140,7 +151,7 @@
 
 ### 🟩Instrument Sans 拉丁字子集
 
-用來取代中文字型中的拉丁文字，讓整體排版更美觀。為什麼做成子集？是因為不想要取代原 Instrument Sans 所有字碼範圍的字，只想取代部分字碼。
+用來取代中文字型的拉丁文字，讓整體排版更美觀。為什麼做成子集？是因為不想取代原 Instrument Sans 所有字碼範圍的字，只想取代部分字碼。
 
 - **授權**：SIL Open Font License 1.1
 
@@ -276,6 +287,7 @@ body {
 
 ### 🟩全字齊楷 標點符號子集
 
+繁體慣用的「置中式」標點符號。
 適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
 
 - **授權**：SIL Open Font License 1.1
@@ -413,5 +425,5 @@ body {
 | **芫荽體**                  | ButTaiwan                                    | [GitHub](https://github.com/ButTaiwan/iansui) (SIL OFL 1.1)                     |
 | **文鼎PL中楷**              | 文鼎科技 / Debian / Ubuntu CJK-Unifonts 社群 | [ARPHICPL](ukai-tw/license/zh_TW.UTF-8/ARPHICPL.TXT)                            |
 | **文鼎PL細上海宋**          | 文鼎科技 / Debian / Ubuntu CJK-Unifonts 社群 | [ARPHICPL](uming-tw/license/zh_TW.UTF-8/ARPHICPL.txt)                           |
-| **全字庫正楷體、正宋體**    | 數位發展部 / 國家發展委員會                  | [全字庫](https://www.fonts.org.tw/) (SIL OFL 1.1)                                  |
+| **全字庫正楷體、正宋體**    | 數位發展部 / 國家發展委員會                  | [全字庫](https://www.fonts.org.tw/) (SIL OFL 1.1)                               |
 | **Instrument Sans**         | Instrument / Rodrigo Fuenzalida              | [Google Fonts](https://fonts.google.com/specimen/Instrument+Sans) (SIL OFL 1.1) |
