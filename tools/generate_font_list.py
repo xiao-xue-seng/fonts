@@ -143,6 +143,14 @@ def build_font_list(root: Path, base_url: str) -> list[dict[str, str]]:
     return fonts
 
 
+def write_text_if_changed(path: Path, content: str) -> bool:
+    if path.exists() and path.read_text(encoding="utf-8") == content:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+    return True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="從 .dist 產生字型清單 JSON")
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
@@ -154,11 +162,11 @@ def main() -> None:
     if not root.is_dir():
         raise SystemExit(f"找不到字型輸出資料夾：{root}")
     fonts = build_font_list(root, args.base_url)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        json.dumps(fonts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-    print(f"已產生 {len(fonts)} 個字型：{output}")
+    rendered = json.dumps(fonts, ensure_ascii=False, indent=2) + "\n"
+    if write_text_if_changed(output, rendered):
+        print(f"已產生 {len(fonts)} 個字型：{output}")
+    else:
+        print(f"內容未變更，跳過寫入：{output}")
 
 
 if __name__ == "__main__":
