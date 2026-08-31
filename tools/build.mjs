@@ -20,6 +20,9 @@ node tools/build.mjs --config ./custom-fonts.config.mjs
 
 🟡相關流程：
 - tools\optimize_ttf_for_app.py
+- 產生總字型清單：執行 tools\generate_font_list.py
+- 同步 amec 清單：執行 tools\sync_amec_font_list.py
+
 */
 
 import fs from "node:fs";
