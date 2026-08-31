@@ -36,12 +36,16 @@ export default [
   {
     name: "tw-kai-aligned",
     title: "全字齊楷 完整",
-    version: "1.0.0",
+    version: "1.0.1",
     license: "OFL-1.1",
+    licenseSource: "temp/licenseSource/tw-kai-aligned/LICENSE",
     includeLocal: true,
     genericFamily: "serif",
     description: "全字齊楷：全字庫正楷體經垂直對齊調整後之切片化 WebFont",
-    details: `## 字型介紹
+    details: `Copyright (c) 2026, xiao-xue-seng (https://github.com/xiao-xue-seng/fonts),
+with Reserved Font Name "全字齊楷" and "TW-Kai-Aligned".
+
+## 字型介紹
 
 本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
 
@@ -77,12 +81,16 @@ ${TW_ALIGNED_COMMON_DETAILS}
   {
     name: "tw-sung-aligned",
     title: "全字齊宋 完整",
-    version: "1.0.0",
+    version: "1.0.1",
     license: "OFL-1.1",
+    licenseSource: "temp/licenseSource/tw-sung-aligned/LICENSE",
     includeLocal: true,
     genericFamily: "serif",
     description: "全字齊宋：全字庫正宋體經垂直對齊調整後之切片化 WebFont",
-    details: `## 字型介紹
+    details: `Copyright (c) 2026, xiao-xue-seng (https://github.com/xiao-xue-seng/fonts),
+with Reserved Font Name "全字齊宋" and "TW-Sung-Aligned".
+
+## 字型介紹
 
 本專案收錄由 全字庫正宋體 (TW-Sung) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
 
