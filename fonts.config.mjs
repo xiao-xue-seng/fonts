@@ -76,7 +76,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
   },
   {
     name: "tw-sung-aligned",
-    title: "全字齊宋",
+    title: "全字齊宋 完整",
     version: "1.0.0",
     license: "OFL-1.1",
     includeLocal: true,
