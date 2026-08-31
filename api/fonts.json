@@ -66,27 +66,27 @@
     "id": "tw-kai-aligned",
     "name": "TW-Kai-Aligned",
     "displayName": "全字齊楷 完整",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/index.css"
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.1/index.css"
   },
   {
     "id": "tw-kai-aligned/base",
     "name": "TW-Kai-Aligned",
     "displayName": "全字齊楷 基本",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/base/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.1/base/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned.ttf"
   },
   {
     "id": "tw-kai-aligned/ext-b",
     "name": "TW-Kai-Aligned-Ext-B",
     "displayName": "全字齊楷 Ext-B",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/ext-b/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.1/ext-b/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Ext-B.ttf"
   },
   {
     "id": "tw-kai-aligned/plus",
     "name": "TW-Kai-Aligned-Plus",
     "displayName": "全字齊楷 Plus",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/plus/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.1/plus/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Plus.ttf"
   },
   {
@@ -100,27 +100,27 @@
     "id": "tw-sung-aligned",
     "name": "TW-Sung-Aligned",
     "displayName": "全字齊宋 完整",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/index.css"
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/index.css"
   },
   {
     "id": "tw-sung-aligned/base",
     "name": "TW-Sung-Aligned",
     "displayName": "全字齊宋 基本",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/base/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/base/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned.ttf"
   },
   {
     "id": "tw-sung-aligned/ext-b",
     "name": "TW-Sung-Aligned-Ext-B",
     "displayName": "全字齊宋 Ext-B",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/ext-b/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/ext-b/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned-Ext-B.ttf"
   },
   {
     "id": "tw-sung-aligned/plus",
     "name": "TW-Sung-Aligned-Plus",
     "displayName": "全字齊宋 Plus",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/plus/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/plus/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned-Plus.ttf"
   },
   {
