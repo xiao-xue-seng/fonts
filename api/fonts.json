@@ -1,16 +1,42 @@
 [
   {
     "id": "ar-pl-ukai",
-    "name": "AR PL UKai TW",
+    "name": "AR PL UKai CN",
     "displayName": "文鼎PL中楷",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@1.0.0/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/index.css"
+  },
+  {
+    "id": "ar-pl-ukai/cn",
+    "name": "AR PL UKai CN",
+    "displayName": "文鼎PL中楷 CN",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/cn/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/AR-PL-UKai-CN.ttf"
+  },
+  {
+    "id": "ar-pl-ukai/tw",
+    "name": "AR PL UKai TW",
+    "displayName": "文鼎PL中楷 TW",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/tw/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/AR-PL-UKai-TW.ttf"
   },
   {
     "id": "ar-pl-uming",
-    "name": "AR PL UMing TW",
+    "name": "AR PL UMing CN",
     "displayName": "文鼎PL細上海宋",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@1.0.0/result.css",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@2.0.0/index.css"
+  },
+  {
+    "id": "ar-pl-uming/cn",
+    "name": "AR PL UMing CN",
+    "displayName": "文鼎PL細上海宋 CN",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@2.0.0/cn/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/AR-PL-UMing-CN.ttf"
+  },
+  {
+    "id": "ar-pl-uming/tw",
+    "name": "AR PL UMing TW",
+    "displayName": "文鼎PL細上海宋 TW",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@2.0.0/tw/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/AR-PL-UMing-TW.ttf"
   },
   {

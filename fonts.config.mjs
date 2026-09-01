@@ -67,14 +67,14 @@ ${TW_ALIGNED_COMMON_DETAILS}
         title: "全字齊楷 Ext-B",
         file: "./temp/ttf-to-next/TW-Kai-Aligned-Ext-B.ttf",
         subDir: "ext-b",
-        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Ext-B.ttf`
+        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Ext-B.ttf`,
       },
       {
         name: "Plus (自造字區)",
         title: "全字齊楷 Plus",
         file: "./temp/ttf-to-next/TW-Kai-Aligned-Plus.ttf",
         subDir: "plus",
-        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Plus.ttf`
+        ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Plus.ttf`,
       },
     ],
   },
@@ -104,21 +104,21 @@ ${TW_ALIGNED_COMMON_DETAILS}
         title: "全字齊宋 基本",
         file: "./temp/ttf-to-next/TW-Sung-Aligned.ttf",
         subDir: "base",
-        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned.ttf`
+        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned.ttf`,
       },
       {
         name: "Ext-B (擴充 B 字集)",
         title: "全字齊宋 Ext-B",
         file: "./temp/ttf-to-next/TW-Sung-Aligned-Ext-B.ttf",
         subDir: "ext-b",
-        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned-Ext-B.ttf`
+        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned-Ext-B.ttf`,
       },
       {
         name: "Plus (自造字區)",
         title: "全字齊宋 Plus",
         file: "./temp/ttf-to-next/TW-Sung-Aligned-Plus.ttf",
         subDir: "plus",
-        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned-Plus.ttf`
+        ttfUrl: `${TTF_BASE_URL}TW-Sung-Aligned-Plus.ttf`,
       },
     ],
   },
@@ -144,7 +144,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
 ${TW_ALIGNED_COMMON_DETAILS}`,
     subsetMode: "single",
     file: "./temp/ttf-to-next/TW-Kai-Aligned-Punct.ttf",
-    ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Punct.ttf`
+    ttfUrl: `${TTF_BASE_URL}TW-Kai-Aligned-Punct.ttf`,
   },
   // 全字庫的標點字形應該都是一樣的，所以不需要另外製作宋體標點。
 
@@ -158,7 +158,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "寒蟬活仿宋 之切片化 WebFont",
     details: getBasicDetails("寒蟬活仿宋"),
     file: "./temp/ttf-to-next/ChillHuoFangSong_Regular.otf",
-    ttfUrl: `${TTF_BASE_URL}ChillHuoFangSong_Regular.otf`
+    ttfUrl: `${TTF_BASE_URL}ChillHuoFangSong_Regular.otf`,
   },
 
   {
@@ -171,7 +171,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "寒蟬正楷體 之切片化 WebFont",
     details: getBasicDetails("寒蟬正楷體"),
     file: "./temp/ttf-to-next/ChillKai.ttf",
-    ttfUrl: `${TTF_BASE_URL}ChillKai.ttf`
+    ttfUrl: `${TTF_BASE_URL}ChillKai.ttf`,
   },
 
   {
@@ -185,7 +185,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "匯文仿宋 之切片化 WebFont",
     details: getBasicDetails("匯文仿宋"),
     file: "./temp/ttf-to-next/huiwen-fangsong.ttf",
-    ttfUrl: `${TTF_BASE_URL}huiwen-fangsong.ttf`
+    ttfUrl: `${TTF_BASE_URL}huiwen-fangsong.ttf`,
   },
 
   {
@@ -198,7 +198,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "芫荽體 之切片化 WebFont",
     details: getBasicDetails("芫荽體"),
     file: "./temp/ttf-to-next/Iansui-Regular.ttf",
-    ttfUrl: `${TTF_BASE_URL}Iansui-Regular.ttf`
+    ttfUrl: `${TTF_BASE_URL}Iansui-Regular.ttf`,
   },
 
   {
@@ -216,43 +216,71 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     keywords: ["font", "webfont"],
     subsetMode: "single",
     file: "./temp/ttf-to-next/InstrumentSans-Subset.ttf",
-    ttfUrl: `${TTF_BASE_URL}InstrumentSans-Subset.ttf`
+    ttfUrl: `${TTF_BASE_URL}InstrumentSans-Subset.ttf`,
   },
 
   {
     name: "ar-pl-ukai",
     title: "文鼎PL中楷",
-    version: "1.0.0",
+    version: "2.0.0",
     license: "SEE LICENSE IN LICENSE",
     licenseSource: "temp/licenseSource/ar-pl-ukai/license",
     includeLocal: true,
     genericFamily: "serif",
-    description: "文鼎PL中楷 之切片化 WebFont",
+    description: "文鼎PL中楷 之切片化 WebFont，包含 CN 及 TW 字集。",
     details: `${getBasicDetails("文鼎PL中楷")}
 
-此專案從 ukai.ttc (0.1.20080216) 中擷取出 ukai-tw.ttf 再經切片化處理。並未修改字形內容。
+此專案從 ukai.ttc (0.1.20080216) 中擷取出 CN 及 TW ttf 再經切片化處理。並未修改字形內容。
 `,
-    file: "./temp/ttf-to-next/AR-PL-UKai-TW.ttf",
-    ttfUrl: `${TTF_BASE_URL}AR-PL-UKai-TW.ttf`
+    items: [
+      {
+        name: "CN (簡體字集)",
+        title: "文鼎PL中楷 CN",
+        file: "./temp/ttf-to-next/AR-PL-UKai-CN.ttf",
+        subDir: "cn",
+        ttfUrl: `${TTF_BASE_URL}AR-PL-UKai-CN.ttf`,
+      },
+      {
+        name: "TW (繁體字集)",
+        title: "文鼎PL中楷 TW",
+        file: "./temp/ttf-to-next/AR-PL-UKai-TW.ttf",
+        subDir: "tw",
+        ttfUrl: `${TTF_BASE_URL}AR-PL-UKai-TW.ttf`,
+      },
+    ],
   },
 
   {
     name: "ar-pl-uming",
     title: "文鼎PL細上海宋",
-    version: "1.0.0",
+    version: "2.0.0",
     license: "SEE LICENSE IN LICENSE",
     licenseSource: "temp/licenseSource/ar-pl-uming/license",
     includeLocal: true,
     genericFamily: "serif",
-    description: "文鼎PL細上海宋 之切片化 WebFont",
+    description: "文鼎PL細上海宋 之切片化 WebFont，包含 CN 及 TW 字集。",
     details: `${getBasicDetails("文鼎PL細上海宋")}
 
-此專案從 uming.ttc (0.1.20080216) 中擷取出 uming-tw.ttf 再經切片化處理。並未修改字形內容。
+此專案從 uming.ttc (0.1.20080216) 中擷取出 CN 及 TW ttf 再經切片化處理。並未修改字形內容。
 
-註：此字體原本的「，：；！？」就是靠左下小型。若有需要，可用「全字齊楷 標點 (TW-Kai-Aligned-Punct)」於 CSS font-family 中，前置替換為置中標點。
+註：TW 字集原本的「，：；！？」就是靠左下小型。若有需要，可用「全字齊楷 標點 (TW-Kai-Aligned-Punct)」於 CSS font-family 中，前置替換為置中標點。
 `,
-    file: "./temp/ttf-to-next/AR-PL-UMing-TW.ttf",
-    ttfUrl: `${TTF_BASE_URL}AR-PL-UMing-TW.ttf`
+    items: [
+      {
+        name: "CN (簡體字集)",
+        title: "文鼎PL細上海宋 CN",
+        file: "./temp/ttf-to-next/AR-PL-UMing-CN.ttf",
+        subDir: "cn",
+        ttfUrl: `${TTF_BASE_URL}AR-PL-UMing-CN.ttf`,
+      },
+      {
+        name: "TW (繁體字集)",
+        title: "文鼎PL細上海宋 TW",
+        file: "./temp/ttf-to-next/AR-PL-UMing-TW.ttf",
+        subDir: "tw",
+        ttfUrl: `${TTF_BASE_URL}AR-PL-UMing-TW.ttf`,
+      },
+    ],
   },
 
   {
@@ -265,7 +293,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
     description: "朱雀仿宋 之切片化 WebFont",
     details: getBasicDetails("朱雀仿宋(v.0.212)"),
     file: "./temp/ttf-to-next/ZhuqueFangsong-Regular.ttf",
-    ttfUrl: `${TTF_BASE_URL}ZhuqueFangsong-Regular.ttf`
+    ttfUrl: `${TTF_BASE_URL}ZhuqueFangsong-Regular.ttf`,
   },
 
   {
@@ -283,7 +311,7 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 `,
     subsetMode: "single",
     file: "./temp/ttf-to-next/Noto-Serif-SC-Punct.ttf",
-    ttfUrl: `${TTF_BASE_URL}Noto-Serif-SC-Punct.ttf`
+    ttfUrl: `${TTF_BASE_URL}Noto-Serif-SC-Punct.ttf`,
   },
   {
     name: "noto-serif-tc-punct",
@@ -300,6 +328,6 @@ ${TW_ALIGNED_COMMON_DETAILS}`,
 `,
     subsetMode: "single",
     file: "./temp/ttf-to-next/Noto-Serif-TC-Punct.ttf",
-    ttfUrl: `${TTF_BASE_URL}Noto-Serif-TC-Punct.ttf`
+    ttfUrl: `${TTF_BASE_URL}Noto-Serif-TC-Punct.ttf`,
   },
 ];

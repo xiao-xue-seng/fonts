@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AR PL UKai TW vs CN 字形比對工具</title>
+    <style>
+      :root {
+        --font-tw: "AR PL UKai TW", serif;
+        --font-cn: "AR PL UKai CN", serif;
+        --font-size: 72px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #f4f6f9;
+        color: #333;
+        margin: 0;
+        padding: 24px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0 0 12px 0;
+        font-size: 24px;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .custom-input-box {
+        flex: 1;
+        min-width: 300px;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 14px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      button {
+        padding: 10px 16px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      button.active {
+        background: #0f172a;
+      }
+
+      /* 比對卡片佈局 */
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 24px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #cbd5e1;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card-header {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .card-body {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: #fafafa;
+        border: 1px dashed #e2e8f0;
+        border-radius: 6px;
+        min-height: 120px;
+        position: relative;
+      }
+
+      /* 字型樣式 */
+      .font-sample {
+        font-size: var(--font-size);
+        line-height: 1.2;
+        position: relative;
+        padding: 10px;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 輔助米字格線與標點基準線 */
+      .show-grid .font-sample {
+        background:
+          linear-gradient(
+            to right,
+            transparent 49.5%,
+            #e2e8f0 50%,
+            transparent 50.5%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 49.5%,
+            #e2e8f0 50%,
+            transparent 50.5%
+          );
+        border: 1px solid #e2e8f0;
+      }
+
+      .sample-tw {
+        font-family: var(--font-tw);
+        color: #1d4ed8; /* 藍色 */
+      }
+
+      .sample-cn {
+        font-family: var(--font-cn);
+        color: #b91c1c; /* 紅色 */
+      }
+
+      .label-tag {
+        position: absolute;
+        bottom: 2px;
+        right: 4px;
+        font-size: 10px;
+        font-family: sans-serif;
+        color: #94a3b8;
+      }
+
+      /* 疊加模式 (Overlay Mode) */
+      .overlay-view .card-body {
+        justify-content: center;
+      }
+      .overlay-view .sample-tw {
+        position: absolute;
+        color: rgba(29, 78, 216, 0.6); /* 半透明藍 */
+        mix-blend-mode: multiply;
+      }
+      .overlay-view .sample-cn {
+        position: absolute;
+        color: rgba(220, 38, 38, 0.6); /* 半透明紅 */
+        mix-blend-mode: multiply;
+      }
+    </style>
+  </head>
+  <body class="show-grid">
+    <div class="container">
+      <header>
+        <h1>🔍 AR PL UKai TW vs CN 字形即時比對工具</h1>
+        <div class="toolbar">
+          <div class="custom-input-box">
+            <input
+              type="text"
+              id="customInput"
+              placeholder="在此輸入任意文字進行比對（例如：道骨差着户...）"
+              oninput="renderCustom()"
+            />
+          </div>
+          <div class="btn-group">
+            <button id="toggleGridBtn" onclick="toggleGrid()">
+              切換輔助格線
+            </button>
+            <button id="toggleOverlayBtn" onclick="toggleOverlay()">
+              切換疊加模式 (Overlay)
+            </button>
+          </div>
+        </div>
+        <div>注意：這是以本機已安裝 AR PL UKai 字型的方式測試，不是用網路字型。</div>
+      </header>
+
+      <!-- 即時自訂輸入區 -->
+      <div id="customSection" style="display: none">
+        <div class="section-title">自訂輸入測試區</div>
+        <div class="grid" id="customGrid"></div>
+      </div>
+
+      <!-- 1. 標點符號組 (檢驗居中 vs 靠左下) -->
+      <div class="section-title">1. 標點符號（檢測：TW 置中 vs CN 靠左下）</div>
+      <div class="grid" id="punctGrid"></div>
+
+      <!-- 2. 筆畫結構差異字組 -->
+      <div class="section-title">2. 常見兩岸筆畫結構候選字組</div>
+      <div class="grid" id="strokeGrid"></div>
+
+      <!-- 3. 示部 / 辵部 / 艸部 / 肉部 -->
+      <div class="section-title">3. 部首部組（示 礻、辶、艹、月/⺼）</div>
+      <div class="grid" id="radicalsGrid"></div>
+    </div>
+
+    <script>
+      // 測試字元清單
+      const punctChars = [
+        { char: "，", desc: "逗號 (U+FF0C)" },
+        { char: "。", desc: "句號 (U+3002)" },
+        { char: "、", desc: "頓號 (U+3001)" },
+        { char: "；", desc: "分號 (U+FF1B)" },
+        { char: "：", desc: "冒號 (U+FF1A)" },
+        { char: "！", desc: "嘆號 (U+FF01)" },
+        { char: "？", desc: "問號 (U+FF1F)" },
+        { char: "“", desc: "左雙引號" },
+        { char: "”", desc: "右雙引號" },
+      ];
+
+      const strokeChars = [
+        { char: "骨", desc: "骨部 (折筆朝向/重心)" },
+        { char: "差", desc: "差 (長撇穿出 vs 不穿出)" },
+        { char: "着", desc: "着 (差/着 目部 vs 日部)" },
+        { char: "著", desc: "著 (艸頭 / 差字身)" },
+        { char: "戶", desc: "戶 (繁體戶)" },
+        { char: "户", desc: "户 (簡體户)" },
+        { char: "刃", desc: "刃 (點位置與折筆)" },
+        { char: "角", desc: "角 (中豎下穿 vs 不下穿)" },
+        { char: "真", desc: "真 (下橫斷開 vs 相連)" },
+        { char: "具", desc: "具 (下橫斷開 vs 相連)" },
+        { char: "呂", desc: "呂 (連接筆畫)" },
+        { char: "吕", desc: "吕 (簡體吕)" },
+        { char: "兌", desc: "兌 (八部 vs 八/点)" },
+        { char: "兑", desc: "兑 (簡體兑)" },
+        { char: "告", desc: "告 (下部口 vs 穿出)" },
+        { char: "海", desc: "海 (母 vs 毋部)" },
+        { char: "每", desc: "每 (母 vs 毋部)" },
+        { char: "查", desc: "查 (木上橫劃)" },
+      ];
+
+      const radicalChars = [
+        { char: "道", desc: "辶部 (三折 vs 點撇)" },
+        { char: "通", desc: "辶部" },
+        { char: "進", desc: "辶部" },
+        { char: "花", desc: "艹部 (四劃連 vs 斷)" },
+        { char: "草", desc: "艹部" },
+        { char: "藝", desc: "艹部" },
+        { char: "祖", desc: "礻部 (示字折筆)" },
+        { char: "神", desc: "礻部" },
+        { char: "肚", desc: "⺼/月部 (肉月旁挑筆)" },
+        { char: "胃", desc: "⺼/月部" },
+        { char: "習", desc: "羽部 (挑筆細節)" },
+        { char: "冷", desc: "冫部 (兩點水)" },
+      ];
+
+      function createCardHTML(item) {
+        return `
+      <div class="card">
+        <div class="card-header">
+          <span>${item.desc}</span>
+          <span>Unicode: U+${item.char.codePointAt(0).toString(16).toUpperCase()}</span>
+        </div>
+        <div class="card-body">
+          <div class="font-sample sample-tw">
+            ${item.char}
+            <span class="label-tag">TW</span>
+          </div>
+          <div class="font-sample sample-cn">
+            ${item.char}
+            <span class="label-tag">CN</span>
+          </div>
+        </div>
+      </div>
+    `;
+      }
+
+      function renderGroup(elementId, list) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = list.map(createCardHTML).join("");
+      }
+
+      function renderCustom() {
+        const input = document.getElementById("customInput").value;
+        const section = document.getElementById("customSection");
+        const grid = document.getElementById("customGrid");
+
+        if (!input.trim()) {
+          section.style.display = "none";
+          grid.innerHTML = "";
+          return;
+        }
+
+        section.style.display = "block";
+        const chars = Array.from(input).map((ch) => ({
+          char: ch,
+          desc: `字元: ${ch}`,
+        }));
+        grid.innerHTML = chars.map(createCardHTML).join("");
+      }
+
+      function toggleGrid() {
+        document.body.classList.toggle("show-grid");
+        document.getElementById("toggleGridBtn").classList.toggle("active");
+      }
+
+      function toggleOverlay() {
+        document.body.classList.toggle("overlay-view");
+        document.getElementById("toggleOverlayBtn").classList.toggle("active");
+      }
+
+      // 初始化載入預設群組
+      renderGroup("punctGrid", punctChars);
+      renderGroup("strokeGrid", strokeChars);
+      renderGroup("radicalsGrid", radicalChars);
+    </script>
+  </body>
+</html>

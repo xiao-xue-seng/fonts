@@ -13,12 +13,12 @@ node tools/build.mjs chill-kai
 node tools/build.mjs --config ./custom-fonts.config.mjs
 
 🟢前置作業：
-- 準備文鼎來源：執行 tools\處理文鼎字型\extract_ttcs.py 拆出 TW ttf。
+- 準備文鼎來源：執行 tools\處理文鼎字型\extract_ttcs.py 拆出 CN & TW ttf。
 - 準備對齊版：  執行 tools\處理全字庫對齊\batch_transform_tw.py
 - 準備標點子集：執行 tools\extract_cjk_punctuation.py 產生標點符號子集。
 - 準備拉丁子集：執行 tools\extract_latin_subset_ttf.py
 
-🟡相關流程：
+🟡後續流程：
 - tools\optimize_ttf_for_app.py
 - 產生總字型清單：執行 tools\generate_font_list.py
 - 同步 amec 清單：執行 tools\sync_amec_font_list.py

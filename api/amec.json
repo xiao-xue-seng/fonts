@@ -1,9 +1,9 @@
 [
   {
-    "id": "ar-pl-ukai",
+    "id": "ar-pl-ukai/tw",
     "name": "AR PL UKai TW",
-    "displayName": "文鼎PL中楷",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@1.0.0/result.css",
+    "displayName": "文鼎PL中楷 TW",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/tw/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/AR-PL-UKai-TW.ttf"
   },
   {
@@ -33,6 +33,13 @@
     "displayName": "全字齊楷 Ext-B",
     "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.1/ext-b/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Ext-B.ttf"
+  },
+  {
+    "id": "tw-kai-aligned/plus",
+    "name": "TW-Kai-Aligned-Plus",
+    "displayName": "全字齊楷 Plus",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.1/plus/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Plus.ttf"
   },
   {
     "id": "tw-sung-aligned/base",

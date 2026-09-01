@@ -1,11 +1,14 @@
 """
-這隻腳本會自動掃描同目錄下的 ukai.ttc 與 uming.ttc 兩個檔案，自動辨識內部的子字型名稱，並一口氣幫你匯出以下 4 個獨立的 .ttf 檔案：
+此腳本會自動掃描同目錄下的 ukai.ttc 與 uming.ttc 兩個檔案，自動辨識內部的子字型名稱，並一口氣幫你匯出以下 4 個獨立的 .ttf 檔案：
 - AR-PL-UKai-TW.ttf（文鼎楷體 - 台灣教育部標準）
 - AR-PL-UKai-CN.ttf（文鼎楷體 - 大陸 GB 標準）
 - AR-PL-UMing-TW.ttf（文鼎明體 - 台灣教育部標準）
 - AR-PL-UMing-CN.ttf（文鼎明體 - 大陸 GB 標準）
 
-🟡註：cn版與tw版在字形方面並沒有差別，標點符號也沒有差別(都是置中)，所以只需要拿字碼較多的tw版去切片即可。
+🟡註：
+- cn版與tw版在字形方面雖然絕大部分相同，但仍有很少的筆劃差別。
+- 楷體標點符號都是置中，所以 楷體簡體 需要替換簡體標點。
+- 明體有些標點則全是靠左下，既不符合繁體也不符合簡體習慣，所以 明體 需要替換標點。
 """
 
 from pathlib import Path
@@ -18,7 +21,11 @@ script_dir = Path(__file__).resolve().parent
 # 定義要處理的 TTC 檔案資訊
 TARGET_TTCS = [
     {"filename": "ukai.ttc", "prefix": "AR-PL-UKai", "label": "文鼎 PL 中楷 (UKai)"},
-    {"filename": "uming.ttc", "prefix": "AR-PL-UMing", "label": "文鼎 PL 細上海宋 (UMing)"},
+    {
+        "filename": "uming.ttc",
+        "prefix": "AR-PL-UMing",
+        "label": "文鼎 PL 細上海宋 (UMing)",
+    },
 ]
 
 print("🚀 開始自動處理 ukai.ttc 與 uming.ttc 字型檔...\n")
@@ -79,16 +86,16 @@ for target in TARGET_TTCS:
         print(f"   ❌ 在 {filename} 中未找到 TW 版本。")
 
     # 匯出 CN 版本
-    # if cn_index is not None:
-    #     output_cn = os.path.join(script_dir, f"{prefix}-CN.ttf")
-    #     print(
-    #         f"   ✨ 正在匯出 CN 大陸標準版 ➔ [{prefix}-CN.ttf] (Index [{cn_index}])..."
-    #     )
-    #     cn_font = TTFont(ttc_path, fontNumber=cn_index)
-    #     cn_font.save(output_cn)
-    #     total_extracted += 1
-    # else:
-    #     print(f"   ❌ 在 {filename} 中未找到 CN 版本。")
+    if cn_index is not None:
+        output_cn = script_dir / f"{prefix}-CN.ttf"
+        print(
+            f"   ✨ 正在匯出 CN 大陸標準版 ➔ [{prefix}-CN.ttf] (Index [{cn_index}])..."
+        )
+        cn_font = TTFont(ttc_path, fontNumber=cn_index)
+        cn_font.save(output_cn)
+        total_extracted += 1
+    else:
+        print(f"   ❌ 在 {filename} 中未找到 CN 版本。")
 
     print("-" * 50 + "\n")
 
