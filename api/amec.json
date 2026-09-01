@@ -42,18 +42,18 @@
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Kai-Aligned-Plus.ttf"
   },
   {
-    "id": "tw-sung-aligned/base",
-    "name": "TW-Sung-Aligned",
-    "displayName": "全字齊宋 基本",
-    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/base/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned.ttf"
-  },
-  {
     "id": "tw-sung-aligned/ext-b",
     "name": "TW-Sung-Aligned-Ext-B",
     "displayName": "全字齊宋 Ext-B",
     "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/ext-b/result.css",
     "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned-Ext-B.ttf"
+  },
+  {
+    "id": "tw-sung-aligned/plus",
+    "name": "TW-Sung-Aligned-Plus",
+    "displayName": "全字齊宋 Plus",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.1/plus/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/TW-Sung-Aligned-Plus.ttf"
   },
   {
     "id": "zhuque-fangsong",
