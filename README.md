@@ -17,41 +17,133 @@
 
 ## 📦 字型列表與引入方式
 
-### 🟩文鼎PL中楷 / 文鼎PL細上海宋
+### 🟩文鼎PL中楷
 
-- **字型來源說明**：
-  本專案採用文鼎科技（Arphic Technology Co., Ltd.）之 AR PL UKai / AR PL UMing 字型，並配合 Debian / Ubuntu CJK-Unifonts 社群修補後，透過 ARPHIC PUBLIC LICENSE（ARPHICPL）進行自託管與分發。切片與格式轉換後，仍須保留原始版權宣告與授權檔案。
+#### 字型來源說明
 
-- **在網頁 `<head>` 中引入字型**：
+本專案採用文鼎科技（Arphic Technology Co., Ltd.）之 AR PL UKai 字型，並配合 Debian / Ubuntu CJK-Unifonts 社群修補後，透過 ARPHIC PUBLIC LICENSE（ARPHICPL）進行自託管與分發。切片與格式轉換後，仍須保留原始版權宣告與授權檔案。
 
-  ```html
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@1.0.0/result.css"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@1.0.0/result.css"
-  />
-  ```
+#### 在網頁 `<head>` 中引入字型
 
-- **CSS 使用範例**：
+##### 1. 載入完整字集 (所有子集整合版)
 
-  ```css
-  body {
-    font-family: "AR PL UKai TW", serif;
-  }
-  body {
-    font-family: "AR PL UMing TW", serif;
-  }
-  ```
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/index.css"
+/>
+```
 
-- **版權聲明**：
-  本字型源自文鼎科技之 ARPHIC PUBLIC LICENSE 授權字型，包含原始版權註明「Copyright (C) 1999 Arphic Technology Co., Ltd.」與相關授權說明；本倉庫已將授權檔案一併收錄於各字型資料夾中，請於散布時一併保留。
+##### 2. 按需載入個別子集
 
-- 備註：
-  - 文鼎這兩種字型的TW與CN版，在字形方面沒有差異，標點符號也都是"置中式"，所以只取字碼較多的TW版進行切片化。
-  - 呈現簡體字時，若須"靠下式"標點，可用`"Noto Serif SC Punct"`替換標點。
+CN (簡體字集)
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/cn/result.css"
+/>
+```
+
+TW (繁體字集)
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/tw/result.css"
+/>
+```
+
+#### CSS 使用範例
+
+CN (簡體字集)
+
+```css
+body {
+  font-family: "AR PL UKai CN", serif;
+}
+```
+
+TW (繁體字集)
+
+```css
+body {
+  font-family: "AR PL UKai TW", serif;
+}
+```
+
+#### 版權聲明
+
+本字型源自文鼎科技之 ARPHIC PUBLIC LICENSE 授權字型，包含原始版權註明「Copyright (C) 1999 Arphic Technology Co., Ltd.」與相關授權說明；本倉庫已將授權檔案一併收錄於各字型資料夾及 `npm` 套件中，請於散布時一併保留。
+
+#### 備註
+
+- CN 字集的標點原生是"置中式"，若須"靠下式"標點，可用`"Noto Serif SC Punct"`替換標點。
+
+---
+
+### 🟩文鼎PL細上海宋
+
+#### 字型來源說明
+
+本專案採用文鼎科技（Arphic Technology Co., Ltd.）之 AR PL UMing 字型，並配合 Debian / Ubuntu CJK-Unifonts 社群修補後，透過 ARPHIC PUBLIC LICENSE（ARPHICPL）進行自託管與分發。切片與格式轉換後，仍須保留原始版權宣告與授權檔案。
+
+#### 在網頁 `<head>` 中引入字型
+
+##### 1. 載入完整字集 (所有子集整合版)
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@2.0.0/index.css"
+/>
+```
+
+##### 2. 按需載入個別子集
+
+CN (簡體字集)
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@2.0.0/cn/result.css"
+/>
+```
+
+TW (繁體字集)
+
+```html
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-uming@2.0.0/tw/result.css"
+/>
+```
+
+#### CSS 使用範例
+
+CN (簡體字集)
+
+```css
+body {
+  font-family: "AR PL UMing CN", serif;
+}
+```
+
+TW (繁體字集)
+
+```css
+body {
+  font-family: "AR PL UMing TW", serif;
+}
+```
+
+#### 版權聲明
+
+本字型源自文鼎科技之 ARPHIC PUBLIC LICENSE 授權字型，包含原始版權註明「Copyright (C) 1999 Arphic Technology Co., Ltd.」與相關授權說明；本倉庫已將授權檔案一併收錄於各字型資料夾及 `npm` 套件中，請於散布時一併保留。
+
+#### 備註
+
+- 此字型的標點符號有些是"靠下式"，有些是"置中式，若須符合簡繁慣例，可用`"Noto Serif SC Punct"`、`"Noto Serif TC Punct"`或`"TW-Kai-Aligned Punct"`替換標點。
 
 ---
 
@@ -218,7 +310,7 @@
 
 本專案字型採集自 中華民國數位發展部 / 國家發展委員會 [中文標準交換碼全字庫 (CNS 11643)]，依據 SIL OFL 1.1 進行託管與分發。
 
-#### 在網頁 `<head>` 中引入字型\*
+#### 在網頁 `<head>` 中引入字型
 
 ##### 1. 載入完整字集 (所有子集整合版)
 
@@ -258,7 +350,7 @@ Plus (自造字區)
 />
 ```
 
-#### CSS 使用範例：
+#### CSS 使用範例
 
 Base (基本字集)
 
