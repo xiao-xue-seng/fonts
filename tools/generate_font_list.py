@@ -4,15 +4,18 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 DEFAULT_BASE_URL = "https://cdn.jsdelivr.net/npm/"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ROOT = PROJECT_ROOT / ".dist"
 DEFAULT_OUTPUT = PROJECT_ROOT / "api" / "fonts.json"
+OPTIMIZED_TTF_SOURCE = PROJECT_ROOT / "temp" / "ttf-optimized"
 FONT_FAMILY_RE = re.compile(
     r"font-family\s*:\s*(?:\"([^\"]+)\"|'([^']+)'|([^;]+))",
     re.IGNORECASE,
@@ -63,6 +66,17 @@ def css_url(base_url: str, package_name: str, version: str, css_path: str) -> st
     return f"{base_url.rstrip('/')}/{package_name}@{version}/{css_path.lstrip('/')}"
 
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as font_file:
+            for chunk in iter(lambda: font_file.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except OSError as error:
+        raise ValueError(f"無法讀取 optimizedTtf 字型檔案：{path}") from error
+    return digest.hexdigest()
+
+
 def build_font_item(
     *,
     item_id: str,
@@ -85,6 +99,11 @@ def build_font_item(
     ttf_url = metadata.get("ttfUrl")
     if isinstance(ttf_url, str) and ttf_url:
         item["ttfUrl"] = ttf_url
+        optimized_ttf_filename = Path(urlparse(ttf_url).path).name
+        optimized_ttf_path = OPTIMIZED_TTF_SOURCE / optimized_ttf_filename
+        if not optimized_ttf_path.is_file():
+            raise ValueError(f"找不到 optimizedTtf 字型檔案：{optimized_ttf_path}")
+        item["sha256"] = sha256_file(optimized_ttf_path)
     return item
 
 

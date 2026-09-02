@@ -127,7 +127,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
   {
     name: "tw-kai-aligned-punct",
     title: "全字齊楷 標點",
-    // 此版號跟隨來源字型的版號
+    // 此版號跟隨來源字型(全字齊楷)的版號
     version: "1.0.2",
     license: "OFL-1.1",
     includeLocal: false, // 標點刻意不用本地字型

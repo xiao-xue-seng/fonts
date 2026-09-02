@@ -30,15 +30,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
-import {
-  NPM_SCOPE,
-  OUTPUT_BASE,
-  processFont,
-  toKebabCase,
-} from "./split.mjs";
-import {
-  extractFontFamily,
-} from "./utils/font-output.mjs";
+import { NPM_SCOPE, OUTPUT_BASE, processFont, toKebabCase } from "./split.mjs";
+import { extractFontFamily } from "./utils/font-output.mjs";
 import {
   createPackageJson,
   writePackageJson,
@@ -192,13 +185,11 @@ export function writeGroupReadme(destDir, config, fontFamily) {
   const items = config.items || [];
 
   const subsetLinkBlocks = items
-    .map(
-      (it) => {
-        const label = it.name || it.subDir || "base";
-        const subDirName = it.subDir || toKebabCase(label);
-        return `### ${label}\n\n\`\`\`html\n<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${subDirName}/result.css" />\n\`\`\``;
-      },
-    )
+    .map((it) => {
+      const label = it.name || it.subDir || "base";
+      const subDirName = it.subDir || toKebabCase(label);
+      return `### ${label}\n\n\`\`\`html\n<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@${NPM_SCOPE}/${pkgName}@${version}/${subDirName}/result.css" />\n\`\`\``;
+    })
     .join("\n\n");
 
   const firstSubDir = items[0]?.subDir || "base";
@@ -206,7 +197,10 @@ export function writeGroupReadme(destDir, config, fontFamily) {
     const subDirName = it.subDir || toKebabCase(it.name || firstSubDir);
     const cssPath = path.join(destDir, subDirName, "result.css");
     const detectedFamily = fs.existsSync(cssPath)
-      ? extractFontFamily(fs.readFileSync(cssPath, "utf-8"), it.fontFamily || fontFamily)
+      ? extractFontFamily(
+          fs.readFileSync(cssPath, "utf-8"),
+          it.fontFamily || fontFamily,
+        )
       : it.fontFamily || fontFamily;
 
     return {
