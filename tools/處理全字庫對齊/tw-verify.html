@@ -48,6 +48,7 @@
         --base-font: "Font-UKai-TW";
         --aligned-font: "Font-TW-Kai-Aligned";
         --raw-font: "Font-TW-Kai-Raw";
+        --noto-font: "Noto Sans TC";
         --bg: #f8fafc;
         --card-bg: #ffffff;
         --border: #cbd5e1;
@@ -67,6 +68,10 @@
       .f-raw {
         font-family: var(--raw-font), serif;
         color: #94a3b8; /* 灰色：原始未修訂版 */
+      }
+      .f-noto {
+        font-family: var(--noto-font), sans-serif;
+        color: #d97706; /* 橙色：Noto 系列 */
       }
 
       * {
@@ -550,7 +555,7 @@
           sentenceHtml += `
           <div class="row-card">
             <div class="line-text" style="font-size: ${fSize}px;">
-              天地玄黃<span class="char-badge f-base" title="${baseTitle}">${char}</span><span class="char-badge f-aligned" title="${alignedTitle}">${char}</span><span class="char-badge f-raw" title="${rawTitle}">${char}</span>宇宙洪荒
+              天地玄黃<span class="char-badge f-base" title="${baseTitle}">${char}</span><span class="char-badge f-aligned" title="${alignedTitle}">${char}</span><span class="char-badge f-noto">${char}</span><span class="char-badge f-raw" title="${rawTitle}">${char}</span>宇宙洪荒
             </div>
           </div>
         `;
@@ -564,7 +569,7 @@
           <div class="overlay-box">
             <div style="font-size:0.75rem; color:#64748b; margin-bottom:6px;">「${char}」疊合</div>
             <div class="overlay-stage" style="font-size: ${fSize * 1.15}px;">
-              <span class="f-raw">${char}</span><span class="f-base" style="margin-left: -1em;">${char}</span><span class="f-aligned" style="margin-left: -1em;">${char}</span>
+              <span class="f-noto">${char}</span><span class="f-raw" style="margin-left: -1em;">${char}</span><span class="f-base" style="margin-left: -1em;">${char}</span><span class="f-aligned" style="margin-left: -1em;">${char}</span>
             </div>
           </div>
         `;
@@ -580,6 +585,7 @@
           root.style.setProperty("--base-font", '"Font-UMing-TW"');
           root.style.setProperty("--aligned-font", '"Font-TW-Sung-Aligned"');
           root.style.setProperty("--raw-font", '"Font-TW-Sung-Raw"');
+          root.style.setProperty("--noto-font", '"Noto Serif TC"');
           labelKai.style.color = "#94a3b8";
           labelMing.style.color = "#059669";
           currentFontMode = "ming";
@@ -588,6 +594,7 @@
           root.style.setProperty("--base-font", '"Font-UKai-TW"');
           root.style.setProperty("--aligned-font", '"Font-TW-Kai-Aligned"');
           root.style.setProperty("--raw-font", '"Font-TW-Kai-Raw"');
+          root.style.setProperty("--noto-font", '"Noto Sans TC"');
           labelKai.style.color = "#059669";
           labelMing.style.color = "#94a3b8";
           currentFontMode = "kai";

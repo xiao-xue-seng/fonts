@@ -33,6 +33,7 @@
       :root {
         --base-font: "Font-UKai-TW";
         --target-font: "Font-TW-Kai";
+        --noto-font: "Noto Sans TC";
       }
 
       .compare-base {
@@ -42,6 +43,10 @@
       .compare-raw {
         font-family: var(--target-font), serif;
         color: #94a3b8; /* 淺灰色：未調整原樣 */
+      }
+      .compare-noto {
+        font-family: var(--noto-font), sans-serif;
+        color: #d97706; /* 橙色：Noto 系列 */
       }
       .compare-target {
         font-family: var(--target-font), serif;
@@ -563,7 +568,7 @@
           sentenceHtml += `
           <div class="row-card">
             <div class="line-text">
-              天地玄黃<span class="char-badge compare-base">${char}</span><span class="char-badge compare-target target-span">${char}</span><span class="char-badge compare-raw">${char}</span>宇宙洪荒
+              天地玄黃<span class="char-badge compare-base">${char}</span><span class="char-badge compare-target target-span">${char}</span><span class="char-badge compare-noto">${char}</span><span class="char-badge compare-raw">${char}</span>宇宙洪荒
             </div>
           </div>
         `;
@@ -668,12 +673,14 @@
           // 切換為明體
           root.style.setProperty("--base-font", '"Font-UMing-TW"');
           root.style.setProperty("--target-font", '"Font-TW-Sung"');
+          root.style.setProperty("--noto-font", '"Noto Serif TC"');
           labelKai.style.color = "#94a3b8";
           labelMing.style.color = "#059669";
         } else {
           // 切換回楷體
           root.style.setProperty("--base-font", '"Font-UKai-TW"');
           root.style.setProperty("--target-font", '"Font-TW-Kai"');
+          root.style.setProperty("--noto-font", '"Noto Sans TC"');
           labelKai.style.color = "#059669";
           labelMing.style.color = "#94a3b8";
         }
