@@ -21,7 +21,7 @@ from typing import Dict, List
 from fontTools.ttLib import TTFont, TTLibError
 
 # 確保專案根目錄在 sys.path 中以利載入 tools.utils 模組
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -44,7 +44,15 @@ PROCESS_SUNG = True  # 是否處理 全字庫宋體 (TW-Sung)
 # ==============================================================================
 KAI_BASE_NAME_EN = "TW-Kai-Aligned"  # 新英文字型家族名稱基礎
 KAI_BASE_NAME_ZH = "全字齊楷"  # 新中文字型家族名稱基礎
-KAI_VERSION = "1.0.0"  # 楷體衍生字型版本號
+# 版號更動原則
+#   變更來源檔案：更新主版號
+#   調整整體參數：更新次版號
+#   調整排除字元：更新修訂版號
+# git tag 與 傳統 OpenType 規範的 fontRevision 欄位的對映：
+#   v1.0.0 → Version 1.000 (修訂版號用兩碼)
+#   v1.1.0 → Version 1.100
+#   v1.1.1 → Version 1.101
+KAI_VERSION = "1.002"  # 楷體衍生字型版本號
 KAI_SCALE_FACTOR = 1.006  # 縮放比例係數
 KAI_DY = 90  # UPM 1024 向上平移量
 
@@ -53,7 +61,7 @@ KAI_DY = 90  # UPM 1024 向上平移量
 # ==============================================================================
 SUNG_BASE_NAME_EN = "TW-Sung-Aligned"  # 新英文字型家族名稱基礎
 SUNG_BASE_NAME_ZH = "全字齊宋"  # 新中文字型家族名稱基礎
-SUNG_VERSION = "1.0.0"  # 宋體衍生字型版本號
+SUNG_VERSION = "1.002"  # 宋體衍生字型版本號
 SUNG_SCALE_FACTOR = 1.000  # 縮放比例係數
 SUNG_DY = 90  # UPM 1024 向上平移量
 
@@ -66,8 +74,15 @@ SUBSET_RULES = [
     {"suffix_file": "-Plus-98_1.ttf", "suffix_en": "-Plus", "suffix_zh": " Plus"},
 ]
 
-# 這些標點原本就已置中，不需要再調整。
-EXCLUDE_UNICODE_RANGES = "FE52,FE54,FE55,FF1A,FF1B"
+# 這些標點原本就已置中或接近置中，不需要再調整。
+EXCLUDE_UNICODE_RANGES = "2022-2031,203C,2042,2044,2047-2049,204E,3000-3003,FE52,FE54-FE57,FF01,FF0C,FF0E,FF1A,FF1B,FF1F"
+
+# 2000-206F,  # 通用標點（“ ” ‘ ’ — … 等）
+# 3000-303F,  # CJK 符號和標點（、 。 《 》 「 」 【 】 等）
+# FE10-FE1F,  # 直排形式
+# FE30-FE4F,  # CJK 相容形式（直排引號、專名線等）
+# FE50-FE6F,  # 小型變體形式（繁體/Big5 相容標點如 ﹐ ﹑ ﹖ 等）
+# FF00-FFEF,  # 全形 ASCII 標點（！ ？ ， ： ； 等）
 
 
 def has_matching_transform_metadata(
@@ -116,6 +131,7 @@ def has_matching_transform_metadata(
         "exclude_unicode_ranges": exclude_unicode_ranges,
     }
     return all(metadata.get(key) == value for key, value in expected.items())
+
 
 def generate_tasks() -> List[Dict]:
     """

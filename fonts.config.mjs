@@ -19,7 +19,7 @@
 */
 
 const TTF_BASE_URL =
-  "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.0/";
+  "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.1/";
 
 const TW_ALIGNED_COMMON_DETAILS = `全字庫傳承自早期 Windows 系統的字型設計規範，其字型內部座標系（EM Square）將字身位置刻意偏下繪製。全字庫常是缺字備援的首選字型，當瀏覽器或排版軟體將不同字型的基線（Baseline）對齊於同條水平線時，全字庫字體會顯得比「文鼎楷體/宋體」等現代標準字型矮上一截，且無法單純透過 CSS 的 @font-face 參數進行垂直平移。
 
@@ -36,7 +36,7 @@ export default [
   {
     name: "tw-kai-aligned",
     title: "全字齊楷 完整",
-    version: "1.0.1",
+    version: "1.0.2",
     license: "OFL-1.1",
     licenseSource: "temp/licenseSource/tw-kai-aligned/LICENSE",
     includeLocal: true,
@@ -47,9 +47,9 @@ with Reserved Font Name "全字齊楷" and "TW-Kai-Aligned".
 
 ## 字型介紹
 
-本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
+本專案收錄由 全字庫正楷體 (TW-Kai, ver.11508.01) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
 
-「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
+「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正，其中標點符號是採用選擇性調整，排除原已接近置中的字碼。
 
 ${TW_ALIGNED_COMMON_DETAILS}
 `,
@@ -81,7 +81,7 @@ ${TW_ALIGNED_COMMON_DETAILS}
   {
     name: "tw-sung-aligned",
     title: "全字齊宋 完整",
-    version: "1.0.1",
+    version: "1.0.2",
     license: "OFL-1.1",
     licenseSource: "temp/licenseSource/tw-sung-aligned/LICENSE",
     includeLocal: true,
@@ -92,9 +92,9 @@ with Reserved Font Name "全字齊宋" and "TW-Sung-Aligned".
 
 ## 字型介紹
 
-本專案收錄由 全字庫正宋體 (TW-Sung) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
+本專案收錄由 全字庫正宋體 (TW-Sung, ver.11503.01) 經垂直對齊調整後之切片化 WebFont，包含常用字 (Base)、擴充 B 字集 (Ext-B) 與自造字區 (Plus)。
 
-「全字齊宋」針對「全字庫正宋體」進行了垂直位置校正。
+「全字齊宋」針對「全字庫正宋體」進行了垂直位置校正，其中標點符號是採用選擇性調整，排除原已接近置中的字碼。
 
 ${TW_ALIGNED_COMMON_DETAILS}
 `,
@@ -127,19 +127,20 @@ ${TW_ALIGNED_COMMON_DETAILS}
   {
     name: "tw-kai-aligned-punct",
     title: "全字齊楷 標點",
-    version: "1.0.0",
+    // 此版號跟隨來源字型的版號
+    version: "1.0.2",
     license: "OFL-1.1",
     includeLocal: false, // 標點刻意不用本地字型
     genericFamily: "serif",
     description:
-      "全字齊楷-標點：全字庫正楷體經垂直對齊調整後之切片化 WebFont (僅包含標點符號)",
+      "全字齊楷-標點：全字齊楷 標點符號部分的切片化 WebFont。",
     details: `## 字型介紹
 
-本專案收錄由 全字庫正楷體 (TW-Kai) 經垂直對齊調整後之切片化 WebFont，僅包含標點符號。
+本專案收錄 全字齊楷 標點符號部分的切片化 WebFont。
 
 適用場景：將此字型排在 CSS font-family 的最前面，用以強制取代後方字型的標點符號，無須修改 DOM 結構。
 
-「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
+「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正，其中標點符號是採用選擇性調整，排除原已接近置中的字碼。
 
 ${TW_ALIGNED_COMMON_DETAILS}`,
     subsetMode: "single",

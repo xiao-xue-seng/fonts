@@ -214,7 +214,7 @@ def transform_font(
     :param fallback_em_shift: 未匹配 UPM 時的相對 em 位移比例
     :param decompose: 是否強制攤平所有複合字元 (預設: True)
     :param unicode_ranges: 要調整的 Unicode 範圍；空值表示不限制
-    :param exclude_unicode_ranges: 要排除的 Unicode 範圍，優先於 unicode_ranges
+    :param exclude_unicode_ranges: 要排除的 Unicode 範圍，優先於 unicode_ranges。可重複指定；格式如 U+4E00-9FFF,U+3001
     :param verbose: 是否輸出詳細處理進度 (預設: True)
     :return: 轉換成功回傳 True，失敗回傳 False
     """

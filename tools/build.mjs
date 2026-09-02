@@ -14,9 +14,10 @@ node tools/build.mjs --config ./custom-fonts.config.mjs
 
 🟢前置作業：
 - 準備文鼎來源：執行 tools\處理文鼎字型\extract_ttcs.py 拆出 CN & TW ttf。
-- 準備對齊版：  執行 tools\處理全字庫對齊\batch_transform_tw.py
+- 準備對齊版：  更新 tools\處理全字庫對齊\batch_transform_tw.py 中的版號，並執行。
 - 準備標點子集：執行 tools\extract_cjk_punctuation.py 產生標點符號子集。
 - 準備拉丁子集：執行 tools\extract_latin_subset_ttf.py
+- 更新 fonts.config.mjs 中的版號及 TTF 下載 URL 中的版號。
 
 🟡後續流程：
 - tools\optimize_ttf_for_app.py
