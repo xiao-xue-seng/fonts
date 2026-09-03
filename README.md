@@ -300,7 +300,7 @@ body {
 
 ### 🟩全字齊楷
 
-「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正。
+「全字齊楷」針對「全字庫正楷體」進行了垂直位置校正，其中標點符號是採用選擇性調整，排除原已接近置中的字碼。
 
 全字庫傳承自早期 Windows 系統的字型設計規範，其字型內部座標系（EM Square）將字身位置刻意偏下繪製。全字庫常是缺字備援的首選字型，當瀏覽器或排版軟體將不同字型的基線（Baseline）對齊於同條水平線時，全字庫字體會顯得比「文鼎楷體/宋體」等現代標準字型矮上一截，且無法單純透過 CSS 的 @font-face 參數進行垂直平移。
 
@@ -317,7 +317,7 @@ body {
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/index.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.2/index.css"
 />
 ```
 
@@ -328,7 +328,7 @@ Base (基本字集)
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/base/result.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.2/base/result.css"
 />
 ```
 
@@ -337,7 +337,7 @@ Ext-B (擴充 B 字集)
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/ext-b/result.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.2/ext-b/result.css"
 />
 ```
 
@@ -346,7 +346,7 @@ Plus (自造字區)
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.0/plus/result.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned@1.0.2/plus/result.css"
 />
 ```
 
@@ -390,7 +390,7 @@ body {
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned-punct@1.0.0/result.css"
+    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-kai-aligned-punct@1.0.2/result.css"
   />
   ```
 
@@ -406,7 +406,7 @@ body {
 
 ### 🟩全字齊宋
 
-「全字齊宋」針對「全字庫正宋體」進行了垂直位置校正。
+「全字齊宋」針對「全字庫正宋體」進行了垂直位置校正，其中標點符號是採用選擇性調整，排除原已接近置中的字碼。
 
 全字庫傳承自早期 Windows 系統的字型設計規範，其字型內部座標系（EM Square）將字身位置刻意偏下繪製。全字庫常是缺字備援的首選字型，當瀏覽器或排版軟體將不同字型的基線（Baseline）對齊於同條水平線時，全字庫字體會顯得比「文鼎楷體/宋體」等現代標準字型矮上一截，且無法單純透過 CSS 的 @font-face 參數進行垂直平移。
 
@@ -423,7 +423,7 @@ body {
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/index.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.2/index.css"
 />
 ```
 
@@ -434,7 +434,7 @@ Base (基本字集)
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/base/result.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.2/base/result.css"
 />
 ```
 
@@ -443,7 +443,7 @@ Ext-B (擴充 B 字集)
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/ext-b/result.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.2/ext-b/result.css"
 />
 ```
 
@@ -452,7 +452,7 @@ Plus (自造字區)
 ```html
 <link
   rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.0/plus/result.css"
+  href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/tw-sung-aligned@1.0.2/plus/result.css"
 />
 ```
 
@@ -493,7 +493,7 @@ body {
   ```html
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/zhuque-fangsong/result.css"
+    href="https://cdn.jsdelivr.net/npm/@xiao-xue-seng/zhuque-fangsong@1.0.0/result.css"
   />
   ```
 
