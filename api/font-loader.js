@@ -101,7 +101,7 @@
    */
   async function init() {
     try {
-      const response = await fetch(CONFIG_URL);
+      const response = await fetch(CONFIG_URL, { cache: "no-cache" }); // 使用304機制(條件式請求)
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
 
