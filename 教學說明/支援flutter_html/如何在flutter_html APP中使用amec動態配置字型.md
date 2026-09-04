@@ -179,25 +179,28 @@ amec.json 範例：
 ```json
 [
   {
-    "id": "instrument-sans",
-    "name": "InstrumentSansLatinSubset",
-    "displayName": "Instrument Sans 拉丁子集",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/instrument-sans/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/InstrumentSans-Subset.ttf"
+    "id": "ar-pl-ukai/tw",
+    "name": "AR PL UKai TW",
+    "displayName": "文鼎PL中楷 TW",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/ar-pl-ukai@2.0.0/tw/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.1/AR-PL-UKai-TW.ttf",
+    "sha256": "114eac8819ecb6e13911dc1e069379d103c7def8f1d6989d95fa38c54aa18cd1"
   },
   {
-    "id": "ukai-cn",
-    "name": "AR PL UKai CN",
-    "displayName": "AR PL UKai CN",
-    "cssUrl": "https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/ukai-cn/result.css",
-    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.0.0/ukai-cn.ttf"
+    "id": "instrument-sans-subset",
+    "name": "Instrument Sans Subset",
+    "displayName": "Instrument Sans 拉丁子集",
+    "cssUrl": "https://cdn.jsdelivr.net/npm/@xiao-xue-seng/instrument-sans-subset@1.0.0/result.css",
+    "ttfUrl": "https://github.com/xiao-xue-seng/fonts/releases/download/app-fonts-v1.1.1/InstrumentSans-Subset.ttf",
+    "sha256": "3fc6fb4e7b7c89d68dfaa107c74916adca12166ed072ef91da9184876cbfb5f8"
   }
   // ... 其他字型依此類推
 ]
 ```
 
-`name` 是 font-family 中使用的名稱。
-`ttfUrl` 即是 APP 所需的字型檔網址。如果缺少此欄位，則表示該字型沒有提供 ttf 檔案。APP 端可使用備援字型呈現。
+- `name` 是 font-family 中使用的名稱。
+- `ttfUrl` 即是 APP 所需的字型檔網址。如果缺少此欄位，則表示該字型沒有提供 ttf 檔案。APP 端可使用備援字型呈現。
+- `sha256` 提供 APP ttf 檔的 sha256，可供比對節約不必要的下載。github release 每次推進版號時，未必所有字型都會變更，APP 端可透由比對 sha256，僅當 ttf 真實變更時才啟動新的下載。
 
 ---
 
@@ -219,14 +222,44 @@ Web 專用的 cssUrl 請直接忽略。
 
 建議的 Flutter 實作邏輯如下（虛擬碼參考）：
 
+> **💡 最佳實踐提示：啟用「304 條件式請求（Conditional Request）」**
+> - 在抓取 `amec.json` 時，建議在 Request Header 加上 `'Cache-Control': 'no-cache'`（要求伺服器重新驗證快取）與 `'If-None-Match': cachedEtag`。
+> - jsDelivr CDN 原生支援 ETag 機制。若遠端字型清單未更新，CDN 會立即回應 **`304 Not Modified`**（不含 Response Body），APP 便可直接讀取本地已快取的 JSON，大幅節省頻寬與 APP 啟動等待時間。
+> - 若不想自行手動比對與維護 ETag 邏輯，也可以直接選用**支援 HTTP 快取中介層的套件**（例如使用 `dio` 搭配 `dio_cache_interceptor` 等套件），即可全自動處理 304 條件式請求與本地快取同步。
+
 ```dart
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart'; // 給 FontLoader 用
 
 Future<void> loadDynamicFonts() async {
-  // 1. 抓取 JSON 清單
-  final response = await http.get(Uri.parse('https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/amec.json'));
-  final List<dynamic> fonts = jsonDecode(response.body);
+  // 1. 抓取 JSON 清單（使用 304 條件式請求機制）
+  final String? cachedEtag = await getStoredEtag(); // 從本地取得前次儲存的 ETag
+  final response = await http.get(
+    Uri.parse('https://cdn.jsdelivr.net/gh/xiao-xue-seng/fonts@v1/api/amec.json'),
+    headers: {
+      'Cache-Control': 'no-cache', // 啟用重新驗證 (Revalidation)
+      if (cachedEtag != null) 'If-None-Match': cachedEtag, // 條件式請求：未變更時伺服器直接回傳 304
+    },
+  );
+
+  List<dynamic> fonts;
+  if (response.statusCode == 304) {
+    // 伺服器回傳 304 Not Modified：清單無異動，直接讀取本機快取的 JSON
+    final localJson = await getStoredFontJson();
+    fonts = jsonDecode(localJson);
+  } else if (response.statusCode == 200) {
+    // 伺服器回傳 200 OK：有新版清單，儲存新的 ETag 與 JSON 後解析
+    final newEtag = response.headers['etag'];
+    if (newEtag != null) await saveStoredEtag(newEtag);
+    await saveStoredFontJson(response.body);
+    fonts = jsonDecode(response.body);
+  } else {
+    // 例外或離線處理：嘗試降級讀取本地現有快取
+    final localJson = await getStoredFontJson();
+    if (localJson == null) return;
+    fonts = jsonDecode(localJson);
+  }
 
   for (var font in fonts) {
     final String fontFamilyName = font['name'];
